@@ -10,14 +10,14 @@ export class ProductsService {
     return this.DatabaseService.product.create({ data: createProductDto });
   }
 
+  async findAll(page: number, perPage: number, search: String) {
+    return this.DatabaseService.product.findMany({});
+  }
+
   async findOne(id: number) {
     return this.DatabaseService.product.findUnique({
       where: { id },
     });
-  }
-
-  async findAll(page: number, perPage: number, search: String) {
-    return this.DatabaseService.product.findMany({});
   }
 
   async update(id: number, updateProductDto: Prisma.ProductUpdateInput) {
