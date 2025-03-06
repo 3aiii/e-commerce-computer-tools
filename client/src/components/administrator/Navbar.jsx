@@ -1,7 +1,7 @@
 import React from "react";
 import { AiOutlineHome, AiOutlineShoppingCart } from "react-icons/ai";
 import { FiBox, FiUsers } from "react-icons/fi";
-import { MdOutlineCategory } from "react-icons/md";
+import { MdOutlineCategory, MdOutlineDiscount } from "react-icons/md";
 import { Link, matchPath, useLocation } from "react-router-dom";
 
 const Navbar = () => {
@@ -20,7 +20,7 @@ const Navbar = () => {
 
   return (
     <div className="w-full h-fit bg-white">
-      <div className="flex justify-center min-h-16 border-b-[2px] border-gray-200">
+      <div className="flex justify-center min-h-16 border-b-[1px] border-gray-200">
         <div className="flex justify-between items-center xl:w-[1180px] 2xl:w-[1580px]">
           <div className="w-fit text-xl text-blue-600 font-semibold">
             E-COMMERCE PANEL
@@ -56,7 +56,7 @@ const Navbar = () => {
 
           {/* Products Link */}
           <Link
-            to="/administrator/Products"
+            to="/administrator/products"
             className={`link-navbar-text ${getLinkClassName(
               "/administrator/Products"
             )}`}
@@ -64,56 +64,77 @@ const Navbar = () => {
             <FiBox size={20} />
             <span>Products</span>
             <span
-              className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/Products"
-              )}`}
+              className={`underline-navbar-text ${
+                isActive("/administrator/products") ||
+                isActive("/administrator/products/create") ||
+                isActive("/administrator/products/:id/edit") ||
+                isActive("/administrator/products/:id")
+                  ? "underline-active-navbar-admin"
+                  : "underline-inactive-navbar-admin"
+              }`}
             />
           </Link>
 
           {/* Orders Link */}
           <Link
-            to="/administrator/Orders"
+            to="/administrator/orders"
             className={`link-navbar-text ${getLinkClassName(
-              "/administrator/Orders"
+              "/administrator/orders"
             )}`}
           >
             <AiOutlineShoppingCart size={20} />
             <span>Orders</span>
             <span
               className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/Orders"
+                "/administrator/orders"
               )}`}
             />
           </Link>
 
           {/* Categories Link */}
           <Link
-            to="/administrator/Categories"
+            to="/administrator/categories"
             className={`link-navbar-text ${getLinkClassName(
-              "/administrator/Categories"
+              "/administrator/categories"
             )}`}
           >
             <MdOutlineCategory size={20} />
             <span>Categories</span>
             <span
               className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/Categories"
+                "/administrator/categories"
               )}`}
             />
           </Link>
 
           {/* Users Link */}
           <Link
-            to="/administrator/Users"
+            to="/administrator/users"
             className={`link-navbar-text ${getLinkClassName(
-              "/administrator/Users"
+              "/administrator/users"
             )}`}
           >
             <FiUsers size={20} />
             <span>Users</span>
             <span
               className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/Users"
+                "/administrator/users"
+              )}`}
+            />
+          </Link>
+
+          {/* Discount Link */}
+          <Link
+            to="/administrator/discount"
+            className={`link-navbar-text ${getLinkClassName(
+              "/administrator/discount"
+            )}`}
+          >
+            <MdOutlineDiscount size={20} />
+            <span>Discount</span>
+            <span
+              className={`underline-navbar-text ${getUnderlineClassName(
+                "/administrator/discount"
               )}`}
             />
           </Link>

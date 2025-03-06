@@ -8,6 +8,10 @@ import CreateProducts from "./pages/administrator/Products/Create";
 import IndexOrders from "./pages/administrator/Orders/Index";
 import IndexCategories from "./pages/administrator/Categories/Index";
 import Dashboard from "./pages/administrator/Dashboard";
+import Product from "./pages/administrator/Products/Product";
+import EditProduct from "./pages/administrator/Products/Edit";
+import InputLayout from "./layouts/administrator/InputLayout";
+import IndexDiscount from "./pages/administrator/Discounts/Index";
 
 function App() {
   return (
@@ -17,9 +21,15 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<Profile />} />
           <Route path="products" element={<IndexProducts />} />
-          <Route path="products/create" element={<CreateProducts />} />
-          <Route path="products/:id" />
-          <Route path="products/:id/edit" />
+          <Route path="products/create" element={<InputLayout />}>
+            <Route path="" element={<CreateProducts />} />
+          </Route>
+          <Route path="products/:slug" element={<InputLayout />}>
+            <Route path="" element={<Product />} />
+          </Route>
+          <Route path="products/:slug/edit" element={<InputLayout />}>
+            <Route path="" element={<EditProduct />} />
+          </Route>
           <Route path="users" element={<IndexUsers />} />
           <Route path="users/create" />
           <Route path="user/:id/edit" />
@@ -29,6 +39,9 @@ function App() {
           <Route path="categories" element={<IndexCategories />} />
           <Route path="categories/create" />
           <Route path="categories/:id/edit" />
+          <Route path="discount" element={<IndexDiscount />} />
+          <Route path="discount/create" />
+          <Route path="discount/:id/edit" />
         </Route>
       </Routes>
     </BrowserRouter>

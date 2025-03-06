@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer {
   * {
@@ -60,17 +62,38 @@
 }
 
 .index-topic {
-  @apply text-xl font-normal text-center;
-}
-
-.table-div {
-  @apply overflow-x-auto mt-4;
+  @apply text-2xl font-normal text-center;
 }
 
 .table-th {
-  @apply px-3 py-2 text-blue-500 font-normal  bg-[#f7f8fc];
+  @apply border px-3 py-2 text-blue-500 font-normal bg-[#f7f8fc];
 }
 
 .table-th-no {
   @apply px-3 py-2 text-gray-500 font-normal w-fit bg-[#f7f8fc];
+}
+
+.tbody-td {
+  @apply border px-3 py-1 font-light;
+}
+
+/* Input Layout Page */
+.input-layout-left {
+  @apply w-1/3 bg-white p-4 rounded-md border-[1px] border-gray-300;
+}
+
+.input-layout-right {
+  @apply w-2/3 bg-white p-4 rounded-md border-[1px] border-gray-300;
+}
+
+.input-field {
+  @apply w-full p-2 border-[1px] font-light border-gray-300 focus:outline-none focus:ring-2 rounded-md focus:ring-blue-500;
+}
+
+.update-button {
+  @apply bg-blue-700 rounded-md p-2 text-white;
+}
+
+.cancel-button {
+  @apply bg-red-500 rounded-md p-2 text-white;
 }

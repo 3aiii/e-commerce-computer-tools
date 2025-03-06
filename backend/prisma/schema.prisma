@@ -46,6 +46,7 @@ model Profile {
 model Product {
   id            Int             @id @default(autoincrement())
   name          String          @unique
+  slug          String
   description   String
   price         Float
   createdAt     DateTime        @default(now())
