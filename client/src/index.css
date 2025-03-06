@@ -7,3 +7,70 @@
     margin: 0;
   }
 }
+
+/* Default button */
+.create-button {
+  @apply border-[1px] font-light border-green-500 text-green-500 rounded-md p-2 hover:bg-green-500 hover:text-white text-lg transition;
+}
+
+.view-button {
+  @apply bg-blue-500  rounded-md p-3  text-white text-xl;
+}
+
+.edit-button {
+  @apply bg-yellow-500  rounded-md p-3  text-white text-xl;
+}
+
+.delete-button {
+  @apply bg-red-500 rounded-md p-3  text-white text-xl;
+}
+
+/* Navbar-admin */
+.link-navbar-text {
+  @apply flex items-center gap-2 cursor-pointer p-4 rounded-md transition-all duration-300 relative;
+}
+
+.underline-navbar-text {
+  @apply absolute left-0 bottom-0 w-full h-[2px] bg-blue-600 transition-all duration-300 ease-in-out transform;
+}
+
+.active-link-navbar-admin {
+  @apply text-blue-600;
+}
+
+.inactive-link-navbar-admin {
+  @apply text-gray-500 hover:text-blue-600;
+}
+
+.underline-active-navbar-admin {
+  @apply scale-x-100;
+}
+
+.underline-inactive-navbar-admin {
+  @apply scale-x-0;
+}
+
+/* Default Index Page */
+.index-border-div {
+  @apply border-[1px] border-gray-300 rounded-sm bg-white mt-8;
+}
+
+.index-title-div {
+  @apply p-4 border-b-[1px] border-gray-300;
+}
+
+.index-topic {
+  @apply text-xl font-normal text-center;
+}
+
+.table-div {
+  @apply overflow-x-auto mt-4;
+}
+
+.table-th {
+  @apply px-3 py-2 text-blue-500 font-normal  bg-[#f7f8fc];
+}
+
+.table-th-no {
+  @apply px-3 py-2 text-gray-500 font-normal w-fit bg-[#f7f8fc];
+}
