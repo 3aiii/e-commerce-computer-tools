@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { LuPlus } from "react-icons/lu";
-import { AiOutlineEye, AiOutlineEdit, AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineEdit } from "react-icons/ai";
 import NoDataTable from "../../../components/administrator/NoDataTable";
 import { FiBox } from "react-icons/fi";
 import Pagination from "../../../components/administrator/Pagination";
+import DeleteModal from "../../../components/administrator/Modal/DeleteModal";
 
 const Index = () => {
   const [products, setProducts] = useState([
     {
       id: 1,
-      name: "Product 1",
+      name: "Lorem Ipsum has been the industry's standard dummy Ipsum.",
       slug: "product-1",
       category: "Electronics",
       price: "$100.00",
@@ -90,6 +91,10 @@ const Index = () => {
     },
   ]);
 
+  const handleDelete = (product) => {
+    console.log(product.id);
+  };
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -148,7 +153,7 @@ const Index = () => {
       </div>
       {/* ตารางแสดงสินค้า */}
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse bg-white shadow-md">
+        <table className="w-full bg-white shadow-md">
           <thead>
             <tr>
               <th className="table-th w-16">NO.</th>
@@ -167,7 +172,13 @@ const Index = () => {
                     {startIndex + index + 1}
                   </td>
                   <td className="tbody-td">{product.name}</td>
-                  <td className="tbody-td text-center">{product.category}</td>
+                  <td className="tbody-td text-center">
+                    <span
+                      className={`p-[2px] px-2 rounded-md bg-blue-100 text-blue-600 font-normal cursor-default`}
+                    >
+                      {product.category}
+                    </span>
+                  </td>
                   <td className="tbody-td text-center">{product.price}</td>
                   <td className="tbody-td text-center">{product.createdAt}</td>
                   <td className="p-4 flex justify-center gap-2">
@@ -183,9 +194,11 @@ const Index = () => {
                     >
                       <AiOutlineEdit size={20} />
                     </Link>
-                    <button className="delete-button">
-                      <AiOutlineDelete size={20} />
-                    </button>
+
+                    <DeleteModal
+                      onConfirm={() => handleDelete(product)}
+                      product={product}
+                    />
                   </td>
                 </tr>
               ))
@@ -195,6 +208,7 @@ const Index = () => {
           </tbody>
         </table>
       </div>
+
       {/* Pagination */}
       <div className="flex justify-center items-center mb-4">
         <Pagination

@@ -10,21 +10,22 @@
   }
 }
 
+
 /* Default button */
 .create-button {
   @apply border-[1px] font-light border-green-500 text-green-500 rounded-md p-2 hover:bg-green-500 hover:text-white text-lg transition;
 }
 
 .view-button {
-  @apply bg-blue-500  rounded-md p-3  text-white text-xl;
+  @apply bg-blue-500  rounded-md p-3  text-white hover:bg-blue-600 transition;
 }
 
 .edit-button {
-  @apply bg-yellow-500  rounded-md p-3  text-white text-xl;
+  @apply bg-yellow-500 rounded-md p-3  text-white hover:bg-yellow-600 transition;
 }
 
 .delete-button {
-  @apply bg-red-500 rounded-md p-3  text-white text-xl;
+  @apply bg-red-500 rounded-md p-3  text-white hover:bg-red-600 transition;
 }
 
 /* Navbar-admin */
@@ -54,7 +55,7 @@
 
 /* Default Index Page */
 .index-border-div {
-  @apply border-[1px] border-gray-300 rounded-sm bg-white mt-8;
+  @apply border-[1px] border-gray-300 rounded-sm bg-white my-8;
 }
 
 .index-title-div {
@@ -91,9 +92,9 @@
 }
 
 .update-button {
-  @apply bg-blue-700 rounded-md p-2 text-white;
+  @apply bg-blue-700 rounded-md p-2 text-white hover:bg-blue-800 transition;
 }
 
 .cancel-button {
-  @apply bg-red-500 rounded-md p-2 text-white;
+  @apply bg-gray-400 rounded-md p-2 text-white hover:bg-gray-500 transition;
 }

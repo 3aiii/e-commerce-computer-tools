@@ -8,7 +8,7 @@ const AdministratorLayout = () => {
       <div className="w-full">
         <Navbar />
       </div>
-      <div className="flex justify-center w-full bg-[#f7f8fc] h-screen">
+      <div className="flex justify-center w-full bg-[#f7f8fc] min-h-screen">
         <div className="xl:w-[1180px] 2xl:w-[1580px]">
           <Outlet />
         </div>
