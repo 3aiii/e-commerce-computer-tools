@@ -205,18 +205,18 @@ const Edit = () => {
             ></textarea>
           </div>
           <div className="flex justify-end gap-2 border-t-[1px] border-gray-300 p-2 pt-4">
-            <button
-              type="submit"
-              className="update-button flex items-center gap-2"
-            >
-              <FaSave /> Update
-            </button>
             <Link
               to="/administrator/products"
               className="cancel-button flex items-center gap-2"
             >
               <FaArrowLeftLong /> Cancel
             </Link>
+            <button
+              type="submit"
+              className="update-button flex items-center gap-2"
+            >
+              <FaSave /> Update
+            </button>
           </div>
         </form>
       </div>

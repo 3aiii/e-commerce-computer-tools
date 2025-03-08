@@ -33,7 +33,7 @@ export class ProductsController {
     @Param('id') productId: number,
   ) {
     const { filename } = file;
-    
+
     try {
       return this.productsService.image(filename, productId);
     } catch (error) {

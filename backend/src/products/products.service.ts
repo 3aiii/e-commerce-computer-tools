@@ -27,9 +27,9 @@ export class ProductsService {
   }
 
   async findAll(
-    limit: number = 5,
+    limit: number,
     page: number = 1,
-    perPage: number = 5,
+    perPage: number,
     search?: string,
   ) {
     const skip = (page - 1) * perPage;
@@ -49,8 +49,11 @@ export class ProductsService {
 
     const data = await this.DatabaseService.product.findMany({
       where: whereCondition,
+      include: {
+        category: true,
+      },
       skip,
-      take: Number(limit) || Number(perPage),
+      take: Number(perPage),
     });
 
     const total = await this.DatabaseService.product.count({
@@ -77,6 +80,10 @@ export class ProductsService {
   async findOne(id: number) {
     return this.DatabaseService.product.findUnique({
       where: { id },
+      include: {
+        category: true,
+        ProductImage: true,
+      },
     });
   }
 
@@ -88,10 +95,16 @@ export class ProductsService {
   }
 
   async remove(id: number) {
-    return this.DatabaseService.product.update({
+    const data = await this.DatabaseService.product.findFirst({
       where: { id },
+    });
+
+    const updatedStatus = !data?.status;
+
+    return this.DatabaseService.product.update({
+      where: { id: Number(id) },
       data: {
-        status: false,
+        status: updatedStatus,
       },
     });
   }

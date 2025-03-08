@@ -24,6 +24,10 @@
   @apply bg-yellow-500 rounded-md p-3  text-white hover:bg-yellow-600 transition;
 }
 
+.revert-button {
+  @apply bg-emerald-500 rounded-md p-3  text-white hover:bg-emerald-600 transition;
+}
+
 .delete-button {
   @apply bg-red-500 rounded-md p-3  text-white hover:bg-red-600 transition;
 }

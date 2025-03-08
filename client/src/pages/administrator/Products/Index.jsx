@@ -6,127 +6,53 @@ import NoDataTable from "../../../components/administrator/NoDataTable";
 import { FiBox } from "react-icons/fi";
 import Pagination from "../../../components/administrator/Pagination";
 import DeleteModal from "../../../components/administrator/Modal/DeleteModal";
-import { findAll } from "../../../composables/administrator/ProductService";
+import {
+  findAll,
+  remove,
+} from "../../../composables/administrator/ProductService";
 import { GoDotFill } from "react-icons/go";
+import { toast } from "react-toastify";
+import { GrRevert } from "react-icons/gr";
 
 const Index = () => {
-  useEffect(() => {
-    const fetchs = async () => {
-      const { data } = await findAll();
-      console.log(data);
-    };
-
-    fetchs();
-  }, []);
-
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Lorem Ipsum has been the industry's standard dummy Ipsum.",
-      slug: "product-1",
-      category: "Electronics",
-      price: "$100.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-    {
-      id: 2,
-      name: "จอคอม Asus VY229HF 21.45 IPS FHD Monitor 100Hz",
-      slug: "product-2",
-      category: "Clothing",
-      price: "$50.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: false,
-    },
-    {
-      id: 3,
-      name: "Product 3",
-      slug: "product-3",
-      category: "Accessories",
-      price: "$25.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-    {
-      id: 4,
-      name: "Product 4",
-      slug: "product-4",
-      category: "Home Appliances",
-      price: "$200.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: false,
-    },
-    {
-      id: 5,
-      name: "Product 5",
-      slug: "product-5",
-      category: "Books",
-      price: "$15.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-    {
-      id: 6,
-      name: "Product 6",
-      slug: "product-6",
-      category: "Toys",
-      price: "$30.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-    {
-      id: 7,
-      name: "Product 7",
-      slug: "product-7",
-      category: "Sports",
-      price: "$80.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-    {
-      id: 8,
-      name: "Product 8",
-      slug: "product-8",
-      category: "Beauty",
-      price: "$20.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-    {
-      id: 9,
-      name: "Product 9",
-      slug: "product-9",
-      category: "Furniture",
-      price: "$150.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-    {
-      id: 10,
-      name: "Product 10",
-      slug: "product-10",
-      category: "Gaming",
-      price: "$300.00",
-      createdAt: "3 Apr 2025:20:00",
-      status: true,
-    },
-  ]);
-
-  const handleDelete = (product) => {
-    console.log(product.id);
-  };
+  const [product, setProduct] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-
-  // คำนวณหน้าที่แสดง
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const displayedProducts = products.slice(startIndex, endIndex);
 
-  // จำนวนหน้าทั้งหมด
-  const totalPages = Math.ceil(products.length / itemsPerPage);
+  const fetchs = async () => {
+    const { data } = await findAll(currentPage, itemsPerPage, searchTerm);
+    setProduct(data);
+  };
+
+  const handleDelete = async (product) => {
+    const response = await remove(product?.id);
+
+    if (response?.status === 200) {
+      toast.success(
+        `${response?.data?.status ? `คืนกลับ` : `ลบ`}สินค้าเสร็จสิ้น!`,
+        {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            fetchs();
+          },
+        }
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchs();
+  }, [currentPage, searchTerm, itemsPerPage]);
 
   return (
     <div className="index-border-div">
@@ -157,10 +83,10 @@ const Index = () => {
             }}
             className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={15}>15</option>
+            <option value={20}>20</option>
           </select>
           <span>entries</span>
         </label>
@@ -168,6 +94,7 @@ const Index = () => {
           <input
             type="text"
             placeholder="Search..."
+            onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input font-light px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -186,8 +113,8 @@ const Index = () => {
             </tr>
           </thead>
           <tbody>
-            {displayedProducts.length > 0 ? (
-              displayedProducts.map((product, index) => (
+            {product?.data?.length > 0 ? (
+              product?.data?.map((product, index) => (
                 <tr key={product.id} className="border-b hover:bg-gray-100">
                   <td className="tbody-td text-center">
                     {startIndex + index + 1}
@@ -198,7 +125,7 @@ const Index = () => {
                       className={`p-[2px] px-2 rounded-md bg-blue-100 text-blue-600 
                         font-normal cursor-default`}
                     >
-                      {product.category}
+                      {product.category.name}
                     </span>
                   </td>
                   <td className="tbody-td text-center">{product.price}</td>
@@ -220,6 +147,7 @@ const Index = () => {
                   <td className="p-4 flex  justify-center gap-2">
                     <Link
                       to={`/administrator/products/${product.slug}`}
+                      state={{ product }}
                       className="view-button"
                     >
                       <AiOutlineEye size={20} />
@@ -231,10 +159,19 @@ const Index = () => {
                       <AiOutlineEdit size={20} />
                     </Link>
 
-                    <DeleteModal
-                      onConfirm={() => handleDelete(product)}
-                      product={product}
-                    />
+                    {product?.status ? (
+                      <DeleteModal
+                        onConfirm={() => handleDelete(product)}
+                        product={product}
+                      />
+                    ) : (
+                      <button
+                        onClick={() => handleDelete(product)}
+                        className="revert-button"
+                      >
+                        <GrRevert size={20} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
@@ -248,10 +185,10 @@ const Index = () => {
       {/* Pagination */}
       <div className="flex justify-center items-center mb-4">
         <Pagination
-          totalPages={totalPages}
-          currentPage={currentPage}
+          totalPages={product?.pagination?.totalPages}
+          currentPage={product?.pagination?.currentPage}
           setCurrentPage={setCurrentPage}
-        />{" "}
+        />
       </div>
     </div>
   );

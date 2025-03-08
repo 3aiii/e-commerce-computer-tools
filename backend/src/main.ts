@@ -1,5 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as express from 'express';
+import { join } from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +12,8 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
   });
+
+  app.use('/images', express.static(join(__dirname, '..', 'public')));
   // app.use((req, res, next) => {
   //   // ตั้งค่า cookie ที่ HttpOnly และ Secure (สำหรับใช้งานใน production)
   //   res.cookie('access_token', 'your_token_value', {
