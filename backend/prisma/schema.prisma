@@ -58,12 +58,22 @@ model Product {
   price         Float
   tax           Float
   status        Boolean         @default(true)
+  category      Category        @relation(fields: [categoryId], references: [id])
+  categoryId    Int
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   ProductImage  ProductImage[]
   Cart          Cart[]
   Order         Order[]
   ReviewProduct ReviewProduct[]
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Product   Product[]
 }
 
 model ProductImage {
@@ -86,17 +96,11 @@ model Cart {
   updatedAt DateTime @updatedAt
 }
 
-model Category {
-  id       Int      @id @default(autoincrement())
-  name     String
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-}
-
 model Discount {
   id        Int      @id @default(autoincrement())
   code      String
   discount  Float
+  status    Boolean  @default(true)
   Order     Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

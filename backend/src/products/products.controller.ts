@@ -7,9 +7,15 @@ import {
   Param,
   Delete,
   Query,
+  HttpException,
+  HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { Prisma } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multerOption from 'src/config/multer.config';
 
 @Controller('products')
 export class ProductsController {
@@ -20,13 +26,39 @@ export class ProductsController {
     return this.productsService.create(createProductDto);
   }
 
+  @Post('upload/:id')
+  @UseInterceptors(FileInterceptor('image', multerOption))
+  uploadProductImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') productId: number,
+  ) {
+    const { filename } = file;
+    
+    try {
+      return this.productsService.image(filename, productId);
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   @Get()
   findAll(
+    @Query('limit') limit: number,
     @Query('page') page: number,
     @Query('perPage') perPage: number,
-    @Query('search') search: String,
+    @Query('search') search: string,
   ) {
-    return this.productsService.findAll(page, perPage, search);
+    try {
+      return this.productsService.findAll(limit, page, perPage, search);
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get(':id')

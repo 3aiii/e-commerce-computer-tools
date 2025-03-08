@@ -33,7 +33,7 @@ const TableRow = ({ label, value, isHighlighted, alignTop }) => (
 );
 
 const Product = () => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [product, setProduct] = useState({
     name: "",
     category: "",
@@ -91,9 +91,12 @@ const Product = () => {
           </tbody>
         </table>
         <div className="flex justify-end gap-2 border-t rounded-br-md rounded-bl-md bg-gray-100 border-gray-300 p-2 py-4">
-          <button className="edit-button flex items-center gap-2">
+          <Link
+            to={`/administrator/products/${slug}/edit`}
+            className="edit-button flex items-center gap-2"
+          >
             <FaRegEdit /> Edit
-          </button>
+          </Link>
           <Link
             to="/administrator/products"
             className="cancel-button flex items-center gap-2"

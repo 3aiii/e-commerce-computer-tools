@@ -31,7 +31,7 @@ const InputLayout = () => {
         }`,
       };
     }
-
+    
     switch (path) {
       case "/administrator/dashboard":
         return {
@@ -62,6 +62,11 @@ const InputLayout = () => {
         return {
           title: "Categories",
           pathName: "บทความทั้งหมด / หมวดหมู่ทั้งหมด",
+        };
+      case "/administrator/profile":
+        return {
+          title: "Profile",
+          pathName: "Setting / Profile",
         };
       default:
         return {

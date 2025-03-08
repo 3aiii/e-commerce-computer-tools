@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { LuPlus } from "react-icons/lu";
 import { AiOutlineEye, AiOutlineEdit } from "react-icons/ai";
@@ -6,8 +6,19 @@ import NoDataTable from "../../../components/administrator/NoDataTable";
 import { FiBox } from "react-icons/fi";
 import Pagination from "../../../components/administrator/Pagination";
 import DeleteModal from "../../../components/administrator/Modal/DeleteModal";
+import { findAll } from "../../../composables/administrator/ProductService";
+import { GoDotFill } from "react-icons/go";
 
 const Index = () => {
+  useEffect(() => {
+    const fetchs = async () => {
+      const { data } = await findAll();
+      console.log(data);
+    };
+
+    fetchs();
+  }, []);
+
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -15,15 +26,17 @@ const Index = () => {
       slug: "product-1",
       category: "Electronics",
       price: "$100.00",
-      createdAt: "2025-03-01",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
     {
       id: 2,
-      name: "Product 2",
+      name: "จอคอม Asus VY229HF 21.45 IPS FHD Monitor 100Hz",
       slug: "product-2",
       category: "Clothing",
       price: "$50.00",
-      createdAt: "2025-02-20",
+      createdAt: "3 Apr 2025:20:00",
+      status: false,
     },
     {
       id: 3,
@@ -31,7 +44,8 @@ const Index = () => {
       slug: "product-3",
       category: "Accessories",
       price: "$25.00",
-      createdAt: "2025-03-05",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
     {
       id: 4,
@@ -39,7 +53,8 @@ const Index = () => {
       slug: "product-4",
       category: "Home Appliances",
       price: "$200.00",
-      createdAt: "2025-01-30",
+      createdAt: "3 Apr 2025:20:00",
+      status: false,
     },
     {
       id: 5,
@@ -47,7 +62,8 @@ const Index = () => {
       slug: "product-5",
       category: "Books",
       price: "$15.00",
-      createdAt: "2025-02-10",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
     {
       id: 6,
@@ -55,7 +71,8 @@ const Index = () => {
       slug: "product-6",
       category: "Toys",
       price: "$30.00",
-      createdAt: "2025-03-02",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
     {
       id: 7,
@@ -63,7 +80,8 @@ const Index = () => {
       slug: "product-7",
       category: "Sports",
       price: "$80.00",
-      createdAt: "2025-02-25",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
     {
       id: 8,
@@ -71,7 +89,8 @@ const Index = () => {
       slug: "product-8",
       category: "Beauty",
       price: "$20.00",
-      createdAt: "2025-03-01",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
     {
       id: 9,
@@ -79,7 +98,8 @@ const Index = () => {
       slug: "product-9",
       category: "Furniture",
       price: "$150.00",
-      createdAt: "2025-02-15",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
     {
       id: 10,
@@ -87,7 +107,8 @@ const Index = () => {
       slug: "product-10",
       category: "Gaming",
       price: "$300.00",
-      createdAt: "2025-01-20",
+      createdAt: "3 Apr 2025:20:00",
+      status: true,
     },
   ]);
 
@@ -156,12 +177,12 @@ const Index = () => {
         <table className="w-full bg-white shadow-md">
           <thead>
             <tr>
-              <th className="table-th w-16">NO.</th>
+              <th className="table-th w-16">NO</th>
               <th className="table-th">NAME</th>
               <th className="table-th">CATEGORY</th>
               <th className="table-th">PRICE</th>
-              <th className="table-th">CREATED AT</th>
-              <th className="table-th text-center">ACTION</th>
+              <th className="table-th w-36">STATUS</th>
+              <th className="table-th w-48 text-center">ACTION</th>
             </tr>
           </thead>
           <tbody>
@@ -174,14 +195,29 @@ const Index = () => {
                   <td className="tbody-td">{product.name}</td>
                   <td className="tbody-td text-center">
                     <span
-                      className={`p-[2px] px-2 rounded-md bg-blue-100 text-blue-600 font-normal cursor-default`}
+                      className={`p-[2px] px-2 rounded-md bg-blue-100 text-blue-600 
+                        font-normal cursor-default`}
                     >
                       {product.category}
                     </span>
                   </td>
                   <td className="tbody-td text-center">{product.price}</td>
-                  <td className="tbody-td text-center">{product.createdAt}</td>
-                  <td className="p-4 flex justify-center gap-2">
+                  <td className="tbody-td text-center">
+                    <div
+                      className={`flex justify-center items-center p-[2px] px-2 gap-1
+                        rounded-md font-normal cursor-default w-fit mx-auto
+                        ${
+                          product.status
+                            ? `bg-green-100 text-green-600`
+                            : `bg-orange-100 text-orange-600`
+                        }
+                      `}
+                    >
+                      <GoDotFill size={20} />
+                      {product.status ? `ACTIVE` : `DELETED`}
+                    </div>
+                  </td>
+                  <td className="p-4 flex  justify-center gap-2">
                     <Link
                       to={`/administrator/products/${product.slug}`}
                       className="view-button"

@@ -1,26 +1,96 @@
-import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSave } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { findAll } from "../../../composables/administrator/CategoryService";
+import {
+  create,
+  image,
+} from "../../../composables/administrator/ProductService";
+import { toast } from "react-toastify";
+import { showErrorToast } from "./../../../components/ToastNotification";
 
 const Create = () => {
+  const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState([]);
+  const [imageData, setImage] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [product, setProduct] = useState({
+    name: "",
+    categoryId: 0,
+    price: "",
+    tax: "",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProduct((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImagePreview = files.map((file) => URL.createObjectURL(file));
+    const file = e.target.files[0];
 
-    if (files.length > 0) {
-      setImagePreview(newImagePreview);
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview([previewUrl]);
+      setImage(file);
     }
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const { categoryId, price, tax } = product;
+    const updateProduct = {
+      ...product,
+      price: Number(price),
+      tax: Number(tax),
+      categoryId: Number(categoryId),
+    };
+
+    const response = await create(updateProduct);
+
+    if (response.status === 201) {
+      if (imageData) {
+        await image(imageData, response?.data?.id);
+      }
+
+      toast.success("สร้างสินค้าสำเร็จ!", {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          navigate("/administrator/products");
+        },
+      });
+    } else {
+      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+    }
+  };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data } = await findAll();
+      setCategories(data);
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div className="flex gap-4 mt-6">
       <div className="input-layout-left h-fit">
         <h1 className="text-xl">Product Image</h1>
         <div className="my-4 mb-1 ">
-          {imagePreview?.length > 0 ? (
+          {imagePreview.length > 0 ? (
             <div className="mt-4">
               <div className="flex gap-2 mt-2">
                 {imagePreview.map((preview, index) => (
@@ -67,21 +137,40 @@ const Create = () => {
       </div>
       <div className="input-layout-right">
         <h1 className="text-xl">Product Details</h1>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1 mt-4">
             <label className="text-md">
               Name<span className="text-red-500">*</span>
             </label>
-            <input type="text" placeholder="Name" className="input-field" />
+            <input
+              type="text"
+              name="name"
+              value={product.name}
+              onChange={handleChange}
+              placeholder="Name"
+              className="input-field"
+              required
+            />
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-md">
               Category<span className="text-red-500">*</span>
             </label>
-            <select className="input-field">
-              <option value="1">Category 1</option>
-              <option value="2">Category 2</option>
-              <option value="3">Category 3</option>
+            <select
+              name="categoryId"
+              value={product.categoryId}
+              onChange={handleChange}
+              className="input-field"
+              required
+            >
+              <option value={0} disabled>
+                กรุณาเลือกประเภทของสินค้า
+              </option>
+              {categories.map((category, index) => (
+                <option key={index} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex gap-4">
@@ -89,11 +178,26 @@ const Create = () => {
               <label className="text-md">
                 Price<span className="text-red-500">*</span>
               </label>
-              <input type="text" placeholder="Price" className="input-field" />
+              <input
+                type="number"
+                name="price"
+                value={product.price}
+                onChange={handleChange}
+                placeholder="Price"
+                className="input-field"
+                required
+              />
             </div>
             <div className="flex flex-col w-full gap-1">
               <label className="text-md">Tax</label>
-              <input type="text" placeholder="Tax" className="input-field" />
+              <input
+                type="number"
+                name="tax"
+                value={product.tax}
+                onChange={handleChange}
+                placeholder="Tax"
+                className="input-field"
+              />
             </div>
           </div>
           <div className="flex flex-col gap-1">
@@ -101,12 +205,19 @@ const Create = () => {
               Description<span className="text-red-500">*</span>
             </label>
             <textarea
+              name="description"
+              value={product.description}
+              onChange={handleChange}
               placeholder="Description"
               className="input-field h-24 resize-none"
+              required
             ></textarea>
           </div>
           <div className="flex justify-end gap-2 border-t-[1px] border-gray-300 p-2 pt-4 ">
-            <button className="update-button flex items-center gap-2">
+            <button
+              type="submit"
+              className="update-button flex items-center gap-2"
+            >
               <FaSave /> Create
             </button>
             <Link

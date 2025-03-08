@@ -12,14 +12,24 @@ import Product from "./pages/administrator/Products/Product";
 import EditProduct from "./pages/administrator/Products/Edit";
 import InputLayout from "./layouts/administrator/InputLayout";
 import IndexDiscount from "./pages/administrator/Discounts/Index";
+import CreateUser from "./pages/administrator/Users/Create";
+import EditUser from "./pages/administrator/Users/Edit";
+import EditOrder from "./pages/administrator/Orders/Edit";
+import Order from "./pages/administrator/Orders/Order";
+import CreateCategories from "./pages/administrator/Categories/create";
+import EditCategories from "./pages/administrator/Categories/Edit";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <BrowserRouter>
+      <ToastContainer position="bottom-right" theme="colored" />
       <Routes>
         <Route path="/administrator" element={<AdministratorLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="profile" element={<InputLayout />}>
+            <Route path="" element={<Profile />} />
+          </Route>
           <Route path="products" element={<IndexProducts />} />
           <Route path="products/create" element={<InputLayout />}>
             <Route path="" element={<CreateProducts />} />
@@ -31,14 +41,26 @@ function App() {
             <Route path="" element={<EditProduct />} />
           </Route>
           <Route path="users" element={<IndexUsers />} />
-          <Route path="users/create" />
-          <Route path="user/:id/edit" />
+          <Route path="users/create" element={<InputLayout />}>
+            <Route path="" element={<CreateUser />} />
+          </Route>
+          <Route path="users/:id/edit" element={<InputLayout />}>
+            <Route path="" element={<EditUser />} />
+          </Route>
           <Route path="orders" element={<IndexOrders />} />
-          <Route path="orders/create" />
-          <Route path="orders/:id/edit" />
+          <Route path="orders/:id" element={<IndexOrders />}>
+            <Route path="" element={<Order />} />
+          </Route>
+          <Route path="orders/:id/edit" element={<IndexOrders />}>
+            <Route path="" element={<EditOrder />} />
+          </Route>
           <Route path="categories" element={<IndexCategories />} />
-          <Route path="categories/create" />
-          <Route path="categories/:id/edit" />
+          <Route path="categories/create" element={<InputLayout />}>
+            <Route path="" element={<CreateCategories />} />
+          </Route>
+          <Route path="categories/:id/edit" element={<InputLayout />}>
+            <Route path="" element={<EditCategories />} />
+          </Route>
           <Route path="discount" element={<IndexDiscount />} />
           <Route path="discount/create" />
           <Route path="discount/:id/edit" />
