@@ -1,14 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSave } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { findAll } from "../../../composables/administrator/CategoryService";
-import {
-  create,
-  image,
-} from "../../../composables/administrator/ProductService";
 import { toast } from "react-toastify";
 import { showErrorToast } from "./../../../components/ToastNotification";
+import { create, image } from "../../../composables/administrator/UserService";
 
 const Create = () => {
   const navigate = useNavigate();
@@ -42,15 +38,14 @@ const Create = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const response = await create(updateProduct);
-
+    const response = await create(user);
+    
     if (response.status === 201) {
       if (imageData) {
         await image(imageData, response?.data?.id);
       }
 
-      toast.success("สร้างสินค้าสำเร็จ!", {
+      toast.success("สร้างเพิ่มผู้ใช้งานสำเร็จ!", {
         position: "bottom-right",
         autoClose: 1000,
         hideProgressBar: false,

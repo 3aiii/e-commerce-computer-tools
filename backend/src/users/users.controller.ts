@@ -9,17 +9,43 @@ import {
   Query,
   HttpException,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { Prisma } from '@prisma/client';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multerOption from 'src/config/multer.config';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Post('/login')
+  login(@Body() loginUserDto: Prisma.UserCreateInput) {
+    return this.usersService.login(loginUserDto);
+  }
+
   @Post()
   create(@Body() createUserDto: Prisma.UserCreateInput) {
     return this.usersService.create(createUserDto);
+  }
+
+  @Post('upload/:id')
+  @UseInterceptors(FileInterceptor('image', multerOption))
+  uploadProductImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('id') userId: number,
+  ) {
+    const { filename } = file;
+    try {
+      return this.usersService.image(filename, userId);
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get()

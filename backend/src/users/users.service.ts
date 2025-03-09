@@ -1,10 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
 import { Prisma } from '@prisma/client';
+import { hashSync } from 'bcrypt';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly DatabaseService: DatabaseService) {}
+
+  async login(loginUserDto: Prisma.UserCreateInput) {
+    return;
+  }
 
   async create(
     createUserDto: Prisma.UserCreateInput & {
@@ -12,22 +17,34 @@ export class UsersService {
       lastname?: string;
     },
   ) {
-    const data = await this.DatabaseService.user.create({
+    const hashPassword = hashSync(createUserDto.password, 10);
+
+    const dataUser = await this.DatabaseService.user.create({
       data: {
         email: createUserDto.email,
-        password: createUserDto.password,
+        password: hashPassword,
+        role: createUserDto.role,
       },
     });
 
-    await this.DatabaseService.profile.create({
+    const dataProfile = await this.DatabaseService.profile.create({
       data: {
-        userId: data.id,
+        userId: dataUser.id,
         firstname: createUserDto.firstname,
         lastname: createUserDto.lastname,
       },
     });
 
-    return data;
+    return dataProfile;
+  }
+
+  async image(filename: string, userId: number) {
+    return this.DatabaseService.profile.update({
+      where: {
+        id: Number(userId),
+      },
+      data: { image: filename },
+    });
   }
 
   async findAll(page: number, perPage: number, search: string) {
