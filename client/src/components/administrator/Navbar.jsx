@@ -11,7 +11,7 @@ const Navbar = () => {
   const dropdownRef = useRef(null);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -114,9 +114,14 @@ const Navbar = () => {
           {/* Products Link */}
           <Link
             to="/administrator/products"
-            className={`link-navbar-text ${getLinkClassName(
-              "/administrator/Products"
-            )}`}
+            className={`link-navbar-text ${
+              isActive("/administrator/products") ||
+              isActive("/administrator/products/create") ||
+              isActive("/administrator/products/:id/edit") ||
+              isActive("/administrator/products/:id")
+                ? "active-link-navbar-admin"
+                : "inactive-link-navbar-admin"
+            }`}
           >
             <FiBox size={20} />
             <span>Products</span>
@@ -151,32 +156,50 @@ const Navbar = () => {
           {/* Categories Link */}
           <Link
             to="/administrator/categories"
-            className={`link-navbar-text ${getLinkClassName(
-              "/administrator/categories"
-            )}`}
+            className={`link-navbar-text ${
+              isActive("/administrator/categories") ||
+              isActive("/administrator/categories/create") ||
+              isActive("/administrator/categories/:id/edit")
+                ? "active-link-navbar-admin"
+                : "inactive-link-navbar-admin"
+            }`}
           >
             <MdOutlineCategory size={20} />
             <span>Categories</span>
             <span
-              className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/categories"
-              )}`}
+              className={`underline-navbar-text ${
+                isActive("/administrator/categories") ||
+                isActive("/administrator/categories/create") ||
+                isActive("/administrator/categories/:id/edit")
+                  ? "underline-active-navbar-admin"
+                  : "underline-inactive-navbar-admin"
+              }`}
             />
           </Link>
 
           {/* Users Link */}
           <Link
             to="/administrator/users"
-            className={`link-navbar-text ${getLinkClassName(
-              "/administrator/users"
-            )}`}
+            className={`link-navbar-text ${
+              isActive("/administrator/users") ||
+              isActive("/administrator/users/create") ||
+              isActive("/administrator/users/:id/edit") ||
+              isActive("/administrator/users/:id")
+                ? "active-link-navbar-admin"
+                : "inactive-link-navbar-admin"
+            }`}
           >
             <FiUsers size={20} />
             <span>Users</span>
             <span
-              className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/users"
-              )}`}
+              className={`underline-navbar-text ${
+                isActive("/administrator/users") ||
+                isActive("/administrator/users/create") ||
+                isActive("/administrator/users/:id/edit") ||
+                isActive("/administrator/users/:id")
+                  ? "underline-active-navbar-admin"
+                  : "underline-inactive-navbar-admin"
+              }`}
             />
           </Link>
 

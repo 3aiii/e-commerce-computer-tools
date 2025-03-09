@@ -6,6 +6,9 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Prisma } from '@prisma/client';
@@ -20,8 +23,20 @@ export class CategoriesController {
   }
 
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(
+    @Query('page') page: number,
+    @Query('perPage') perPage: number,
+    @Query('search') search: string,
+    @Query('status') status: string,
+  ) {
+    try {
+      return this.categoriesService.findAll(page, perPage, search, status);
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get(':id')

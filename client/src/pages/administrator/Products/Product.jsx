@@ -7,6 +7,7 @@ import { Pagination } from "swiper/modules";
 import { findOne } from "../../../composables/administrator/ProductService";
 import { formatDateTime } from "../../../utils/formatDateTime";
 import { IMAGE_URL } from "../../../secret";
+import { formatPrice } from "../../../utils/formatPrice";
 
 const TableRow = ({ label, value, isHighlighted, alignTop }) => (
   <tr className="w-full">
@@ -40,7 +41,7 @@ const Product = () => {
   const { slug } = useParams();
   const { id } = location?.state?.product;
   const [product, setProduct] = useState([]);
-
+  
   useEffect(() => {
     const fetchProduct = async () => {
       const { data } = await findOne(id);
@@ -59,7 +60,7 @@ const Product = () => {
             <img
               src={`https://placehold.co/350x200`}
               alt="Product"
-              className="w-full mb-4 h-56 object-contain border-gray-300"
+              className="w-full h-56 object-contain border-gray-300"
             />
           ) : (
             <Swiper
@@ -68,14 +69,14 @@ const Product = () => {
                 clickable: true,
               }}
               modules={[Pagination]}
-              className="mySwiper h-56"
+              className="mySwiper"
             >
               {product?.ProductImage?.map((img, index) => (
                 <SwiperSlide key={index}>
                   <img
                     src={`${IMAGE_URL}/${img?.url}`}
                     alt="Product"
-                    className="w-full mb-4 h-56 object-contain border-gray-300"
+                    className="w-full mb-8 h-56 object-contain border-gray-300"
                   />
                 </SwiperSlide>
               ))}
@@ -101,7 +102,7 @@ const Product = () => {
               value={product?.category?.name}
               isHighlighted
             />
-            <TableRow label="Price" value={product?.price} />
+            <TableRow label="Price" value={formatPrice(product?.price)} />
             <TableRow
               label="Tax"
               value={product?.tax + " " + `%`}
@@ -110,6 +111,10 @@ const Product = () => {
             <TableRow
               label="Created At"
               value={formatDateTime(product?.createdAt)}
+            />
+            <TableRow
+              label="Update At"
+              value={formatDateTime(product?.updatedAt)}
             />
           </tbody>
         </table>
@@ -122,6 +127,7 @@ const Product = () => {
           </Link>
           <Link
             to={`/administrator/products/${slug}/edit`}
+            state={{ product }}
             className="edit-button flex items-center gap-2"
           >
             <FaRegEdit /> Edit

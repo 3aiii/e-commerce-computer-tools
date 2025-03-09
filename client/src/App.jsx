@@ -16,9 +16,8 @@ import CreateUser from "./pages/administrator/Users/Create";
 import EditUser from "./pages/administrator/Users/Edit";
 import EditOrder from "./pages/administrator/Orders/Edit";
 import Order from "./pages/administrator/Orders/Order";
-import CreateCategories from "./pages/administrator/Categories/create";
-import EditCategories from "./pages/administrator/Categories/Edit";
 import { ToastContainer } from "react-toastify";
+import User from "./pages/administrator/Users/User";
 
 function App() {
   return (
@@ -41,10 +40,13 @@ function App() {
             <Route path="" element={<EditProduct />} />
           </Route>
           <Route path="users" element={<IndexUsers />} />
+          <Route path="users/:slug" element={<InputLayout />}>
+            <Route path="" element={<User />} />
+          </Route>
           <Route path="users/create" element={<InputLayout />}>
             <Route path="" element={<CreateUser />} />
           </Route>
-          <Route path="users/:id/edit" element={<InputLayout />}>
+          <Route path="users/:slug/edit" element={<InputLayout />}>
             <Route path="" element={<EditUser />} />
           </Route>
           <Route path="orders" element={<IndexOrders />} />
@@ -55,12 +57,6 @@ function App() {
             <Route path="" element={<EditOrder />} />
           </Route>
           <Route path="categories" element={<IndexCategories />} />
-          <Route path="categories/create" element={<InputLayout />}>
-            <Route path="" element={<CreateCategories />} />
-          </Route>
-          <Route path="categories/:id/edit" element={<InputLayout />}>
-            <Route path="" element={<EditCategories />} />
-          </Route>
           <Route path="discount" element={<IndexDiscount />} />
           <Route path="discount/create" />
           <Route path="discount/:id/edit" />

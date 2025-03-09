@@ -28,6 +28,14 @@
   @apply bg-emerald-500 rounded-md p-3  text-white hover:bg-emerald-600 transition;
 }
 
+.update-button {
+  @apply bg-blue-700 rounded-md p-2 text-white hover:bg-blue-800 transition;
+}
+
+.cancel-button {
+  @apply bg-gray-400 rounded-md p-2 text-white hover:bg-gray-500 transition;
+}
+
 .delete-button {
   @apply bg-red-500 rounded-md p-3  text-white hover:bg-red-600 transition;
 }
@@ -93,12 +101,4 @@
 
 .input-field {
   @apply w-full p-2 border-[1px] font-light border-gray-300 focus:outline-none focus:ring-2 rounded-md focus:ring-blue-500;
-}
-
-.update-button {
-  @apply bg-blue-700 rounded-md p-2 text-white hover:bg-blue-800 transition;
-}
-
-.cancel-button {
-  @apply bg-gray-400 rounded-md p-2 text-white hover:bg-gray-500 transition;
 }

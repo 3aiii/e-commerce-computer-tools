@@ -32,8 +32,8 @@ export const create = async (data) => {
   });
 };
 
-export const update = async (data) => {
-  return await axios.patch(`${HOST_URL}/products`, data, {
+export const update = async (id, data) => {
+  return await axios.patch(`${HOST_URL}/products/${id}`, data, {
     headers: {
       "Content-Type": "application/json",
     },

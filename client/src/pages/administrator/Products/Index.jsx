@@ -13,6 +13,7 @@ import {
 import { GoDotFill } from "react-icons/go";
 import { toast } from "react-toastify";
 import { GrRevert } from "react-icons/gr";
+import { formatPrice } from "../../../utils/formatPrice";
 
 const Index = () => {
   const [product, setProduct] = useState([]);
@@ -36,7 +37,7 @@ const Index = () => {
         `${response?.data?.status ? `คืนกลับ` : `ลบ`}สินค้าเสร็จสิ้น!`,
         {
           position: "bottom-right",
-          autoClose: 1000,
+          autoClose: 500,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -128,7 +129,9 @@ const Index = () => {
                       {product.category.name}
                     </span>
                   </td>
-                  <td className="tbody-td text-center">{product.price}</td>
+                  <td className="tbody-td text-center">
+                    {formatPrice(product.price)}
+                  </td>
                   <td className="tbody-td text-center">
                     <div
                       className={`flex justify-center items-center p-[2px] px-2 gap-1
@@ -154,6 +157,7 @@ const Index = () => {
                     </Link>
                     <Link
                       to={`/administrator/products/${product.slug}/edit`}
+                      state={{ product }}
                       className="edit-button"
                     >
                       <AiOutlineEdit size={20} />

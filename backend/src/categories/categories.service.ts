@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from './../database/database.service';
 
@@ -6,26 +6,110 @@ import { DatabaseService } from './../database/database.service';
 export class CategoriesService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
-  create(createCategoryDto: Prisma.CategoryCreateInput) {
+  async create(createCategoryDto: Prisma.CategoryCreateInput) {
+    if (
+      createCategoryDto?.name === '' ||
+      createCategoryDto?.name === undefined
+    ) {
+      throw new HttpException(
+        'Please, type category name.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     return this.DatabaseService.category.create({ data: createCategoryDto });
   }
 
-  findAll() {
-    return this.DatabaseService.category.findMany();
+  async findAll(page: number, perPage: number, search: string, status: string) {
+    const skip = (page - 1) * perPage;
+
+    const whereCondition: Prisma.CategoryWhereInput = {
+      AND: [
+        search
+          ? {
+              OR: [
+                {
+                  name: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              ],
+            }
+          : {},
+
+        status
+          ? {
+              status: {
+                equals: status === 'active',
+              },
+            }
+          : {},
+      ],
+    };
+
+    const data = await this.DatabaseService.category.findMany({
+      where: whereCondition,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip,
+      take: Number(perPage),
+    });
+
+    const total = await this.DatabaseService.category.count({
+      where: whereCondition,
+    });
+
+    if (data.length === 0) {
+      throw new HttpException(
+        'No categories available to display',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      data,
+      pagination: {
+        totalPages: Math.ceil(total / perPage),
+        currentPage: Number(page),
+        perPage: Number(perPage),
+      },
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number) {
+    return this.DatabaseService.category.findFirst({
+      where: { id },
+    });
   }
 
-  update(id: number, updateCategoryDto: Prisma.CategoryUpdateInput) {
+  async update(id: number, updateCategoryDto: Prisma.CategoryUpdateInput) {
+    if (
+      updateCategoryDto?.name === '' ||
+      updateCategoryDto?.name === undefined
+    ) {
+      throw new HttpException(
+        'Please, type category name.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    
     return this.DatabaseService.category.update({
       where: { id },
       data: updateCategoryDto,
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    const data = await this.DatabaseService.category.findFirst({
+      where: { id },
+    });
+    const updatedStatus = !data?.status;
+
+    return this.DatabaseService.category.update({
+      where: { id },
+      data: { status: updatedStatus },
+    });
   }
 }

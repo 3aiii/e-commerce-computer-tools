@@ -19,7 +19,7 @@ const DeleteModal = ({ onConfirm, product }) => {
           <AlertDialog.Description className="mt-2 text-gray-600">
             Are you sure you want to delete{" "}
             <span className="font-medium text-red-500">
-              {product?.name || "this product"}
+              {product?.name || "user"}
             </span>
             ? This action cannot be undone.
           </AlertDialog.Description>

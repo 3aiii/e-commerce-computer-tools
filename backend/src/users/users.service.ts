@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
 import { Prisma } from '@prisma/client';
 
@@ -6,23 +6,88 @@ import { Prisma } from '@prisma/client';
 export class UsersService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
-  create(createUserDto: Prisma.UserCreateInput) {
-    return this.DatabaseService.user.create({ data: createUserDto });
+  async create(
+    createUserDto: Prisma.UserCreateInput & {
+      firstname?: string;
+      lastname?: string;
+    },
+  ) {
+    const data = await this.DatabaseService.user.create({
+      data: {
+        email: createUserDto.email,
+        password: createUserDto.password,
+      },
+    });
+
+    await this.DatabaseService.profile.create({
+      data: {
+        userId: data.id,
+        firstname: createUserDto.firstname,
+        lastname: createUserDto.lastname,
+      },
+    });
+
+    return data;
   }
 
-  findAll() {
-    return this.DatabaseService.user.findMany({});
+  async findAll(page: number, perPage: number, search: string) {
+    const skip = (page - 1) * perPage;
+
+    const whereCondition: Prisma.UserWhereInput = search
+      ? {
+          OR: [
+            {
+              email: {
+                contains: search,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        }
+      : {};
+
+    const data = await this.DatabaseService.user.findMany({
+      where: whereCondition,
+      include: {
+        profile: true,
+      },
+      skip,
+      take: Number(perPage),
+    });
+
+    const total = await this.DatabaseService.user.count({
+      where: whereCondition,
+    });
+
+    if (data.length === 0) {
+      throw new HttpException(
+        'No users available to display',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      data,
+      pagination: {
+        totalPages: Math.ceil(total / perPage),
+        currentPage: Number(page),
+        perPage: Number(perPage),
+      },
+    };
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return this.DatabaseService.user.findUnique({
       where: {
         id,
       },
+      include: {
+        profile: true,
+      },
     });
   }
 
-  update(id: number, updateUserDto: Prisma.UserUpdateInput) {
+  async update(id: number, updateUserDto: Prisma.UserUpdateInput) {
     return this.DatabaseService.user.update({
       where: {
         id,
@@ -31,10 +96,17 @@ export class UsersService {
     });
   }
 
-  remove(id: number) {
-    return this.DatabaseService.user.delete({
-      where: {
-        id,
+  async remove(id: number) {
+    const data = await this.DatabaseService.user.findFirst({
+      where: { id },
+    });
+
+    const updatedStatus = !data?.status;
+
+    return this.DatabaseService.user.update({
+      where: { id: Number(id) },
+      data: {
+        status: updatedStatus,
       },
     });
   }

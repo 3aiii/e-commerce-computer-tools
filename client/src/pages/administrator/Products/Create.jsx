@@ -78,13 +78,13 @@ const Create = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data } = await findAll();
+      const { data } = await findAll(1, 50, "", "active");
       setCategories(data);
     };
 
     fetchCategories();
   }, []);
-
+  
   return (
     <div className="flex gap-4 mt-6">
       <div className="input-layout-left h-fit">
@@ -105,7 +105,7 @@ const Create = () => {
             </div>
           ) : (
             <>
-              <label className="flex flex-col items-center justify-center w-full px-4 py-6 mb-2 bg-white border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-500 transition">
+              <label className="flex flex-col items-center justify-center w-full px-4 py-8 mb-2 bg-white border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-500 transition">
                 <svg
                   className="w-10 h-10 text-gray-400 mb-2"
                   fill="none"
@@ -166,7 +166,7 @@ const Create = () => {
               <option value={0} disabled>
                 กรุณาเลือกประเภทของสินค้า
               </option>
-              {categories.map((category, index) => (
+              {categories?.data?.map((category, index) => (
                 <option key={index} value={category.id}>
                   {category.name}
                 </option>

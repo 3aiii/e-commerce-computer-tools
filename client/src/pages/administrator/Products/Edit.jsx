@@ -1,28 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { FaSave } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
+import {
+  findOne,
+  image,
+  update,
+} from "../../../composables/administrator/ProductService";
+import { findAll } from "../../../composables/administrator/CategoryService";
+import { IMAGE_URL } from "../../../secret";
+import { toast } from "react-toastify";
+import { showErrorToast } from "../../../components/ToastNotification";
 
 const Edit = () => {
-  const { slug } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { id } = location?.state?.product;
 
+  const [imageArray, setImagaeArray] = useState([]);
+  const [imagePreview, setImagePreview] = useState([]);
+  const [imageData, setImage] = useState("");
+  const [categories, setCategories] = useState([]);
   const [product, setProduct] = useState({
     name: "",
-    category: "",
+    categoryId: 0,
     price: "",
     tax: "",
     description: "",
-    image: [
-      "https://mercular.s3.ap-southeast-1.amazonaws.com/images/products/2024/07/Computer/VY229HF-1.jpg",
-      "https://mercular.s3.ap-southeast-1.amazonaws.com/images/products/2024/07/Computer/VY229HF-5.jpg",
-      "https://mercular.s3.ap-southeast-1.amazonaws.com/images/products/2024/07/Computer/VY229HF-3.jpg",
-    ],
   });
-
-  const [imagePreview, setImagePreview] = useState([]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prev) => ({
@@ -32,57 +39,102 @@ const Edit = () => {
   };
 
   const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    const newImagePreview = files.map((file) => URL.createObjectURL(file));
+    const file = Array.from(e.target.files);
+    const newImagePreview = file.map((file) => URL.createObjectURL(file));
 
-    if (files.length > 0) {
+    if (file.length > 0) {
       setImagePreview(newImagePreview);
+      setImage(file?.[0]);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Updated Product:", product);
+
+    const { categoryId, price, tax } = product;
+    const updateProduct = {
+      ...product,
+      price: Number(price),
+      tax: Number(tax),
+      categoryId: Number(categoryId),
+    };
+
+    const response = await update(id, updateProduct);
+    if (response.status === 200) {
+      if (imageData) {
+        await image(imageData, response?.data?.id);
+      }
+
+      toast.success("ปรับแก้สินค้าสำเร็จ!", {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          navigate("/administrator/products");
+        },
+      });
+    } else {
+      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+    }
   };
 
   useEffect(() => {
-    setProduct({
-      name: "Sample Product",
-      category: "1",
-      price: "100",
-      tax: "5",
-      description: "This is a sample product description.",
-      image: [
-        "https://mercular.s3.ap-southeast-1.amazonaws.com/images/products/2024/07/Computer/VY229HF-1.jpg",
-        "https://mercular.s3.ap-southeast-1.amazonaws.com/images/products/2024/07/Computer/VY229HF-5.jpg",
-        "https://mercular.s3.ap-southeast-1.amazonaws.com/images/products/2024/07/Computer/VY229HF-3.jpg",
-      ],
-    });
-  }, [slug]);
+    const fetchProduct = async () => {
+      const { data } = await findOne(id);
+      setImagaeArray(data?.ProductImage);
+      setProduct({
+        name: data?.name,
+        categoryId: data?.categoryId,
+        price: data?.price,
+        tax: data?.tax,
+        description: data?.description,
+      });
+    };
+
+    const fetchCategories = async () => {
+      const { data } = await findAll(1, 50, "", "active");
+      setCategories(data);
+    };
+
+    fetchCategories();
+    fetchProduct();
+  }, []);
 
   return (
     <div className="flex gap-4 mt-6">
       <div className="input-layout-left h-fit">
         <h1 className="text-xl">Product Image</h1>
         <div className="my-4 mb-1">
-          <Swiper
-            spaceBetween={30}
-            pagination={{
-              clickable: true,
-            }}
-            modules={[Pagination]}
-            className="mySwiper h-56"
-          >
-            {product.image.map((img, index) => (
-              <SwiperSlide key={index}>
-                <img
-                  src={img}
-                  alt="Product"
-                  className="w-full mb-4 h-56 object-contain border-gray-300"
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {product?.ProductImage?.length === 0 ? (
+            <img
+              src={`https://placehold.co/350x200`}
+              alt="Product"
+              className="w-full h-56 object-contain border-gray-300"
+            />
+          ) : (
+            <Swiper
+              spaceBetween={30}
+              pagination={{
+                clickable: true,
+              }}
+              modules={[Pagination]}
+              className="mySwiper"
+            >
+              {imageArray?.map((img, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={`${IMAGE_URL}/${img?.url}`}
+                    alt="Product"
+                    className="w-full mb-8 h-56 object-contain border-gray-300"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </div>
         <div className="w-full mt-4">
           {imagePreview?.length > 0 ? (
@@ -101,7 +153,7 @@ const Edit = () => {
             </div>
           ) : (
             <>
-              <label className="flex flex-col items-center justify-center w-full px-4 py-6 mb-2 bg-white border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-500 transition">
+              <label className="flex flex-col items-center justify-center w-full px-4 py-8 mb-2 bg-white border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-500 transition">
                 <svg
                   className="w-10 h-10 text-gray-400 mb-2"
                   fill="none"
@@ -153,15 +205,17 @@ const Edit = () => {
               Category<span className="text-red-500">*</span>
             </label>
             <select
-              name="category"
-              value={product.category}
+              name="categoryId"
+              value={product.categoryId}
               onChange={handleChange}
               className="input-field"
               required
             >
-              <option value="1">Category 1</option>
-              <option value="2">Category 2</option>
-              <option value="3">Category 3</option>
+              {categories?.data?.map((category, index) => (
+                <option key={index} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
           <div className="flex gap-4">

@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
 import { Prisma } from '@prisma/client';
 import slugify from 'slugify';
@@ -88,9 +83,13 @@ export class ProductsService {
   }
 
   async update(id: number, updateProductDto: Prisma.ProductUpdateInput) {
+    const name =
+      typeof updateProductDto.name === 'string' ? updateProductDto.name : '';
+    const slug = slugify(name, { lower: true, strict: true });
+
     return this.DatabaseService.product.update({
       where: { id },
-      data: updateProductDto,
+      data: { ...updateProductDto, slug },
     });
   }
 

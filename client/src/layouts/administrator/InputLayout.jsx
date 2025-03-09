@@ -14,10 +14,26 @@ const InputLayout = () => {
       };
     }
 
+    if (matchPath("/administrator/users/create", path)) {
+      return {
+        title: "Create User",
+        pathName: "Users / Create User",
+      };
+    }
+
     if (matchPath("/administrator/products/:slug/edit", path)) {
       return {
         title: "Edit Product",
         pathName: `Products / ${
+          slug?.charAt(0).toUpperCase() + slug?.slice(1)
+        } / Edit`,
+      };
+    }
+
+    if (matchPath("/administrator/users/:fname/edit", path)) {
+      return {
+        title: "Edit User",
+        pathName: `Users / ${
           slug?.charAt(0).toUpperCase() + slug?.slice(1)
         } / Edit`,
       };
@@ -31,7 +47,14 @@ const InputLayout = () => {
         }`,
       };
     }
-    
+
+    if (matchPath("/administrator/users/:slug", path)) {
+      return {
+        title: "Preview User",
+        pathName: `Users / ${slug?.charAt(0).toUpperCase() + slug?.slice(1)}`,
+      };
+    }
+
     switch (path) {
       case "/administrator/dashboard":
         return {
