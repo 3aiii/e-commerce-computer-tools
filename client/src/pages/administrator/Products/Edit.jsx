@@ -12,7 +12,10 @@ import {
 import { findAll } from "../../../composables/administrator/CategoryService";
 import { IMAGE_URL } from "../../../secret";
 import { toast } from "react-toastify";
-import { showErrorToast } from "../../../components/ToastNotification";
+import {
+  showErrorToast,
+  showWarningToast,
+} from "../../../components/ToastNotification";
 
 const Edit = () => {
   const navigate = useNavigate();
@@ -50,6 +53,15 @@ const Edit = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (imageData && imageData.size > 1048576) {
+      showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
+      return;
+    }
+
+    if (product.categoryId === 0) {
+      showWarningToast("กรุณาใส่ประเภทของสินค้า");
+    }
 
     const { categoryId, price, tax } = product;
     const updateProduct = {
@@ -254,7 +266,7 @@ const Edit = () => {
               value={product.description}
               onChange={handleChange}
               placeholder="Description"
-              className="input-field h-24 resize-none"
+              className="input-field h-36 resize-none"
               required
             ></textarea>
           </div>

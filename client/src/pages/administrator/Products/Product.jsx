@@ -19,10 +19,10 @@ const TableRow = ({ label, value, isHighlighted, alignTop }) => (
       {label}
     </td>
 
-    <td className={`w-1/2 border-t px-4 py-2 font-light`}>
+    <td className={`w-1/2 border-t px-4 py-2 font-light break-all break-words`}>
       {isHighlighted ? (
         <span
-          className={` p-[2px] px-2 rounded-md ${
+          className={` p-[2px] px-2 rounded-md break-words ${
             (label === "Category" && `bg-blue-100 text-blue-600`) ||
             (label === "Tax" && `bg-red-100 text-red-600`)
           } font-normal`}
@@ -30,7 +30,7 @@ const TableRow = ({ label, value, isHighlighted, alignTop }) => (
           {value}
         </span>
       ) : (
-        <span>{value}</span>
+        <span className="break-words">{value}</span>
       )}
     </td>
   </tr>
@@ -41,7 +41,7 @@ const Product = () => {
   const { slug } = useParams();
   const { id } = location?.state?.product;
   const [product, setProduct] = useState([]);
-  
+
   useEffect(() => {
     const fetchProduct = async () => {
       const { data } = await findOne(id);

@@ -206,16 +206,24 @@ const Navbar = () => {
           {/* Discount Link */}
           <Link
             to="/administrator/discount"
-            className={`link-navbar-text ${getLinkClassName(
-              "/administrator/discount"
-            )}`}
+            className={`link-navbar-text ${
+              isActive("/administrator/discount") ||
+              isActive("/administrator/discount/create") ||
+              isActive("/administrator/discount/:slug/edit")
+                ? "active-link-navbar-admin"
+                : "inactive-link-navbar-admin"
+            }`}
           >
             <MdOutlineDiscount size={20} />
             <span>Discount</span>
             <span
-              className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/discount"
-              )}`}
+              className={`underline-navbar-text ${
+                isActive("/administrator/discount") ||
+                isActive("/administrator/discount/create") ||
+                isActive("/administrator/discount/:slug/edit")
+                  ? "underline-active-navbar-admin"
+                  : "underline-inactive-navbar-admin"
+              }`}
             />
           </Link>
         </div>

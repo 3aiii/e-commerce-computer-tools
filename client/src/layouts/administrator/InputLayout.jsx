@@ -12,12 +12,19 @@ const InputLayout = () => {
         title: "Create Product",
         pathName: "Products / Create Product",
       };
-    }
+    } 
 
     if (matchPath("/administrator/users/create", path)) {
       return {
         title: "Create User",
         pathName: "Users / Create User",
+      };
+    }
+
+    if (matchPath("/administrator/discount/create", path)) {
+      return {
+        title: "Create Discount",
+        pathName: "Discount / Create Discount",
       };
     }
 
@@ -34,6 +41,15 @@ const InputLayout = () => {
       return {
         title: "Edit User",
         pathName: `Users / ${
+          slug?.charAt(0).toUpperCase() + slug?.slice(1)
+        } / Edit`,
+      };
+    }
+
+    if (matchPath("/administrator/discount/:slug/edit", path)) {
+      return {
+        title: "Edit Discount",
+        pathName: `Discount / ${
           slug?.charAt(0).toUpperCase() + slug?.slice(1)
         } / Edit`,
       };

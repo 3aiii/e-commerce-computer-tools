@@ -1,38 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaSave } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { IMAGE_URL } from "../../../secret";
+import { toast } from "react-toastify";
+import { showErrorToast } from "../../../components/ToastNotification";
 import {
   findOne,
   image,
   update,
-} from "../../../composables/administrator/ProductService";
-import { findAll } from "../../../composables/administrator/CategoryService";
-import { IMAGE_URL } from "../../../secret";
-import { toast } from "react-toastify";
-import { showErrorToast } from "../../../components/ToastNotification";
+} from "../../../composables/administrator/UserService";
 
 const Edit = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = location?.state?.product;
+  const { id } = location?.state?.user;
 
   const [imageArray, setImagaeArray] = useState([]);
   const [imagePreview, setImagePreview] = useState([]);
   const [imageData, setImage] = useState("");
-  const [categories, setCategories] = useState([]);
-  const [product, setProduct] = useState({
-    name: "",
-    categoryId: 0,
-    price: "",
-    tax: "",
-    description: "",
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+    firstname: "",
+    lastname: "",
+    phone: "",
+    address: "",
+    role: "",
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct((prev) => ({
+    setUser((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -51,89 +50,78 @@ const Edit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { categoryId, price, tax } = product;
-    const updateProduct = {
-      ...product,
-      price: Number(price),
-      tax: Number(tax),
-      categoryId: Number(categoryId),
-    };
+    if (imageData && imageData.size > 1048576) {
+      showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
+      return;
+    }
 
-    const response = await update(id, updateProduct);
-    if (response.status === 200) {
-      if (imageData) {
-        await image(imageData, response?.data?.id);
+    try {
+      const response = await update(id, user);
+      if (response.status === 200) {
+        if (imageData) {
+          await image(imageData, response?.data?.id);
+        }
+
+        toast.success("ปรับแก้ผู้ใช้งานสำเร็จ!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            navigate("/administrator/users");
+          },
+        });
+      } else {
+        showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
       }
-
-      toast.success("ปรับแก้สินค้าสำเร็จ!", {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          navigate("/administrator/products");
-        },
-      });
-    } else {
-      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+    } catch (error) {
+      if (error.response.data.statusCode === 400) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ jpeg | jpg | png ");
+      } else if (error.response.data.statusCode === 413) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ความจุไม่เกิน 1 MB ");
+      }
     }
   };
 
   useEffect(() => {
-    const fetchProduct = async () => {
+    const fetchUser = async () => {
       const { data } = await findOne(id);
-      setImagaeArray(data?.ProductImage);
-      setProduct({
-        name: data?.name,
-        categoryId: data?.categoryId,
-        price: data?.price,
-        tax: data?.tax,
-        description: data?.description,
+
+      setImagaeArray(data?.profile?.[0]?.image);
+      setUser({
+        email: data?.email,
+        password: "",
+        firstname: data?.profile?.[0]?.firstname,
+        lastname: data?.profile?.[0]?.lastname,
+        phone: data?.profile?.[0]?.phone || "",
+        address: data?.profile?.[0]?.address || "",
+        role: data?.role,
       });
     };
 
-    const fetchCategories = async () => {
-      const { data } = await findAll(1, 50, "", "active");
-      setCategories(data);
-    };
-
-    fetchCategories();
-    fetchProduct();
+    fetchUser();
   }, []);
 
   return (
     <div className="flex gap-4 mt-6">
       <div className="input-layout-left h-fit">
-        <h1 className="text-xl">Product Image</h1>
+        <h1 className="text-xl">User Image</h1>
         <div className="my-4 mb-1">
-          {product?.ProductImage?.length === 0 ? (
+          {!imageArray ? (
             <img
               src={`https://placehold.co/350x200`}
-              alt="Product"
+              alt="User"
               className="w-full h-56 object-contain border-gray-300"
             />
           ) : (
-            <Swiper
-              spaceBetween={30}
-              pagination={{
-                clickable: true,
-              }}
-              modules={[Pagination]}
-              className="mySwiper"
-            >
-              {imageArray?.map((img, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    src={`${IMAGE_URL}/${img?.url}`}
-                    alt="Product"
-                    className="w-full mb-8 h-56 object-contain border-gray-300"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            <img
+              src={`${IMAGE_URL}/${imageArray}`}
+              alt="User"
+              className="w-full mb-8 h-56 object-contain border-gray-300"
+            />
           )}
         </div>
         <div className="w-full mt-4">
@@ -184,83 +172,105 @@ const Edit = () => {
         </div>
       </div>
       <div className="input-layout-right">
-        <h1 className="text-xl">Product Details</h1>
+        <h1 className="text-xl">User Details</h1>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1 mt-4">
             <label className="text-md">
-              Name<span className="text-red-500">*</span>
+              Email<span className="text-red-500">*</span>
             </label>
             <input
-              type="text"
-              name="name"
-              value={product.name}
+              type="email"
+              name="email"
+              value={user.email}
               onChange={handleChange}
-              placeholder="Name"
+              placeholder="Email"
               className="input-field"
               required
             />
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-md">
-              Category<span className="text-red-500">*</span>
+              Password<span className="text-red-500">*</span>
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={user.password}
+              onChange={handleChange}
+              placeholder="Password"
+              className="input-field"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-md">
+              Role<span className="text-red-500">*</span>
             </label>
             <select
-              name="categoryId"
-              value={product.categoryId}
+              name="role"
+              value={user.role}
               onChange={handleChange}
               className="input-field"
               required
             >
-              {categories?.data?.map((category, index) => (
-                <option key={index} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
+              <option value={""} disabled>
+                กรุณาเลือกประเภทของผู้ใช้งาน
+              </option>
+              <option value={"USER"}>USER</option>
+              <option value={"ADMIN"}>ADMIN</option>
             </select>
           </div>
           <div className="flex gap-4">
             <div className="flex flex-col w-full gap-1">
-              <label className="text-md">
-                Price<span className="text-red-500">*</span>
-              </label>
+              <label className="text-md">Firstname</label>
               <input
-                type="number"
-                name="price"
-                value={product.price}
+                type="text"
+                name="firstname"
+                value={user.firstname}
                 onChange={handleChange}
-                placeholder="Price"
+                placeholder="Firstname"
                 className="input-field"
                 required
               />
             </div>
             <div className="flex flex-col w-full gap-1">
-              <label className="text-md">Tax</label>
+              <label className="text-md">Lastname</label>
               <input
-                type="number"
-                name="tax"
-                value={product.tax}
+                type="text"
+                name="lastname"
+                value={user.lastname}
                 onChange={handleChange}
-                placeholder="Tax"
+                placeholder="Lastname"
                 className="input-field"
               />
             </div>
           </div>
+
           <div className="flex flex-col gap-1">
-            <label className="text-md">
-              Description<span className="text-red-500">*</span>
-            </label>
-            <textarea
-              name="description"
-              value={product.description}
+            <label className="text-md">Phone</label>
+            <input
+              type="phone"
+              name="phone"
+              value={user.phone}
               onChange={handleChange}
-              placeholder="Description"
-              className="input-field h-24 resize-none"
-              required
+              placeholder="Password"
+              className="input-field"
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-md">Address</label>
+            <textarea
+              type="address"
+              name="address"
+              value={user.address}
+              onChange={handleChange}
+              placeholder="Address"
+              className="input-field h-36  resize-none"
             ></textarea>
           </div>
-          <div className="flex justify-end gap-2 border-t-[1px] border-gray-300 p-2 pt-4">
+
+          <div className="flex justify-end gap-2 border-t-[1px] border-gray-300 p-2 pt-4 ">
             <Link
-              to="/administrator/products"
+              to={"/administrator/users"}
               className="cancel-button flex items-center gap-2"
             >
               <FaArrowLeftLong /> Cancel
@@ -269,7 +279,7 @@ const Edit = () => {
               type="submit"
               className="update-button flex items-center gap-2"
             >
-              <FaSave /> Update
+              <FaSave /> Create
             </button>
           </div>
         </form>

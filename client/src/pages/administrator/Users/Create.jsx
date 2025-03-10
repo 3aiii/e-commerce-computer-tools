@@ -38,27 +38,41 @@ const Create = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await create(user);
-    
-    if (response.status === 201) {
-      if (imageData) {
-        await image(imageData, response?.data?.id);
-      }
 
-      toast.success("สร้างเพิ่มผู้ใช้งานสำเร็จ!", {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          navigate("/administrator/users");
-        },
-      });
-    } else {
-      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+    if (imageData && imageData.size > 1048576) {
+      showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
+      return;
+    }
+
+    const response = await create(user);
+
+    try {
+      if (response.status === 201) {
+        if (imageData) {
+          await image(imageData, response?.data?.id);
+        }
+
+        toast.success("สร้างผู้ใช้งานสำเร็จ!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            navigate("/administrator/users");
+          },
+        });
+      } else {
+        showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+      }
+    } catch (error) {
+      if (error.response.data.statusCode === 400) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ jpeg | jpg | png ");
+      } else if (error.response.data.statusCode === 413) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ความจุไม่เกิน 1 MB ");
+      }
     }
   };
 
@@ -120,7 +134,7 @@ const Create = () => {
               Email<span className="text-red-500">*</span>
             </label>
             <input
-              type="text"
+              type="email"
               name="email"
               value={user.email}
               onChange={handleChange}

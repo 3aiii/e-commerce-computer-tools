@@ -8,7 +8,10 @@ import {
   image,
 } from "../../../composables/administrator/ProductService";
 import { toast } from "react-toastify";
-import { showErrorToast } from "./../../../components/ToastNotification";
+import {
+  showErrorToast,
+  showWarningToast,
+} from "./../../../components/ToastNotification";
 
 const Create = () => {
   const navigate = useNavigate();
@@ -43,6 +46,15 @@ const Create = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (imageData && imageData.size > 1048576) {
+      showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
+      return;
+    }
+
+    if (product.categoryId === 0) {
+      showWarningToast("กรุณาใส่ประเภทของสินค้า");
+    }
 
     const { categoryId, price, tax } = product;
     const updateProduct = {
@@ -84,7 +96,7 @@ const Create = () => {
 
     fetchCategories();
   }, []);
-  
+
   return (
     <div className="flex gap-4 mt-6">
       <div className="input-layout-left h-fit">
@@ -209,7 +221,7 @@ const Create = () => {
               value={product.description}
               onChange={handleChange}
               placeholder="Description"
-              className="input-field h-24 resize-none"
+              className="input-field h-36 resize-none"
               required
             ></textarea>
           </div>

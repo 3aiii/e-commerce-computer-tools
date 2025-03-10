@@ -18,6 +18,8 @@ import EditOrder from "./pages/administrator/Orders/Edit";
 import Order from "./pages/administrator/Orders/Order";
 import { ToastContainer } from "react-toastify";
 import User from "./pages/administrator/Users/User";
+import CreateDiscount from "./pages/administrator/Discounts/Create";
+import EditDiscount from "./pages/administrator/Discounts/Edit";
 
 function App() {
   return (
@@ -58,8 +60,12 @@ function App() {
           </Route>
           <Route path="categories" element={<IndexCategories />} />
           <Route path="discount" element={<IndexDiscount />} />
-          <Route path="discount/create" />
-          <Route path="discount/:id/edit" />
+          <Route path="discount/create" element={<InputLayout />}>
+            <Route path="" element={<CreateDiscount />} />
+          </Route>
+          <Route path="discount/:slug/edit" element={<InputLayout />}>
+            <Route path="" element={<EditDiscount />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,14 +1,37 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
 import { Prisma } from '@prisma/client';
-import { hashSync } from 'bcrypt';
+import { compareSync, hashSync } from 'bcrypt';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
   async login(loginUserDto: Prisma.UserCreateInput) {
-    return;
+    const user = await this.DatabaseService.user.findUnique({
+      where: {
+        email: loginUserDto.email,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException(
+        'Invalid email or password',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    const isPasswordValid = compareSync(loginUserDto.password, user.password);
+    if (!isPasswordValid) {
+      throw new HttpException(
+        'Invalid email or password',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    return isPasswordValid;
   }
 
   async create(
@@ -39,6 +62,19 @@ export class UsersService {
   }
 
   async image(filename: string, userId: number) {
+    const user = await this.DatabaseService.profile.findUnique({
+      where: { id: Number(userId) },
+      select: { image: true },
+    });
+
+    if (user?.image) {
+      const oldImagePath = path.join(__dirname, '../../public/', user.image);
+
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+    }
+
     return this.DatabaseService.profile.update({
       where: {
         id: Number(userId),
@@ -68,6 +104,7 @@ export class UsersService {
       include: {
         profile: true,
       },
+      orderBy: { createdAt: 'desc' },
       skip,
       take: Number(perPage),
     });
@@ -98,18 +135,52 @@ export class UsersService {
       where: {
         id,
       },
-      include: {
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
         profile: true,
       },
     });
   }
 
-  async update(id: number, updateUserDto: Prisma.UserUpdateInput) {
-    return this.DatabaseService.user.update({
-      where: {
-        id,
-      },
-      data: updateUserDto,
+  async update(
+    id: number,
+    updateUserDto: Prisma.UserUpdateInput & {
+      firstname?: string;
+      lastname?: string;
+      phone?: string;
+      address?: string;
+    },
+  ) {
+    let hashPassword: string;
+
+    if (updateUserDto.password) {
+      hashPassword = hashSync(updateUserDto.password as string, 10);
+    }
+
+    return this.DatabaseService.$transaction(async (prisma) => {
+      await prisma.user.update({
+        where: { id },
+        data: {
+          email: updateUserDto.email,
+          password: hashPassword,
+        },
+      });
+
+      const updatedProfile = await prisma.profile.update({
+        where: { userId: id },
+        data: {
+          firstname: updateUserDto.firstname,
+          lastname: updateUserDto.lastname,
+          phone: updateUserDto.phone,
+          address: updateUserDto.address,
+        },
+      });
+
+      return updatedProfile;
     });
   }
 

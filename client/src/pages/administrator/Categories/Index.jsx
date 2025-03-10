@@ -202,12 +202,12 @@ const Index = () => {
         <div>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="🔍 Search..."
+            className="font-light px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="font-light px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>

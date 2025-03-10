@@ -19,7 +19,7 @@ const TableRow = ({ label, value, isHighlighted, alignTop }) => (
       {label}
     </td>
 
-    <td className={`w-1/2 border-t px-4 py-2 font-light`}>
+    <td className={`w-1/2 border-t px-4 py-2 font-light break-all break-words`}>
       {isHighlighted ? (
         <span
           className={` p-[2px] px-2 rounded-md ${
@@ -44,7 +44,7 @@ const User = () => {
   const location = useLocation();
   const { slug } = useParams();
   const { id } = location?.state?.user;
-  const [users, setUsers] = useState([]);
+  const [user, setUsers] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -60,8 +60,8 @@ const User = () => {
       <div className="input-layout-left h-fit">
         <h1 className="text-xl">User Image</h1>
         <div className="my-4 mb-1">
-          {users?.profile?.[0].image === null ||
-          users?.profile?.[0].image === "" ? (
+          {user?.profile?.[0].image === null ||
+          user?.profile?.[0].image === "" ? (
             <img
               src={`https://placehold.co/350x200`}
               alt="users"
@@ -78,7 +78,7 @@ const User = () => {
             >
               <SwiperSlide>
                 <img
-                  src={`${IMAGE_URL}/${users?.profile?.[0].image}`}
+                  src={`${IMAGE_URL}/${user?.profile?.[0].image}`}
                   alt="Product"
                   className="w-full mb-8 h-56 object-contain border-gray-300"
                 />
@@ -95,30 +95,30 @@ const User = () => {
           <tbody>
             <TableRow
               label="Firstname"
-              value={`${users?.profile?.[0]?.firstname}`}
+              value={`${user?.profile?.[0]?.firstname}`}
             />
             <TableRow
               label="Lastname"
-              value={`${users?.profile?.[0]?.lastname}`}
+              value={`${user?.profile?.[0]?.lastname}`}
             />
-            <TableRow label="Email" value={users?.email} />
+            <TableRow label="Email" value={user?.email} />
             <TableRow
               label="Address"
-              value={users?.profile?.[0]?.address}
+              value={user?.profile?.[0]?.address}
               alignTop
             />
-            <TableRow label="Role" value={users?.role} isHighlighted />
+            <TableRow label="Role" value={user?.role} isHighlighted />
             <TableRow
               label="Phone"
-              value={formatPrice(users?.profile?.[0]?.phone)}
+              value={formatPrice(user?.profile?.[0]?.phone)}
             />
             <TableRow
               label="Created At"
-              value={formatDateTime(users?.createdAt)}
+              value={formatDateTime(user?.createdAt)}
             />
             <TableRow
               label="Update At"
-              value={formatDateTime(users?.updatedAt)}
+              value={formatDateTime(user?.updatedAt)}
             />
           </tbody>
         </table>
@@ -131,7 +131,7 @@ const User = () => {
           </Link>
           <Link
             to={`/administrator/users/${slug}/edit`}
-            state={{ users }}
+            state={{ user }}
             className="edit-button flex items-center gap-2"
           >
             <FaRegEdit /> Edit
