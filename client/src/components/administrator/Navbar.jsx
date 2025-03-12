@@ -5,11 +5,14 @@ import { MdOutlineCategory, MdOutlineDiscount } from "react-icons/md";
 import { Link, matchPath, useLocation } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
 import { IoSettingsOutline } from "react-icons/io5";
+import { findOne } from "../../composables/administrator/UserService";
+import { IMAGE_URL } from "../../secret";
 
 const Navbar = () => {
   const location = useLocation();
   const dropdownRef = useRef(null);
 
+  const [user, setUser] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -40,6 +43,15 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await findOne(40);
+      setUser(data);
+    };
+
+    fetchUser();
+  }, []);
+  
   return (
     <div className="w-full h-fit bg-white">
       <div className="flex justify-center min-h-16 border-b-[1px] border-gray-200">
@@ -54,11 +66,18 @@ const Navbar = () => {
               className="flex gap-4 items-center cursor-pointer"
             >
               <img
-                className="w-[40px] h-[40px] rounded-full"
-                src="https://placehold.co/40x40"
+                className={`w-[40px] h-[40px] rounded-full`}
+                src={
+                  user?.profile?.[0]?.image === null ||
+                  user?.profile?.[0]?.image === ""
+                    ? `https://placehold.co/40x40`
+                    : `${IMAGE_URL}/${user?.profile?.[0]?.image}`
+                }
                 alt="Admin"
               />
-              <span>ADMIN</span>
+              <span>
+                {user?.profile?.[0]?.firstname} {user?.profile?.[0]?.lastname}
+              </span>
             </div>
 
             {/* Dropdown Menu */}
@@ -74,6 +93,7 @@ const Navbar = () => {
               <ul className="py-2 text-gray-500">
                 <Link
                   to={"/administrator/profile"}
+                  state={{ user }}
                   onClick={() => setDropdownOpen(false)}
                 >
                   <li className="flex gap-2 px-10 py-2 hover:text-blue-500 hover:bg-gray-100 cursor-pointer">

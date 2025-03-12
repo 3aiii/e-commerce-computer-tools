@@ -9,7 +9,6 @@ import DeleteModal from "../../../components/administrator/Modal/DeleteModal";
 import { GoDotFill } from "react-icons/go";
 import { toast } from "react-toastify";
 import { GrRevert } from "react-icons/gr";
-import { CiSearch } from "react-icons/ci";
 import {
   findAll,
   remove,

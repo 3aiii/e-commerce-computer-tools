@@ -26,6 +26,9 @@ function App() {
     <BrowserRouter>
       <ToastContainer position="bottom-right" theme="colored" />
       <Routes>
+        <Route>
+          <Route />
+        </Route>
         <Route path="/administrator" element={<AdministratorLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<InputLayout />}>

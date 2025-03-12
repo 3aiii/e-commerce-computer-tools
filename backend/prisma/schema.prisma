@@ -66,7 +66,6 @@ model Product {
   updatedAt     DateTime        @updatedAt
   ProductImage  ProductImage[]
   Cart          Cart[]
-  Order         Order[]
   ReviewProduct ReviewProduct[]
 }
 
@@ -84,17 +83,6 @@ model ProductImage {
   product   Product  @relation(fields: [productId], references: [id])
   productId Int
   url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Cart {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  quantity  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -126,19 +114,31 @@ model ReviewProduct {
   updatedAt           DateTime @updatedAt
 }
 
+model Cart {
+  id        Int         @id @default(autoincrement())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    Int
+  product   Product     @relation(fields: [productId], references: [id])
+  productId Int         @unique
+  quantity  Int
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  OrderCart OrderCart[]
+}
+
 model Order {
   id         Int          @id @default(autoincrement())
+  invoiceNo  String
   user       User         @relation(fields: [userId], references: [id])
   userId     Int
-  product    Product      @relation(fields: [productId], references: [id])
-  productId  Int
-  discout    Discount?    @relation(fields: [discountId], references: [id])
+  discount   Discount?    @relation(fields: [discountId], references: [id])
   discountId Int?
-  total      Float
+  total      Float        @default(0)
   status     Status       @default(Pending)
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   OrderImage OrderImage[]
+  OrderCart  OrderCart[]
 }
 
 model OrderImage {
@@ -148,4 +148,13 @@ model OrderImage {
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model OrderCart {
+  order   Order @relation(fields: [orderId], references: [id])
+  orderId Int
+  cart    Cart  @relation(fields: [cartId], references: [id])
+  cartId  Int
+
+  @@id([orderId, cartId])
 }

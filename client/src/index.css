@@ -40,6 +40,10 @@
   @apply bg-red-500 rounded-md p-3  text-white hover:bg-red-600 transition;
 }
 
+.print-button {
+  @apply bg-orange-500 rounded-md p-3  text-white hover:bg-orange-600 transition;
+}
+
 /* Navbar-admin */
 .link-navbar-text {
   @apply flex items-center gap-2 cursor-pointer p-4 rounded-md transition-all duration-300 relative;
