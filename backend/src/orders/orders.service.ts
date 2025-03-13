@@ -88,7 +88,19 @@ export class OrdersService {
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} order`;
+    return this.DatabaseService.order.findUnique({
+      where: { id },
+      select: {
+        user: {
+          select: {
+            email: true,
+            profile: true,
+          },
+        },
+        OrderDetails: true,
+        OrderImage: true,
+      },
+    });
   }
 
   update(id: number, updateOrderDto: Prisma.OrderUpdateInput) {

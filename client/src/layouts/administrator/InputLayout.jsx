@@ -12,7 +12,7 @@ const InputLayout = () => {
         title: "Create Product",
         pathName: "Products / Create Product",
       };
-    } 
+    }
 
     if (matchPath("/administrator/users/create", path)) {
       return {
@@ -68,6 +68,13 @@ const InputLayout = () => {
       return {
         title: "Preview User",
         pathName: `Users / ${slug?.charAt(0).toUpperCase() + slug?.slice(1)}`,
+      };
+    }
+
+    if (matchPath("/administrator/orders/:slug", path)) {
+      return {
+        title: "Preview Order",
+        pathName: `Orders / ${slug?.charAt(0).toUpperCase() + slug?.slice(1)}`,
       };
     }
 

@@ -51,7 +51,7 @@ const Navbar = () => {
 
     fetchUser();
   }, []);
-  
+
   return (
     <div className="w-full h-fit bg-white">
       <div className="flex justify-center min-h-16 border-b-[1px] border-gray-200">
@@ -160,16 +160,22 @@ const Navbar = () => {
           {/* Orders Link */}
           <Link
             to="/administrator/orders"
-            className={`link-navbar-text ${getLinkClassName(
-              "/administrator/orders"
-            )}`}
+            className={`link-navbar-text ${
+              isActive("/administrator/orders") ||
+              isActive("/administrator/orders/:id")
+                ? "active-link-navbar-admin"
+                : "inactive-link-navbar-admin"
+            }`}
           >
             <AiOutlineShoppingCart size={20} />
             <span>Orders</span>
             <span
-              className={`underline-navbar-text ${getUnderlineClassName(
-                "/administrator/orders"
-              )}`}
+              className={`underline-navbar-text ${
+                isActive("/administrator/orders") ||
+                isActive("/administrator/orders/:id")
+                  ? "underline-active-navbar-admin"
+                  : "underline-inactive-navbar-admin"
+              }`}
             />
           </Link>
 

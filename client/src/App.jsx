@@ -20,14 +20,18 @@ import { ToastContainer } from "react-toastify";
 import User from "./pages/administrator/Users/User";
 import CreateDiscount from "./pages/administrator/Discounts/Create";
 import EditDiscount from "./pages/administrator/Discounts/Edit";
+import AuthLayout from "./layouts/user/AuthLayout";
+import SignIn from "./pages/user/Authentication/SignIn";
+import SignUp from "./pages/user/Authentication/SignUp";
 
 function App() {
   return (
     <BrowserRouter>
       <ToastContainer position="bottom-right" theme="colored" />
       <Routes>
-        <Route>
-          <Route />
+        <Route element={<AuthLayout />}>
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
         </Route>
         <Route path="/administrator" element={<AdministratorLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
@@ -55,10 +59,10 @@ function App() {
             <Route path="" element={<EditUser />} />
           </Route>
           <Route path="orders" element={<IndexOrders />} />
-          <Route path="orders/:id" element={<IndexOrders />}>
+          <Route path="orders/:slug" element={<InputLayout />}>
             <Route path="" element={<Order />} />
           </Route>
-          <Route path="orders/:id/edit" element={<IndexOrders />}>
+          <Route path="orders/:slug/edit" element={<InputLayout />}>
             <Route path="" element={<EditOrder />} />
           </Route>
           <Route path="categories" element={<IndexCategories />} />

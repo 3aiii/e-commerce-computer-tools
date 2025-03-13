@@ -18,32 +18,13 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const startIndex = (currentPage - 1) * itemsPerPage;
-
   const fetchs = async () => {
     const { data } = await findAll(currentPage, itemsPerPage, searchTerm);
     setOrder(data);
   };
 
   const handlePrinter = async (product) => {
-    const response = await remove(product?.id);
-
-    if (response?.status === 200) {
-      toast.success(
-        `${response?.data?.status ? `คืนกลับ` : `ลบ`}สินค้าเสร็จสิ้น!`,
-        {
-          position: "bottom-right",
-          autoClose: 500,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          onClose: () => {
-            fetchs();
-          },
-        }
-      );
-    }
+    return;
   };
 
   useEffect(() => {
@@ -109,15 +90,17 @@ const Index = () => {
                   <td className="tbody-td text-center">
                     {startIndex + index + 1}
                   </td>
-                  <td className="tbody-td text-center">{order.invoiceNo}</td>
-                  <td className="tbody-td">
+                  <td className="tbody-td text-center">
                     <span
                       className={`p-[2px] px-2 rounded-md bg-blue-100 text-blue-600 
                         font-normal cursor-default`}
                     >
-                      {order.user.profile?.[0]?.firstname}{" "}
-                      {order.user.profile?.[0]?.lastname}
+                      {order.invoiceNo}
                     </span>
+                  </td>
+                  <td className="tbody-td">
+                    {order.user.profile?.[0]?.firstname}{" "}
+                    {order.user.profile?.[0]?.lastname}
                   </td>
                   <td className="tbody-td text-center">
                     {formatDateTime(order.createdAt)}
@@ -149,15 +132,15 @@ const Index = () => {
 
                   <td className="p-4 flex  justify-center gap-2">
                     <Link
-                      to={`/administrator/orders/${order.slug}/edit`}
+                      to={`/administrator/orders/${order.invoiceNo}`}
                       state={{ order }}
                       className="view-button"
                     >
                       <AiOutlineEye size={20} />
                     </Link>
-                    <Link to={`/administrator/orders`} className="print-button">
+                    <button className="print-button">
                       <FiPrinter size={20} />
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               ))

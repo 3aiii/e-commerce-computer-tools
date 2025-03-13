@@ -67,6 +67,7 @@ model Product {
   ProductImage  ProductImage[]
   Cart          Cart[]
   ReviewProduct ReviewProduct[]
+  OrderDetails  OrderDetails[]
 }
 
 model Category {
@@ -115,30 +116,40 @@ model ReviewProduct {
 }
 
 model Cart {
-  id        Int         @id @default(autoincrement())
-  user      User        @relation(fields: [userId], references: [id])
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
   userId    Int
-  product   Product     @relation(fields: [productId], references: [id])
-  productId Int         @unique
-  quantity  Int
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  OrderCart OrderCart[]
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Order {
-  id         Int          @id @default(autoincrement())
-  invoiceNo  String
-  user       User         @relation(fields: [userId], references: [id])
-  userId     Int
-  discount   Discount?    @relation(fields: [discountId], references: [id])
-  discountId Int?
-  total      Float        @default(0)
-  status     Status       @default(Pending)
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  OrderImage OrderImage[]
-  OrderCart  OrderCart[]
+  id           Int            @id @default(autoincrement())
+  invoiceNo    String
+  user         User           @relation(fields: [userId], references: [id])
+  userId       Int
+  discount     Discount?      @relation(fields: [discountId], references: [id])
+  discountId   Int?
+  total        Float          @default(0)
+  status       Status         @default(Pending)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  OrderImage   OrderImage[]
+  OrderDetails OrderDetails[]
+}
+
+model OrderDetails {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int     @default(1)
+  price     Float 
+  subtotal  Float   @default(0)
 }
 
 model OrderImage {
@@ -148,13 +159,4 @@ model OrderImage {
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model OrderCart {
-  order   Order @relation(fields: [orderId], references: [id])
-  orderId Int
-  cart    Cart  @relation(fields: [cartId], references: [id])
-  cartId  Int
-
-  @@id([orderId, cartId])
 }
