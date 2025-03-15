@@ -9,31 +9,6 @@ import * as path from 'path';
 export class UsersService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
-  async login(loginUserDto: Prisma.UserCreateInput) {
-    const user = await this.DatabaseService.user.findUnique({
-      where: {
-        email: loginUserDto.email,
-      },
-    });
-
-    if (!user) {
-      throw new HttpException(
-        'Invalid email or password',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    const isPasswordValid = compareSync(loginUserDto.password, user.password);
-    if (!isPasswordValid) {
-      throw new HttpException(
-        'Invalid email or password',
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    return isPasswordValid;
-  }
-
   async create(
     createUserDto: Prisma.UserCreateInput & {
       firstname?: string;

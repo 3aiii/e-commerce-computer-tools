@@ -8,9 +8,10 @@ import { CategoriesModule } from './categories/categories.module';
 import { DiscountModule } from './discount/discount.module';
 import { OrdersModule } from './orders/orders.module';
 import { CartsModule } from './carts/carts.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule, ProductsModule, UsersModule, CategoriesModule, DiscountModule, OrdersModule, CartsModule],
+  imports: [DatabaseModule, ProductsModule, UsersModule, CategoriesModule, DiscountModule, OrdersModule, CartsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

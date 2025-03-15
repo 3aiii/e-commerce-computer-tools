@@ -21,11 +21,6 @@ import multerOption from 'src/config/multer.config';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post('/login')
-  login(@Body() loginUserDto: Prisma.UserCreateInput) {
-    return this.usersService.login(loginUserDto);
-  }
-
   @Post()
   create(@Body() createUserDto: Prisma.UserCreateInput) {
     return this.usersService.create(createUserDto);
