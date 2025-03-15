@@ -20,16 +20,16 @@ import { ToastContainer } from "react-toastify";
 import User from "./pages/administrator/Users/User";
 import CreateDiscount from "./pages/administrator/Discounts/Create";
 import EditDiscount from "./pages/administrator/Discounts/Edit";
-import AuthLayout from "./layouts/user/AuthLayout";
 import SignIn from "./pages/user/Authentication/SignIn";
 import SignUp from "./pages/user/Authentication/SignUp";
+import AuthLayout from "./layouts/authentication/AuthLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <ToastContainer position="bottom-right" theme="colored" />
       <Routes>
-        <Route element={<AuthLayout />}>
+        <Route path="" element={<AuthLayout />}>
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
         </Route>
