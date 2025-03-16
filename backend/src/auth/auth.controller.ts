@@ -1,10 +1,39 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private AuthService: AuthService) {}
+
+  @Get('verify')
+  async verify(@Req() req: Request, @Res() res: Response) {
+    const token = req.cookies.user_token;
+
+    if (!token) {
+      throw new HttpException(
+        'Not found your token, please login first.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const user = await this.AuthService.verifyToken(token);
+
+    if (!user) {
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+    }
+
+    return res.json({ user });
+  }
 
   @Post('login')
   async login(@Body() body: any, @Res({ passthrough: true }) res: any) {

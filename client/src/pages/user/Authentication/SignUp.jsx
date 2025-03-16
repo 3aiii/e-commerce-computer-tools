@@ -1,28 +1,49 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { showErrorToast } from "../../../components/ToastNotification";
+import { create } from "../../../composables/administrator/UserService";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
     email: "",
     password: "",
-    confirmPassword: "",
     phone: "",
   });
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== confirmPassword) {
       showErrorToast("Passwords do not match! Please try again.");
       return;
     }
-    console.log("Sign In Data:", formData);
+
+    const response = await create(formData);
+
+    if (response.status === 201) {
+      toast.success("สร้างผู้ใช้งานสำเร็จ!", {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          navigate("/sign-in");
+        },
+      });
+    } else {
+      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+    }
   };
 
   return (
@@ -97,8 +118,8 @@ const SignUp = () => {
             <input
               type="password"
               name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               className="input-field"
               placeholder="Confirm Password"
               required

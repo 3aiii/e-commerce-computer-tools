@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaGoogle, FaFacebook, FaGithub } from "react-icons/fa";
+import { login } from "../../../composables/authentication/Authentication";
+import { showErrorToast } from "../../../components/ToastNotification";
+import { toast } from "react-toastify";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -9,9 +12,27 @@ const SignIn = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Sign In Data:", formData);
+
+    const response = await login(formData);
+
+    if (response.status === 201) {
+      toast.success("เข้าสู่ระบบสำเร็จ!", {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          window.location.reload();
+        },
+      });
+    } else {
+      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+    }
   };
 
   return (

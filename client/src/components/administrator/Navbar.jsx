@@ -2,14 +2,20 @@ import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineHome, AiOutlineShoppingCart } from "react-icons/ai";
 import { FiBox, FiUsers } from "react-icons/fi";
 import { MdOutlineCategory, MdOutlineDiscount } from "react-icons/md";
-import { Link, matchPath, useLocation } from "react-router-dom";
+import { Link, matchPath, useLocation, useNavigate } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
 import { IoSettingsOutline } from "react-icons/io5";
 import { findOne } from "../../composables/administrator/UserService";
 import { IMAGE_URL } from "../../secret";
+import {
+  logout,
+  verify,
+} from "../../composables/authentication/Authentication";
+import { showErrorToast } from "../ToastNotification";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
   const [user, setUser] = useState([]);
@@ -30,6 +36,16 @@ const Navbar = () => {
       ? "underline-active-navbar-admin"
       : "underline-inactive-navbar-admin";
 
+  const handleLogout = async () => {
+    const { data } = await logout();
+
+    if (data?.message === "Logged out successfully") {
+      navigate("/sign-in");
+    } else {
+      showErrorToast(data?.meesage);
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -45,7 +61,9 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data } = await findOne(40);
+      const response = await verify();
+
+      const { data } = await findOne(response?.data?.user?.id);
       setUser(data);
     };
 
@@ -56,9 +74,12 @@ const Navbar = () => {
     <div className="w-full h-fit bg-white">
       <div className="flex justify-center min-h-16 border-b-[1px] border-gray-200">
         <div className="flex justify-between items-center xl:w-[1180px] 2xl:w-[1580px]">
-          <div className="w-fit text-xl text-blue-600 font-semibold">
+          <Link
+            to={"/administrator/dashboard"}
+            className="w-fit text-xl text-blue-600 font-semibold"
+          >
             E-COMMERCE PANEL
-          </div>
+          </Link>
 
           <div className="relative inline-block">
             <div
@@ -103,6 +124,7 @@ const Navbar = () => {
                 </Link>
               </ul>
               <div
+                onClick={handleLogout}
                 className="flex  items-center gap-2 border-t px-10 py-2 bg-red-500 text-white
                    hover:bg-red-600 cursor-pointer transition rounded-br-md rounded-bl-md"
               >

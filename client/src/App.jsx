@@ -23,12 +23,17 @@ import EditDiscount from "./pages/administrator/Discounts/Edit";
 import SignIn from "./pages/user/Authentication/SignIn";
 import SignUp from "./pages/user/Authentication/SignUp";
 import AuthLayout from "./layouts/authentication/AuthLayout";
+import Index from "./pages/Index";
+import IndexLayout from "./layouts/ีuser/IndexLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <ToastContainer position="bottom-right" theme="colored" />
       <Routes>
+        <Route path="" element={<IndexLayout />}>
+          <Route path="/" element={<Index />} />
+        </Route>
         <Route path="" element={<AuthLayout />}>
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />

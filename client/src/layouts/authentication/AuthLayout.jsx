@@ -1,7 +1,25 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { verify } from "../../composables/authentication/Authentication";
 
 const AuthLayout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const verifyUser = async () => {
+      const response = await verify();
+      if (response.status === 200) {
+        if (response?.data?.user?.role === "ADMIN") {
+          navigate("/administrator/dashboard");
+        } else {
+          navigate("/");
+        }
+      }
+    };
+
+    verifyUser();
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
       <div

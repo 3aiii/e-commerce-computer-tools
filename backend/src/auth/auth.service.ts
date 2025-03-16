@@ -10,6 +10,14 @@ export class AuthService {
     private JwtService: JwtService,
   ) {}
 
+  async verifyToken(token: string) {
+    try {
+      return this.JwtService.verify(token);
+    } catch (error) {
+      return null;
+    }
+  }
+
   async login(payload: any) {
     const user = await this.DatabaseService.user.findUnique({
       where: {
@@ -32,7 +40,11 @@ export class AuthService {
       );
     }
 
-    return this.JwtService.sign(payload);
+    return this.JwtService.sign({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
   }
 
   async logout(res: any) {

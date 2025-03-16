@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
 import { Prisma } from '@prisma/client';
-import { compareSync, hashSync } from 'bcrypt';
+import { hashSync } from 'bcrypt';
 import * as fs from 'fs';
 import * as path from 'path';
 
