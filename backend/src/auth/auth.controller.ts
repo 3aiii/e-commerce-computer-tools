@@ -20,7 +20,7 @@ export class AuthController {
     const token = req.cookies.user_token;
 
     if (!token) {
-      throw new HttpException(
+      return new HttpException(
         'Not found your token, please login first.',
         HttpStatus.NOT_FOUND,
       );

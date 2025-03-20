@@ -132,10 +132,10 @@ const Index = () => {
                       {user.role}
                     </div>
                   </td>
-                  <td className="tbody-td text-letft">
+                  <td className="tbody-td text-left">
                     {user.profile?.[0]?.firstname} {user.profile?.[0]?.lastname}
                   </td>
-                  <td className="tbody-td text-letft">{user.email}</td>
+                  <td className="tbody-td text-left">{user.email}</td>
                   <td className="tbody-td text-center">
                     <div
                       className={`flex justify-center items-center p-[2px] px-2 gap-1

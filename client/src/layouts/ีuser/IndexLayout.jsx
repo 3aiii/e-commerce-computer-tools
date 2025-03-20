@@ -4,10 +4,14 @@ import Navbar from "../../components/user/Navbar";
 
 const IndexLayout = () => {
   return (
-    <div>
-      <Navbar />
-      <div>
-        <Outlet />
+    <div className="flex flex-col justify-center items-center">
+      <div className="w-full">
+        <Navbar />
+      </div>
+      <div className="flex justify-center w-full min-h-screen">
+        <div className="w-[1280px]">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

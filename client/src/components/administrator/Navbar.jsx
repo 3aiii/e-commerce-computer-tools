@@ -24,7 +24,7 @@ const Navbar = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
-
+    
   const isActive = (path) =>
     location.pathname === path || matchPath(path, location.pathname);
 
