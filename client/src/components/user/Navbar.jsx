@@ -6,15 +6,21 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
 import { findAll } from "../../composables/administrator/CategoryService";
+import {
+  logout,
+  verify,
+} from "../../composables/authentication/Authentication";
+import { findOne } from "../../composables/administrator/UserService";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
+  const [isScrolled, setIsScrolled] = useState(false);
   const [categories, setCateogries] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setuser] = useState(false);
-
+  const [user, setUser] = useState([]);
+  
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -39,16 +45,14 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setDropdownOpen(false);
-      }
+    const fetchUser = async () => {
+      const response = await verify();
+      const { data } = await findOne(response?.data?.user?.id);
+
+      setUser(data);
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    fetchUser();
   }, []);
 
   useEffect(() => {
@@ -64,8 +68,19 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 0);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <div className="flex justify-center w-full h-fit bg-white py-2">
+    <div
+      className={`sticky top-0 left-0 z-[999] flex justify-center w-full bg-white py-2
+        transition-all duration-300 ${
+          isScrolled ? "bg-white border-b-[1px] shadow-md" : "bg-transparent"
+        }`}
+    >
       <div>
         <div className="flex w-[1280px] justify-between">
           <div className="flex items-center gap-4">
@@ -75,12 +90,13 @@ const Navbar = () => {
             >
               DRACULAR
             </Link>
-            <div
+            <Link
+              to={"/products"}
               className="flex items-center text-sm px-2 py-1 gap-2 text-red-500 cursor-pointer
                   font-semibold bg-red-100 rounded-md transition hover:bg-red-300"
             >
-              <TbCategory size={25} /> <span>สินค้าทั้งหมด</span>
-            </div>
+              <TbCategory size={25} /> <span>ALL PRODUCT</span>
+            </Link>
           </div>
           <div className="relative inline-block">
             <div className={`flex gap-${user ? `4` : `3`}`}>
@@ -91,7 +107,7 @@ const Navbar = () => {
                           rounded-full transition cursor-pointer p-1"
                 />
               </Link>
-              {user ? (
+              {user.length !== 0 ? (
                 <div
                   onClick={toggleDropdown}
                   className="flex gap-4 items-center cursor-pointer"
@@ -118,14 +134,14 @@ const Navbar = () => {
                     className={`rounded-md font-semibold px-4 p-2 bg-red-500 text-white
                            hover:bg-red-400 transition`}
                   >
-                    เข้าสู่ระบบ
+                    SIGN IN
                   </Link>
                   <Link
                     to={"/sign-up"}
                     className={`rounded-md font-semibold px-4 p-2 bg-transparent text-red-500
                            hover:bg-red-500 hover:text-white border-[1px] transition`}
                   >
-                    สมัครสมาชิก
+                    SIGN UP
                   </Link>
                 </>
               )}

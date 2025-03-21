@@ -26,26 +26,40 @@ export class ProductsService {
     page: number = 1,
     perPage: number,
     search?: string,
+    status?: string,
   ) {
     const skip = (page - 1) * perPage;
 
-    const whereCondition: Prisma.ProductWhereInput = search
-      ? {
-          OR: [
-            {
-              name: {
-                contains: search,
-                mode: 'insensitive',
+    const whereCondition: Prisma.ProductWhereInput = {
+      AND: [
+        search
+          ? {
+              OR: [
+                {
+                  name: {
+                    contains: search,
+                    mode: 'insensitive',
+                  },
+                },
+              ],
+            }
+          : {},
+          
+        status
+          ? {
+              status: {
+                equals: status === 'active',
               },
-            },
-          ],
-        }
-      : {};
+            }
+          : {},
+      ],
+    };
 
     const data = await this.DatabaseService.product.findMany({
       where: whereCondition,
       include: {
         category: true,
+        ProductImage: true,
       },
       skip,
       take: Number(perPage),

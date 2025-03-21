@@ -9,6 +9,7 @@ const AdministratorLayout = () => {
   useEffect(() => {
     const verifyUser = async () => {
       const response = await verify();
+      
       if (response.status === 200) {
         if (response?.data?.user?.role === "ADMIN") {
           navigate("/administrator/dashboard");

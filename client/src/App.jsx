@@ -28,6 +28,9 @@ import IndexLayout from "./layouts/ีuser/IndexLayout";
 import Cart from "./pages/user/payment/cart";
 import Checkout from "./pages/user/payment/Checkout";
 import Categories from "./pages/user/Categories";
+import IndexUserProducts from "./pages/user/Products/Index";
+import ProductDetail from "./pages/user/Products/Product";
+import Account from "./pages/user/Authentication/Account";
 
 function App() {
   return (
@@ -38,9 +41,9 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/account" />
-          <Route path="/products" />
-          <Route path="/product/:slug" />
+          <Route path="/account" element={<Account />} />
+          <Route path="/products" element={<IndexUserProducts />} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/categories/:slug" element={<Categories />} />
         </Route>
         <Route path="" element={<AuthLayout />}>

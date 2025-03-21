@@ -24,7 +24,7 @@ const Navbar = () => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
-    
+
   const isActive = (path) =>
     location.pathname === path || matchPath(path, location.pathname);
 
@@ -62,13 +62,20 @@ const Navbar = () => {
   useEffect(() => {
     const fetchUser = async () => {
       const response = await verify();
-
       const { data } = await findOne(response?.data?.user?.id);
+
       setUser(data);
     };
 
     fetchUser();
   }, []);
+
+  // verify user state
+  useEffect(() => {
+    if (Array.isArray(user) && user.length === 0) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   return (
     <div className="w-full h-fit bg-white">

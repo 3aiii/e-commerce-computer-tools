@@ -1,0 +1,186 @@
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Thumbs } from "swiper/modules";
+import { IMAGE_URL } from "../../../secret";
+import { FaStar } from "react-icons/fa";
+import { formatPrice } from "../../../utils/formatPrice";
+import { FaMinus, FaPlus } from "react-icons/fa";
+import { IoCartOutline } from "react-icons/io5";
+import { TbTruckDelivery } from "react-icons/tb";
+import { RiLoopRightFill } from "react-icons/ri";
+import { default as HeroCard } from "../../../components/user/Hero/Card";
+import { findProductByCategory } from "../../../composables/user/CategoryService";
+import Card from "./Card";
+
+const Product = () => {
+  const location = useLocation();
+  const { slug } = useParams();
+  const data = location?.state?.data;
+
+  const [relatedProduct, setRelatedProduct] = useState([]);
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  console.log(relatedProduct);
+  const plusQuantity = () => setQuantity((prev) => prev + 1);
+  const minusQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
+
+  useEffect(() => {
+    const fetchProductByCategory = async () => {
+      const { data } = await findProductByCategory(1);
+
+      setRelatedProduct(data?.data);
+    };
+
+    fetchProductByCategory();
+  }, []);
+
+  return (
+    <div className="flex flex-col mt-4 mb-24">
+      <div className="flex gap-4">
+        <div className="w-1/2">
+          <div className="flex items-center gap-3 font-light text-sm">
+            <span>Home</span>
+            <div className="w-1 h-1 rounded-full bg-red-500"></div>
+            <span>{data?.category?.name}</span>
+            <div className="w-1 h-1 rounded-full bg-red-500"></div>
+            <span>{slug}</span>
+          </div>
+          <p className="text-gray-400 font-base text-sm mt-1">
+            {data?.category?.name} {data?.name}
+          </p>
+
+          <div>
+            <Swiper
+              spaceBetween={10}
+              navigation={true}
+              thumbs={{ swiper: thumbsSwiper }}
+              modules={[Navigation, Thumbs]}
+              className="w-[500px] h-auto"
+              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+            >
+              {data?.ProductImage?.map((img, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={`${IMAGE_URL}/${img.url}`}
+                    alt={`Product ${index}`}
+                    className="w-full my-4"
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+            <Swiper
+              onSwiper={setThumbsSwiper}
+              spaceBetween={10}
+              slidesPerView={5}
+              modules={[Thumbs]}
+              className="mt-2 cursor-pointer"
+            >
+              {data?.ProductImage?.map((img, index) => (
+                <SwiperSlide key={index}>
+                  <img
+                    src={`${IMAGE_URL}/${img.url}`}
+                    alt={`Thumbnail ${index}`}
+                    className={`w-full border rounded-xl ${
+                      index === activeIndex
+                        ? "border-red-500 ring-red-500"
+                        : "border-gray-200"
+                    } transition`}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </div>
+        <div className="w-1/2">
+          <span className="text-red-500 text-sm">{data?.category?.name}</span>
+          <div>
+            <h1 className="text-2xl font-semibold">{data?.name}</h1>
+            <div className="flex items-center gap-2 my-3">
+              <FaStar size={25} className="text-[#FFAD33]" />
+              <FaStar size={25} className="text-black opacity-25" />
+              <FaStar size={25} className="text-black opacity-25" />
+              <FaStar size={25} className="text-black opacity-25" />
+              <FaStar size={25} className="text-black opacity-25" />
+              <p className="text-black opacity-50 ml-4">(15 Reviews)</p>
+            </div>
+            <div className="font-semibold text-red-500 my-3 mb-8 text-2xl">
+              ฿ {formatPrice(data?.price)}
+            </div>
+            <p className="font-light break-words pb-8 border-b-[1px]">
+              {data?.description}
+            </p>
+          </div>
+          <div className="flex w-full h-[44px] gap-4 my-6 mb-10">
+            <div className="flex items-center">
+              <p className="text-lg font-base">Quantity : </p>
+            </div>
+            <div className="flex items-center justify-between w-1/4 border border-gray-300 rounded-lg">
+              <button
+                onClick={minusQuantity}
+                className="flex items-center justify-center w-10 h-full border-r-[1px]"
+              >
+                <FaMinus className="w-5 h-5 text-gray-600" />
+              </button>
+              <div className="text-lg font-semibold">{quantity}</div>
+              <button
+                onClick={plusQuantity}
+                className="flex items-center justify-center w-10 h-full bg-red-500 
+                rounded-tr-lg rounded-br-lg border-gray-300 hover:bg-red-400 transition"
+              >
+                <FaPlus className="w-5 h-5 text-white" />
+              </button>
+            </div>
+            <Link
+              to={"/cart"}
+              className="bg-red-500 text-white font-semibold flex 
+              items-center justify-center text-lg rounded-lg w-1/3 transition 
+              hover:bg-red-600 active:scale-95 shadow-md gap-4"
+            >
+              <IoCartOutline size={22} />
+              BUY NOW
+            </Link>
+          </div>
+          <div className="flex flex-col w-full p-8 border-[1px] rounded-lg">
+            <div className="flex items-center gap-4 border-b-[1px] pb-4">
+              <TbTruckDelivery size={50} />
+              <div>
+                <h2 className="text-lg font-semibold">Free Delivery</h2>
+                <p>Enter your postal code for Delivery Availability</p>
+                <p className="text-sm text-gray-500">
+                  Fast and secure shipping directly to your doorstep. Estimated
+                  delivery within 3-5 business days.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 pt-4">
+              <RiLoopRightFill size={50} />
+              <div>
+                <h2 className="text-lg font-semibold">Return Delivery</h2>
+                <p>Free 30 Days Delivery Returns. Details</p>
+                <p className="text-sm text-gray-500">
+                  If you're not satisfied, return your product within 30 days at
+                  no extra cost. Terms & conditions apply.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="mt-16">
+        <HeroCard
+          name={"Related Item"}
+          navigateTo={`/categories/${data?.category?.name}`}
+        />
+        <div className="grid grid-cols-5 gap-4 mt-4">
+          {relatedProduct?.map((product, index) => (
+            <Card key={index} data={product} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Product;

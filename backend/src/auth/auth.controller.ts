@@ -27,7 +27,6 @@ export class AuthController {
     }
 
     const user = await this.AuthService.verifyToken(token);
-
     if (!user) {
       throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
     }

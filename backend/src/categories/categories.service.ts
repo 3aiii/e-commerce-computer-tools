@@ -84,6 +84,27 @@ export class CategoriesService {
     });
   }
 
+  async findProductByCategory(id: number) {
+    const data = await this.DatabaseService.product.findMany({
+      where: {
+        categoryId: Number(id),
+      },
+      include: {
+        category: true,
+        ProductImage: true,
+      },
+    });
+
+    if (data.length === 0) {
+      throw new HttpException(
+        'No product in this category.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return { data };
+  }
+
   async update(id: number, updateCategoryDto: Prisma.CategoryUpdateInput) {
     if (
       updateCategoryDto?.name === '' ||
@@ -94,7 +115,7 @@ export class CategoriesService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    
+
     return this.DatabaseService.category.update({
       where: { id },
       data: updateCategoryDto,

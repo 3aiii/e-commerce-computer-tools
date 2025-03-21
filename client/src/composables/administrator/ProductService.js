@@ -11,11 +11,12 @@ export const get = async (endpoint, params = {}) => {
   });
 };
 
-export const findAll = async (page, perPage, search) => {
+export const findAll = async (page, perPage, search, status) => {
   return await get(`products`, {
     page,
     perPage,
     search,
+    status,
   });
 };
 

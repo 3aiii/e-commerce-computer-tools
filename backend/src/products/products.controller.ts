@@ -50,9 +50,10 @@ export class ProductsController {
     @Query('page') page: number,
     @Query('perPage') perPage: number,
     @Query('search') search: string,
+    @Query('status') status: string,
   ) {
     try {
-      return this.productsService.findAll(limit, page, perPage, search);
+      return this.productsService.findAll(limit, page, perPage, search, status);
     } catch (error) {
       throw new HttpException(
         'Something went wrong',

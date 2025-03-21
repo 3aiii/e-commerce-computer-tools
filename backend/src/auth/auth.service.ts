@@ -11,11 +11,7 @@ export class AuthService {
   ) {}
 
   async verifyToken(token: string) {
-    try {
-      return this.JwtService.verify(token);
-    } catch (error) {
-      return null;
-    }
+    return this.JwtService.verify(token);
   }
 
   async login(payload: any) {
