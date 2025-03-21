@@ -44,7 +44,7 @@ export class ProductsService {
               ],
             }
           : {},
-          
+
         status
           ? {
               status: {
@@ -61,6 +61,7 @@ export class ProductsService {
         category: true,
         ProductImage: true,
       },
+      orderBy: { createdAt: 'desc' },
       skip,
       take: Number(perPage),
     });

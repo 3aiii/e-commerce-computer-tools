@@ -12,29 +12,45 @@ import { RiLoopRightFill } from "react-icons/ri";
 import { default as HeroCard } from "../../../components/user/Hero/Card";
 import { findProductByCategory } from "../../../composables/user/CategoryService";
 import Card from "./Card";
+import { findOne } from "../../../composables/administrator/ProductService";
+import { showErrorToast } from "../../../components/ToastNotification";
 
 const Product = () => {
   const location = useLocation();
   const { slug } = useParams();
-  const data = location?.state?.data;
 
+  const { id } = location?.state?.data;
+  const [data, setData] = useState([]);
   const [relatedProduct, setRelatedProduct] = useState([]);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  console.log(relatedProduct);
   const plusQuantity = () => setQuantity((prev) => prev + 1);
   const minusQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   useEffect(() => {
-    const fetchProductByCategory = async () => {
-      const { data } = await findProductByCategory(1);
+    if (!id) return;
 
-      setRelatedProduct(data?.data);
+    const fetchProductData = async () => {
+      try {
+        const { data: product } = await findOne(id);
+        setData(product);
+
+        if (product?.categoryId) {
+          const { data: related } = await findProductByCategory(
+            product.categoryId,
+            product.id
+          );
+          setRelatedProduct(related?.data || []);
+        }
+      } catch (error) {
+        // showErrorToast("Error fetching product data:");
+        console.log(error);
+      }
     };
 
-    fetchProductByCategory();
-  }, []);
+    fetchProductData();
+  }, [id]);
 
   return (
     <div className="flex flex-col mt-4 mb-24">
@@ -45,52 +61,63 @@ const Product = () => {
             <div className="w-1 h-1 rounded-full bg-red-500"></div>
             <span>{data?.category?.name}</span>
             <div className="w-1 h-1 rounded-full bg-red-500"></div>
-            <span>{slug}</span>
+            <span className="line-clamp-1">{slug}</span>
           </div>
           <p className="text-gray-400 font-base text-sm mt-1">
-            {data?.category?.name} {data?.name}
+            {data?.category?.name} | {data?.name}
           </p>
 
           <div>
-            <Swiper
-              spaceBetween={10}
-              navigation={true}
-              thumbs={{ swiper: thumbsSwiper }}
-              modules={[Navigation, Thumbs]}
-              className="w-[500px] h-auto"
-              onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
-            >
-              {data?.ProductImage?.map((img, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    src={`${IMAGE_URL}/${img.url}`}
-                    alt={`Product ${index}`}
-                    className="w-full my-4"
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-            <Swiper
-              onSwiper={setThumbsSwiper}
-              spaceBetween={10}
-              slidesPerView={5}
-              modules={[Thumbs]}
-              className="mt-2 cursor-pointer"
-            >
-              {data?.ProductImage?.map((img, index) => (
-                <SwiperSlide key={index}>
-                  <img
-                    src={`${IMAGE_URL}/${img.url}`}
-                    alt={`Thumbnail ${index}`}
-                    className={`w-full border rounded-xl ${
-                      index === activeIndex
-                        ? "border-red-500 ring-red-500"
-                        : "border-gray-200"
-                    } transition`}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            {data?.ProductImage?.length === 0 ? (
+              <div className="flex items-center justify-center mt-4">
+                <img
+                  src="https://placehold.co/500x500"
+                  className="w-[500px] h-[500px]"
+                />
+              </div>
+            ) : (
+              <>
+                <Swiper
+                  spaceBetween={10}
+                  navigation={true}
+                  thumbs={{ swiper: thumbsSwiper }}
+                  modules={[Navigation, Thumbs]}
+                  className="w-[500px] h-auto"
+                  onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+                >
+                  {data?.ProductImage?.map((img, index) => (
+                    <SwiperSlide key={index}>
+                      <img
+                        src={`${IMAGE_URL}/${img.url}`}
+                        alt={`Product ${index}`}
+                        className="w-full my-4"
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+                <Swiper
+                  onSwiper={setThumbsSwiper}
+                  spaceBetween={10}
+                  slidesPerView={5}
+                  modules={[Thumbs]}
+                  className="mt-2 cursor-pointer"
+                >
+                  {data?.ProductImage?.map((img, index) => (
+                    <SwiperSlide key={index}>
+                      <img
+                        src={`${IMAGE_URL}/${img.url}`}
+                        alt={`Thumbnail ${index}`}
+                        className={`w-full border rounded-xl ${
+                          index === activeIndex
+                            ? "border-red-500 ring-red-500"
+                            : "border-gray-200"
+                        } transition`}
+                      />
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </>
+            )}
           </div>
         </div>
         <div className="w-1/2">

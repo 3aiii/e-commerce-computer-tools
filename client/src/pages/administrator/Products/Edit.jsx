@@ -33,6 +33,7 @@ const Edit = () => {
     tax: "",
     description: "",
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProduct((prev) => ({
@@ -71,26 +72,30 @@ const Edit = () => {
       categoryId: Number(categoryId),
     };
 
-    const response = await update(id, updateProduct);
-    if (response.status === 200) {
-      if (imageData) {
-        await image(imageData, response?.data?.id);
-      }
+    try {
+      const response = await update(id, updateProduct);
+      if (response.status === 200) {
+        if (imageData) {
+          await image(imageData, response?.data?.id);
+        }
 
-      toast.success("ปรับแก้สินค้าสำเร็จ!", {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          navigate("/administrator/products");
-        },
-      });
-    } else {
-      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+        toast.success("ปรับแก้สินค้าสำเร็จ!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            navigate(`/administrator/products`);
+          },
+        });
+      } else {
+        showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+      }
+    } catch (error) {
+      showErrorToast(error.response.data.message);
     }
   };
 

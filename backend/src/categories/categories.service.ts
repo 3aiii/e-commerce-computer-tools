@@ -84,10 +84,15 @@ export class CategoriesService {
     });
   }
 
-  async findProductByCategory(id: number) {
+  async findProductByCategory(id: number, productId: number) {
     const data = await this.DatabaseService.product.findMany({
       where: {
-        categoryId: Number(id),
+        AND: [{ categoryId: Number(id) }, { status: true }],
+        NOT: [
+          {
+            id: productId,
+          },
+        ],
       },
       include: {
         category: true,

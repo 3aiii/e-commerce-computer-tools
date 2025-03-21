@@ -20,7 +20,7 @@ const Navbar = () => {
   const [categories, setCateogries] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [user, setUser] = useState([]);
-  
+
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -88,7 +88,7 @@ const Navbar = () => {
               to={"/"}
               className="text-2xl font-bold tracking-wider text-red-500"
             >
-              DRACULAR
+              DRACULA STORE
             </Link>
             <Link
               to={"/products"}
@@ -159,11 +159,11 @@ const Navbar = () => {
             >
               <ul className="py-2 text-gray-500">
                 <Link
-                  to={"/administrator/profile"}
+                  to={"/account"}
                   state={{ user }}
                   onClick={() => setDropdownOpen(false)}
                 >
-                  <li className="flex gap-2 px-10 py-2 hover:text-blue-500 hover:bg-gray-100 cursor-pointer">
+                  <li className="flex gap-2 px-10 py-2 hover:text-red-500 hover:bg-gray-100 cursor-pointer">
                     <IoSettingsOutline className="text-xl" />
                     ตั้งค่าบัญชี
                   </li>

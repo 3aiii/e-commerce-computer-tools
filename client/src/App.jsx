@@ -31,11 +31,13 @@ import Categories from "./pages/user/Categories";
 import IndexUserProducts from "./pages/user/Products/Index";
 import ProductDetail from "./pages/user/Products/Product";
 import Account from "./pages/user/Authentication/Account";
+import ScrollToTop from "./utils/scrollToTop";
 
 function App() {
   return (
     <BrowserRouter>
       <ToastContainer position="bottom-right" theme="colored" />
+      <ScrollToTop />
       <Routes>
         <Route path="" element={<IndexLayout />}>
           <Route path="/" element={<Index />} />

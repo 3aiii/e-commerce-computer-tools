@@ -22,7 +22,7 @@ const Index = () => {
       url: "https://mercular.s3.ap-southeast-1.amazonaws.com/images/landing-pages/2019/11/Surprise%20Sale/Surprise-sale-DSL-1.jpg",
     },
   ];
-
+  
   useEffect(() => {
     const fetchProducts = async () => {
       const { data } = await findAllProducts(1, 12, "", "active");
