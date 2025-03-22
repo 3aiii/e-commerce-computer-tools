@@ -27,10 +27,18 @@ const SideBar = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await verify();
-      const { data } = await findOne(response?.data?.user?.id);
+      try {
+        const response = await verify();
+        const { data } = await findOne(response?.data?.user?.id);
 
-      setUser(data);
+        setUser(data);
+      } catch (error) {
+        if (error.response.data.statusCode === 404) {
+          navigate("/sign-in");
+        } else {
+          console.log(error);
+        }
+      }
     };
 
     fetchUser();
@@ -44,7 +52,7 @@ const SideBar = () => {
           {user?.profile?.[0]?.firstname} {user?.profile?.[0]?.lastname}
         </span>
       </h1>
-      <ul className="">
+      <ul>
         <Link
           to={"/account"}
           state={{ user }}
@@ -79,9 +87,7 @@ const SideBar = () => {
         <button
           onClick={handleLogout}
           className={`flex w-full items-center gap-2 text-lg border-t-[1px] 
-            font-medium p-4 hover:bg-[#ecf3fdff] hover:text-red-500 cursor-pointer transition ${
-              matchPath(`/my-review`, location.pathname) ? `text-red-500` : ``
-            }`}
+            font-medium p-4 hover:bg-[#ecf3fdff] hover:text-red-500 cursor-pointer transition `}
         >
           <TbLogout2 size={25} className="text-gray-500" />
           Logout

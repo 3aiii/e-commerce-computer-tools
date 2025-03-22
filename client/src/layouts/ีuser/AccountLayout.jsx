@@ -8,7 +8,7 @@ const AccountLayout = () => {
   return (
     <div className="flex flex-col justify-center items-center">
       <Navbar />
-      <div className="flex justify-center w-full min-h-screen">
+      <div className="flex justify-center w-full">
         <div className="flex gap-4 w-[1280px] mt-4">
           <div className="w-1/4">
             <SideBar />

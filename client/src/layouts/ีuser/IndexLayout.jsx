@@ -7,7 +7,7 @@ const IndexLayout = () => {
   return (
     <div className="flex flex-col justify-center items-center">
       <Navbar />
-      <div className="flex justify-center w-full min-h-screen">
+      <div className="flex justify-center w-full ">
         <div className="w-[1280px]">
           <Outlet />
         </div>

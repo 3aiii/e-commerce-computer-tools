@@ -17,10 +17,10 @@ export class AuthController {
 
   @Get('verify')
   async verify(@Req() req: Request, @Res() res: Response) {
-    const token = req.cookies.user_token;
+    const token = req.cookies.user_token || null;
 
     if (!token) {
-      return new HttpException(
+      throw new HttpException(
         'Not found your token, please login first.',
         HttpStatus.NOT_FOUND,
       );
