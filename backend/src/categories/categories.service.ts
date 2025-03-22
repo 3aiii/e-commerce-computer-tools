@@ -78,9 +78,20 @@ export class CategoriesService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, status: string) {
     return this.DatabaseService.category.findFirst({
-      where: { id },
+      where: {
+        AND: [
+          { id },
+          status
+            ? {
+                status: {
+                  equals: status === 'active',
+                },
+              }
+            : {},
+        ],
+      },
     });
   }
 
@@ -89,9 +100,11 @@ export class CategoriesService {
       where: {
         AND: [{ categoryId: Number(id) }, { status: true }],
         NOT: [
-          {
-            id: productId,
-          },
+          productId
+            ? {
+                id: productId,
+              }
+            : {},
         ],
       },
       include: {
@@ -107,7 +120,20 @@ export class CategoriesService {
       );
     }
 
-    return { data };
+    const countData = await this.DatabaseService.product.count({
+      where: {
+        AND: [{ categoryId: Number(id) }, { status: true }],
+        NOT: [
+          productId
+            ? {
+                id: productId,
+              }
+            : {},
+        ],
+      },
+    });
+
+    return { data, countData };
   }
 
   async update(id: number, updateCategoryDto: Prisma.CategoryUpdateInput) {

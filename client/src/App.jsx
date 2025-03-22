@@ -30,8 +30,11 @@ import Checkout from "./pages/user/payment/Checkout";
 import Categories from "./pages/user/Categories";
 import IndexUserProducts from "./pages/user/Products/Index";
 import ProductDetail from "./pages/user/Products/Product";
-import Account from "./pages/user/Authentication/Account";
 import ScrollToTop from "./utils/scrollToTop";
+import IndexAccount from "./pages/user/Account/Index";
+import OrderHistory from "./pages/user/Account/OrderHistory";
+import MyReview from "./pages/user/Account/MyReview";
+import AccountLayout from "./layouts/ีuser/AccountLayout";
 
 function App() {
   return (
@@ -43,10 +46,14 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/account" element={<Account />} />
           <Route path="/products" element={<IndexUserProducts />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/categories/:slug" element={<Categories />} />
+        </Route>
+        <Route path="" element={<AccountLayout />}>
+          <Route path="/account" element={<IndexAccount />} />
+          <Route path="/order-history" element={<OrderHistory />} />
+          <Route path="/my-review" element={<MyReview />} />
         </Route>
         <Route path="" element={<AuthLayout />}>
           <Route path="/sign-in" element={<SignIn />} />

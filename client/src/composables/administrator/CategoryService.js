@@ -24,8 +24,8 @@ export const findAll = async (page = 1, perPage = 5, search, status) => {
   });
 };
 
-export const findOne = async (id) => {
-  return await get(`categories/${id}`);
+export const findOne = async (id, status) => {
+  return await get(`categories/${id}?status=${status}`);
 };
 
 export const remove = async (id) => {

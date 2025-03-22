@@ -6,23 +6,21 @@ import { default as CateCard } from "../components/user/Categories/Card";
 import { default as HeroCard } from "./../components/user/Hero/Card";
 import { default as ProductCard } from "./user/Products/Card";
 import MockHero from "../components/user/Hero/MockHero";
-import Service from "../components/user/Hero/Service";
 import { TbTruckDelivery, TbHeadset } from "react-icons/tb";
-import { findProductByCategory } from "../composables/user/CategoryService";
 
 const Index = () => {
   const [products, setProducts] = useState([]);
   const [productsBestSelling, setProductsBestSelling] = useState([]);
   const imageArray = [
     {
-      url: "https://www.finnix.co/wp-content/uploads/2022/12/221213-FINNIX-Mercular-Image-Deal-Banner-FINNIX-Website-1564x880-December.png",
+      url: "Surprise-sale-DSL-1.jpg",
     },
-    { url: "https://images7.alphacoders.com/737/737400.jpg" },
     {
-      url: "https://mercular.s3.ap-southeast-1.amazonaws.com/images/landing-pages/2019/11/Surprise%20Sale/Surprise-sale-DSL-1.jpg",
+      url: "2150040380.jpg",
     },
+    { url: "2100.jpg" },
   ];
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       const { data } = await findAllProducts(1, 12, "", "active");
@@ -44,7 +42,10 @@ const Index = () => {
         <div className="w-2/3 mt-2">
           <Swiper
             spaceBetween={30}
-            pagination={{ clickable: true }}
+            pagination={{
+              clickable: true,
+              dynamicBullets: true,
+            }}
             autoplay={{ delay: 2000, disableOnInteraction: false }}
             modules={[Pagination, Autoplay]}
             className="mySwiper"
@@ -92,24 +93,6 @@ const Index = () => {
             <ProductCard data={product} key={index} />
           ))}
         </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center mt-12 my-12">
-        <Service
-          icon={TbTruckDelivery}
-          Topic="FREE AND FAST DELIVERY"
-          Desc="Free delivery for all orders over $140"
-        />
-        <Service
-          icon={TbHeadset}
-          Topic="24/7 CUSTOMER SERVICE"
-          Desc="Friendly 24/7 customer support"
-        />
-        <Service
-          icon={TbTruckDelivery}
-          Topic="FREE AND FAST DELIVERY"
-          Desc="Free delivery for all orders over $140"
-        />
       </div>
     </div>
   );

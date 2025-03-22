@@ -56,7 +56,7 @@ const Product = () => {
     <div className="flex flex-col mt-4 mb-24">
       <div className="flex gap-4">
         <div className="w-1/2">
-          <div className="flex items-center gap-3 font-light text-sm">
+          <div className="flex items-center gap-3 font-light text-sm cursor-default">
             <span>Home</span>
             <div className="w-1 h-1 rounded-full bg-red-500"></div>
             <span>{data?.category?.name}</span>

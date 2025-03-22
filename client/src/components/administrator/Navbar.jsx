@@ -94,7 +94,7 @@ const Navbar = () => {
               className="flex gap-4 items-center cursor-pointer"
             >
               <img
-                className={`w-[40px] h-[40px] rounded-full`}
+                className={`w-[40px] h-[40px] object-cover rounded-full`}
                 src={
                   user?.profile?.[0]?.image === null ||
                   user?.profile?.[0]?.image === ""

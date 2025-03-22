@@ -40,8 +40,8 @@ export class CategoriesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.categoriesService.findOne(+id);
+  findOne(@Param('id') id: string, @Query('status') status: string) {
+    return this.categoriesService.findOne(+id, status);
   }
 
   @Get('findProduct/:id')

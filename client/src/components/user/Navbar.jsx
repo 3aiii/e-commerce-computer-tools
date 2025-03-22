@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { TbCategory } from "react-icons/tb";
 import { IMAGE_URL } from "../../secret";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, matchPath, useLocation, useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
@@ -14,6 +14,7 @@ import { findOne } from "../../composables/administrator/UserService";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dropdownRef = useRef(null);
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -93,7 +94,7 @@ const Navbar = () => {
             <Link
               to={"/products"}
               className="flex items-center text-sm px-2 py-1 gap-2 text-red-500 cursor-pointer
-                  font-semibold bg-red-100 rounded-md transition hover:bg-red-300"
+                  font-semibold bg-[#fae4e4] rounded-md transition hover:bg-red-200"
             >
               <TbCategory size={25} /> <span>ALL PRODUCT</span>
             </Link>
@@ -113,7 +114,7 @@ const Navbar = () => {
                   className="flex gap-4 items-center cursor-pointer"
                 >
                   <img
-                    className={`w-[40px] h-[40px] rounded-full`}
+                    className={`w-[40px] h-[40px] object-cover rounded-full`}
                     src={
                       user?.profile?.[0]?.image === null ||
                       user?.profile?.[0]?.image === ""
@@ -165,7 +166,7 @@ const Navbar = () => {
                 >
                   <li className="flex gap-2 px-10 py-2 hover:text-red-500 hover:bg-gray-100 cursor-pointer">
                     <IoSettingsOutline className="text-xl" />
-                    ตั้งค่าบัญชี
+                    Setting
                   </li>
                 </Link>
               </ul>
@@ -184,8 +185,13 @@ const Navbar = () => {
             {categories.map((category, index) => (
               <Link
                 to={`/categories/${category.name}`}
-                className="bg-[#f4f6f8] hover:bg-red-200 text-red-500 transition rounded-md 
-            px-4 py-1 font-normal w-fit cursor-pointer"
+                state={{ category }}
+                className={`bg-[#f4f6f8] hover:bg-red-200 text-red-500 transition rounded-md 
+                  px-4 py-1 font-normal w-fit cursor-pointer ${
+                    matchPath(`/categories/${category.name}`, location.pathname)
+                      ? `bg-red-200`
+                      : ``
+                  }`}
                 key={index}
               >
                 {category.name}
