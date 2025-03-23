@@ -11,15 +11,15 @@ const Categories = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [product, setProduct] = useState("");
-
+  
   useEffect(() => {
     const fetchProductCategory = async () => {
-      const { data } = await findProductByCategory(id);
+      const { data } = await findProductByCategory(id, "", searchTerm);
       setProduct(data);
     };
 
     fetchProductCategory();
-  }, [id]);
+  }, [searchTerm, id]);
 
   return (
     <div className="mt-4">

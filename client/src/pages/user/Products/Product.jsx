@@ -14,6 +14,9 @@ import { findProductByCategory } from "../../../composables/user/CategoryService
 import Card from "./Card";
 import { findOne } from "../../../composables/administrator/ProductService";
 import { showErrorToast } from "../../../components/ToastNotification";
+import { verify } from "../../../composables/authentication/Authentication";
+import { create } from "../../../composables/user/CartService";
+import { toast } from "react-toastify";
 
 const Product = () => {
   const location = useLocation();
@@ -21,12 +24,65 @@ const Product = () => {
 
   const { id } = location?.state?.data;
   const [data, setData] = useState([]);
+  const [user, setUser] = useState([]);
   const [relatedProduct, setRelatedProduct] = useState([]);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
-  const plusQuantity = () => setQuantity((prev) => prev + 1);
-  const minusQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
+
+  const updateQuantity = async (change) => {
+    const newQuantity = Math.max(1, quantity + change);
+    setQuantity(newQuantity);
+  };
+
+  const plusQuantity = () => updateQuantity(1);
+  const minusQuantity = () => updateQuantity(-1);
+
+  const handleAddProductIntoCart = async () => {
+    try {
+      const { data } = await create({
+        userId: 40,
+        productId: id,
+        quantity: quantity,
+      });
+
+      if (data) {
+        toast.success("เพิ่มสินค้าเสร็จสิ้น!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      showErrorToast("Error adding product to cart");
+    }
+  };
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const { data } = await verify();
+  //       console.log(data);
+  //       if (data?.user) {
+  //         setUser(data.user);
+  //       } else {
+  //         toast.error("Session expired, please log in again.", {
+  //           position: "bottom-right",
+  //           autoClose: 3000,
+  //         });
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //       toast.error("Error fetching user data.", {
+  //         position: "bottom-right",
+  //         autoClose: 3000,
+  //       });
+  //     }
+  //   };
+
+  //   fetchUserData();
+  // }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -39,7 +95,8 @@ const Product = () => {
         if (product?.categoryId) {
           const { data: related } = await findProductByCategory(
             product.categoryId,
-            product.id
+            product.id,
+            ""
           );
           setRelatedProduct(related?.data || []);
         }
@@ -48,7 +105,6 @@ const Product = () => {
         console.log(error);
       }
     };
-
     fetchProductData();
   }, [id]);
 
@@ -146,6 +202,7 @@ const Product = () => {
             <div className="flex items-center justify-between w-1/4 border border-gray-300 rounded-lg">
               <button
                 onClick={minusQuantity}
+                disabled={quantity <= 1}
                 className="flex items-center justify-center w-10 h-full border-r-[1px]"
               >
                 <FaMinus className="w-5 h-5 text-gray-600" />
@@ -159,15 +216,15 @@ const Product = () => {
                 <FaPlus className="w-5 h-5 text-white" />
               </button>
             </div>
-            <Link
-              to={"/cart"}
+            <button
+              onClick={() => handleAddProductIntoCart}
               className="bg-red-500 text-white font-semibold flex 
-              items-center justify-center text-lg rounded-lg w-1/3 transition 
-              hover:bg-red-600 active:scale-95 shadow-md gap-4"
+                items-center justify-center text-lg rounded-lg w-1/3 transition 
+                hover:bg-red-600 active:scale-95 shadow-md gap-4"
             >
               <IoCartOutline size={22} />
               BUY NOW
-            </Link>
+            </button>
           </div>
           <div className="flex flex-col w-full p-8 border-[1px] rounded-lg">
             <div className="flex items-center gap-4 border-b-[1px] pb-4">

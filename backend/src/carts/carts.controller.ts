@@ -19,9 +19,22 @@ export class CartsController {
     return this.cartsService.create(createCartDto);
   }
 
-  @Get()
-  findAll() {
-    return this.cartsService.findAll();
+  @Get('findAll/:id')
+  findAll(@Param('id') id: string) {
+    return this.cartsService.findAll(+id);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.cartsService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: Prisma.UserUpdateInput,
+  ) {
+    return this.cartsService.update(+id, updateUserDto);
   }
 
   @Delete(':id')

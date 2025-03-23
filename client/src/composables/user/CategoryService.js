@@ -1,10 +1,9 @@
 import { HOST_URL } from "../../secret";
-import { get } from "../administrator/ProductService";
 import axios from "./../../../node_modules/axios/lib/axios";
 
-export const findProductByCategory = async (id, productId) => {
+export const findProductByCategory = async (id, productId, search) => {
   return axios.get(
-    `${HOST_URL}/categories/findProduct/${id}?productId=${productId}`,
+    `${HOST_URL}/categories/findProduct/${id}?productId=${productId}&search=${search}`,
     {
       headers: {
         "Content-Type": "application/json",

@@ -5,15 +5,45 @@ import { Prisma } from '@prisma/client';
 @Injectable()
 export class CartsService {
   constructor(private readonly DatabaseService: DatabaseService) {}
-  create(createCartDto: Prisma.CartCreateInput) {
+
+  async create(
+    createCartDto: Prisma.CartCreateInput & {
+      userId?: number;
+      productId?: number;
+    },
+  ) {
+    const existingCart = await this.DatabaseService.cart.findFirst({
+      where: {
+        userId: createCartDto?.userId,
+        productId: createCartDto?.productId,
+      },
+    });
+
+    if (existingCart) {
+      return this.DatabaseService.cart.update({
+        where: { id: existingCart.id },
+        data: {
+          quantity: existingCart.quantity + (createCartDto.quantity ?? 0),
+        },
+      });
+    }
+
     return this.DatabaseService.cart.create({
-      data: createCartDto,
+      data: {
+        user: { connect: { id: createCartDto.userId } },
+        product: { connect: { id: createCartDto.productId } },
+        quantity: createCartDto.quantity,
+      },
     });
   }
 
-  findAll() {
+  findAll(id: number) {
     return this.DatabaseService.cart.findMany({
+      where: {
+        userId: id,
+      },
       select: {
+        id: true,
         quantity: true,
         product: {
           include: {
@@ -21,6 +51,21 @@ export class CartsService {
           },
         },
       },
+    });
+  }
+
+  findOne(id: number) {
+    return this.DatabaseService.cart.findUnique({
+      where: {
+        id,
+      },
+    });
+  }
+
+  update(id: number, updateCartDto: Prisma.CartUpdateInput) {
+    return this.DatabaseService.cart.update({
+      where: { id },
+      data: { quantity: updateCartDto.quantity },
     });
   }
 

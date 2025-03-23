@@ -95,10 +95,14 @@ export class CategoriesService {
     });
   }
 
-  async findProductByCategory(id: number, productId: number) {
+  async findProductByCategory(id: number, productId: number, search: string) {
     const data = await this.DatabaseService.product.findMany({
       where: {
-        AND: [{ categoryId: Number(id) }, { status: true }],
+        AND: [
+          { categoryId: Number(id) },
+          { status: true },
+          search ? { name: { contains: search, mode: 'insensitive' } } : {},
+        ],
         NOT: [
           productId
             ? {
@@ -122,7 +126,11 @@ export class CategoriesService {
 
     const countData = await this.DatabaseService.product.count({
       where: {
-        AND: [{ categoryId: Number(id) }, { status: true }],
+        AND: [
+          { categoryId: Number(id) },
+          { status: true },
+          search ? { name: { contains: search, mode: 'insensitive' } } : {},
+        ],
         NOT: [
           productId
             ? {

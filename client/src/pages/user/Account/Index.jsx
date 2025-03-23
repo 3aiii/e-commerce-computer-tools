@@ -67,7 +67,7 @@ const Index = () => {
           <div className="flex flex-col items-center gap-2">
             <div className="flex flex-col items-center gap-2">
               <img
-                src={previewImage || "/default-profile.png"}
+                src={previewImage || "/profile image"}
                 className="w-[150px] h-[150px] object-cover rounded-full"
                 alt="Profile Preview"
               />

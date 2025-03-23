@@ -48,8 +48,13 @@ export class CategoriesController {
   findProductByCategory(
     @Param('id') id: string,
     @Query('productId') productId: string,
+    @Query('search') search: string,
   ) {
-    return this.categoriesService.findProductByCategory(+id, +productId);
+    return this.categoriesService.findProductByCategory(
+      +id,
+      +productId,
+      search,
+    );
   }
 
   @Patch(':id')
