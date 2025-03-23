@@ -5,21 +5,23 @@ import { Link, matchPath, useLocation, useNavigate } from "react-router-dom";
 import { IoSettingsOutline } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
 import { IoCartOutline } from "react-icons/io5";
-import { findAll } from "../../composables/administrator/CategoryService";
+import { findAll as findAllCategory } from "../../composables/administrator/CategoryService";
 import {
   logout,
   verify,
 } from "../../composables/authentication/Authentication";
 import { findOne } from "../../composables/administrator/UserService";
+import { findAll as findAllCarts } from "../../composables/user/CartService";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dropdownRef = useRef(null);
 
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [carts, setCarts] = useState([]);
   const [categories, setCateogries] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState([]);
 
   const toggleDropdown = () => {
@@ -38,7 +40,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchs = async () => {
-      const { data } = await findAll(1, 99, "", "active");
+      const { data } = await findAllCategory(1, 99, "", "active");
       setCateogries(data?.data);
     };
 
@@ -55,6 +57,16 @@ const Navbar = () => {
 
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    const fetchCarts = async () => {
+      const { data } = await findAllCarts(user?.id);
+
+      setCarts(data);
+    };
+
+    fetchCarts();
+  }, [user, location.pathname]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -101,12 +113,19 @@ const Navbar = () => {
           </div>
           <div className="relative inline-block">
             <div className={`flex gap-${user ? `4` : `3`}`}>
-              <Link to={"/cart"}>
+              <Link to={"/cart"} className="relative flex items-center">
                 <IoCartOutline
                   size={35}
-                  className="text-gray-500 hover:text-red-600 hover:bg-red-200 
-                          rounded-full transition cursor-pointer p-1"
+                  className="text-gray-600 hover:text-red-600 transition cursor-pointer p-1"
                 />
+                {carts.length > 0 && (
+                  <span
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold 
+                w-5 h-5 flex items-center justify-center rounded-full shadow-md border-[1px] border-white"
+                  >
+                    {carts.length}
+                  </span>
+                )}
               </Link>
               {user.length !== 0 ? (
                 <div

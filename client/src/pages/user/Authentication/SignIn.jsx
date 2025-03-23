@@ -15,23 +15,29 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await login(formData);
+    try {
+      const response = await login(formData);
 
-    if (response.status === 201) {
-      toast.success("เข้าสู่ระบบสำเร็จ!", {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          window.location.reload();
-        },
-      });
-    } else {
-      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+      if (response.status === 201) {
+        toast.success("เข้าสู่ระบบสำเร็จ!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            window.location.reload();
+          },
+        });
+      } else {
+        showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+      }
+    } catch (error) {
+      if (error.response.data.statusCode === 401) {
+        showErrorToast("ตรวจสอบ email และ password อีกครั้ง");
+      }
     }
   };
 

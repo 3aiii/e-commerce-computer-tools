@@ -35,6 +35,7 @@ import IndexAccount from "./pages/user/Account/Index";
 import OrderHistory from "./pages/user/Account/OrderHistory";
 import MyReview from "./pages/user/Account/MyReview";
 import AccountLayout from "./layouts/ีuser/AccountLayout";
+import UploadSlip from "./pages/user/Payment/UploadSlip";
 
 function App() {
   return (
@@ -42,23 +43,31 @@ function App() {
       <ToastContainer position="bottom-right" theme="colored" />
       <ScrollToTop />
       <Routes>
+        {/* Index Layout */}
         <Route path="" element={<IndexLayout />}>
           <Route path="/" element={<Index />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/upload-slip" element={<UploadSlip />} />
           <Route path="/products" element={<IndexUserProducts />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/categories/:slug" element={<Categories />} />
         </Route>
+
+        {/* Account Layout */}
         <Route path="" element={<AccountLayout />}>
           <Route path="/account" element={<IndexAccount />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/my-review" element={<MyReview />} />
         </Route>
+
+        {/* Auth Layout */}
         <Route path="" element={<AuthLayout />}>
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
         </Route>
+        
+        {/* Administrator Layout */}
         <Route path="/administrator" element={<AdministratorLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="profile" element={<InputLayout />}>

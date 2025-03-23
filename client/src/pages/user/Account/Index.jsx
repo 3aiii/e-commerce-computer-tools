@@ -22,7 +22,7 @@ const Index = () => {
     initialUserState?.profile?.[0]?.image || ""
   );
   const [previewImage, setPreviewImage] = useState(
-    image ? `${IMAGE_URL}/${image}` : ""
+    image ? `${IMAGE_URL}/${image}` : "https://placehold.co/150x150"
   );
 
   const handleFileChange = (event) => {

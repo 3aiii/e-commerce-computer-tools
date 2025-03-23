@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
 import { IMAGE_URL } from "../../../secret";
@@ -19,6 +19,7 @@ import { create } from "../../../composables/user/CartService";
 import { toast } from "react-toastify";
 
 const Product = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { slug } = useParams();
 
@@ -41,7 +42,7 @@ const Product = () => {
   const handleAddProductIntoCart = async () => {
     try {
       const { data } = await create({
-        userId: 40,
+        userId: user?.id,
         productId: id,
         quantity: quantity,
       });
@@ -51,6 +52,9 @@ const Product = () => {
           position: "bottom-right",
           autoClose: 1000,
           hideProgressBar: false,
+          onClose: () => {
+            navigate("/cart");
+          },
         });
       }
     } catch (error) {
@@ -59,30 +63,29 @@ const Product = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const { data } = await verify();
-  //       console.log(data);
-  //       if (data?.user) {
-  //         setUser(data.user);
-  //       } else {
-  //         toast.error("Session expired, please log in again.", {
-  //           position: "bottom-right",
-  //           autoClose: 3000,
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //       toast.error("Error fetching user data.", {
-  //         position: "bottom-right",
-  //         autoClose: 3000,
-  //       });
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const { data } = await verify();
+        if (data?.user) {
+          setUser(data.user);
+        } else {
+          toast.error("Session expired, please log in again.", {
+            position: "bottom-right",
+            autoClose: 3000,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error("Error fetching user data.", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
+      }
+    };
 
-  //   fetchUserData();
-  // }, []);
+    fetchUserData();
+  }, []);
 
   useEffect(() => {
     if (!id) return;
@@ -217,7 +220,7 @@ const Product = () => {
               </button>
             </div>
             <button
-              onClick={() => handleAddProductIntoCart}
+              onClick={handleAddProductIntoCart}
               className="bg-red-500 text-white font-semibold flex 
                 items-center justify-center text-lg rounded-lg w-1/3 transition 
                 hover:bg-red-600 active:scale-95 shadow-md gap-4"

@@ -6,7 +6,7 @@ const DeleteModal = ({ onConfirm, product }) => {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>
-        <button className="delete-button ">
+        <button className="delete-button">
           <AiOutlineDelete size={20} />
         </button>
       </AlertDialog.Trigger>
