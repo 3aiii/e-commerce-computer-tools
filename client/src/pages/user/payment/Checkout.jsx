@@ -38,7 +38,14 @@ const Checkout = () => {
       const response = await create(orderData);
 
       if (response.status === 201) {
-        await remove(user?.id, true);
+        await remove(user?.id, "delMany");
+
+        navigate("/upload-slip", {
+          state: {
+            total: discountPrice ? totalPrice - discountPrice : totalPrice,
+            orderId: response?.data?.id,
+          },
+        });
       }
     } catch (error) {
       console.log(error);
@@ -213,17 +220,13 @@ const Checkout = () => {
             </span>
           </div>
           <div className="w-full px-5 py-4">
-            <Link
+            <button
               onClick={CheckOutOrder}
-              to="/upload-slip"
-              state={{
-                total: discountPrice ? totalPrice - discountPrice : totalPrice,
-              }}
               className="w-full block text-center py-2 bg-red-500 
                 hover:bg-red-600 text-white rounded-md transition"
             >
               Checkout
-            </Link>
+            </button>
           </div>
         </div>
       </div>

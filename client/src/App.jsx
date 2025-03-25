@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import AdministratorLayout from "./layouts/administrator/AdministratorLayout";
 import IndexProducts from "./pages/administrator/Products/Index";
@@ -38,79 +38,91 @@ import AccountLayout from "./layouts/ีuser/AccountLayout";
 import UploadSlip from "./pages/user/Payment/UploadSlip";
 
 function App() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate page loading effect
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <BrowserRouter>
       <ToastContainer position="bottom-right" theme="colored" />
       <ScrollToTop />
-      <Routes>
-        {/* Index Layout */}
-        <Route path="" element={<IndexLayout />}>
-          <Route path="/" element={<Index />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/products" element={<IndexUserProducts />} />
-          <Route path="/product/:slug" element={<ProductDetail />} />
-          <Route path="/categories/:slug" element={<Categories />} />
-        </Route>
+      {loading ? (
+        <div className="loading-spinner">Loading...</div>
+      ) : (
+        <Routes>
+          {/* Index Layout */}
+          <Route path="" element={<IndexLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/products" element={<IndexUserProducts />} />
+            <Route path="/product/:slug" element={<ProductDetail />} />
+            <Route path="/categories/:slug" element={<Categories />} />
+          </Route>
 
-        <Route path="/upload-slip" element={<UploadSlip />} />
-        
-        {/* Account Layout */}
-        <Route path="" element={<AccountLayout />}>
-          <Route path="/account" element={<IndexAccount />} />
-          <Route path="/order-history" element={<OrderHistory />} />
-          <Route path="/my-review" element={<MyReview />} />
-        </Route>
+          <Route path="/upload-slip" element={<UploadSlip />} />
 
-        {/* Auth Layout */}
-        <Route path="" element={<AuthLayout />}>
-          <Route path="/sign-in" element={<SignIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-        </Route>
+          {/* Account Layout */}
+          <Route path="" element={<AccountLayout />}>
+            <Route path="/account" element={<IndexAccount />} />
+            <Route path="/order-history" element={<OrderHistory />} />
+            <Route path="/my-review" element={<MyReview />} />
+          </Route>
 
-        {/* Administrator Layout */}
-        <Route path="/administrator" element={<AdministratorLayout />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="profile" element={<InputLayout />}>
-            <Route path="" element={<Profile />} />
+          {/* Auth Layout */}
+          <Route path="" element={<AuthLayout />}>
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
           </Route>
-          <Route path="products" element={<IndexProducts />} />
-          <Route path="products/create" element={<InputLayout />}>
-            <Route path="" element={<CreateProducts />} />
+
+          {/* Administrator Layout */}
+          <Route path="/administrator" element={<AdministratorLayout />}>
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="profile" element={<InputLayout />}>
+              <Route path="" element={<Profile />} />
+            </Route>
+            <Route path="products" element={<IndexProducts />} />
+            <Route path="products/create" element={<InputLayout />}>
+              <Route path="" element={<CreateProducts />} />
+            </Route>
+            <Route path="products/:slug" element={<InputLayout />}>
+              <Route path="" element={<Product />} />
+            </Route>
+            <Route path="products/:slug/edit" element={<InputLayout />}>
+              <Route path="" element={<EditProduct />} />
+            </Route>
+            <Route path="users" element={<IndexUsers />} />
+            <Route path="users/:slug" element={<InputLayout />}>
+              <Route path="" element={<User />} />
+            </Route>
+            <Route path="users/create" element={<InputLayout />}>
+              <Route path="" element={<CreateUser />} />
+            </Route>
+            <Route path="users/:slug/edit" element={<InputLayout />}>
+              <Route path="" element={<EditUser />} />
+            </Route>
+            <Route path="orders" element={<IndexOrders />} />
+            <Route path="orders/:slug" element={<InputLayout />}>
+              <Route path="" element={<Order />} />
+            </Route>
+            <Route path="orders/:slug/edit" element={<InputLayout />}>
+              <Route path="" element={<EditOrder />} />
+            </Route>
+            <Route path="categories" element={<IndexCategories />} />
+            <Route path="discount" element={<IndexDiscount />} />
+            <Route path="discount/create" element={<InputLayout />}>
+              <Route path="" element={<CreateDiscount />} />
+            </Route>
+            <Route path="discount/:slug/edit" element={<InputLayout />}>
+              <Route path="" element={<EditDiscount />} />
+            </Route>
           </Route>
-          <Route path="products/:slug" element={<InputLayout />}>
-            <Route path="" element={<Product />} />
-          </Route>
-          <Route path="products/:slug/edit" element={<InputLayout />}>
-            <Route path="" element={<EditProduct />} />
-          </Route>
-          <Route path="users" element={<IndexUsers />} />
-          <Route path="users/:slug" element={<InputLayout />}>
-            <Route path="" element={<User />} />
-          </Route>
-          <Route path="users/create" element={<InputLayout />}>
-            <Route path="" element={<CreateUser />} />
-          </Route>
-          <Route path="users/:slug/edit" element={<InputLayout />}>
-            <Route path="" element={<EditUser />} />
-          </Route>
-          <Route path="orders" element={<IndexOrders />} />
-          <Route path="orders/:slug" element={<InputLayout />}>
-            <Route path="" element={<Order />} />
-          </Route>
-          <Route path="orders/:slug/edit" element={<InputLayout />}>
-            <Route path="" element={<EditOrder />} />
-          </Route>
-          <Route path="categories" element={<IndexCategories />} />
-          <Route path="discount" element={<IndexDiscount />} />
-          <Route path="discount/create" element={<InputLayout />}>
-            <Route path="" element={<CreateDiscount />} />
-          </Route>
-          <Route path="discount/:slug/edit" element={<InputLayout />}>
-            <Route path="" element={<EditDiscount />} />
-          </Route>
-        </Route>
-      </Routes>
+        </Routes>
+      )}
     </BrowserRouter>
   );
 }

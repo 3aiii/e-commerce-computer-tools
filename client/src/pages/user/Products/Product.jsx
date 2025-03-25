@@ -258,6 +258,7 @@ const Product = () => {
       <div className="mt-16">
         <HeroCard
           name={"Related Item"}
+          state={data?.category}
           navigateTo={`/categories/${data?.category?.name}`}
         />
         <div className="grid grid-cols-5 gap-4 mt-4">

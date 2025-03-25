@@ -11,8 +11,8 @@ export const create = async (data) => {
   });
 };
 
-export const image = async (blob, productId) => {
-  const covertToNumber = Number(productId);
+export const image = async (blob, orderId) => {
+  const covertToNumber = Number(orderId);
   const formData = new FormData();
   formData.append("image", blob);
 

@@ -6,37 +6,6 @@ import { DatabaseService } from './../database/database.service';
 export class OrdersService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
-  // async create(createOrderDto: Prisma.OrderCreateInput) {
-  //   const today = new Date();
-  //   const datePart = today.toISOString().slice(2, 10).replace(/-/g, '');
-
-  //   const lastOrder = await this.DatabaseService.order.findFirst({
-  //     where: {
-  //       invoiceNo: { startsWith: `ECO-${datePart}-` },
-  //     },
-  //     orderBy: { invoiceNo: 'desc' },
-  //   });
-
-  //   let newRunNumber = '001';
-  //   if (lastOrder) {
-  //     const lastNumber = parseInt(
-  //       lastOrder.invoiceNo.split('-').pop() || '0',
-  //       10,
-  //     );
-  //     newRunNumber = String(lastNumber + 1).padStart(3, '0');
-  //   }
-
-  //   const runNumber = `ECO-${datePart}-${newRunNumber}`;
-  //   createOrderDto.invoiceNo = runNumber;
-
-  //   return this.DatabaseService.order.create({
-  //     data: {
-  //       invoiceNo: createOrderDto.invoiceNo,
-  //       user: { connect: { id: 19 } },
-  //       total: createOrderDto.total,
-  //     },
-  //   });
-  // }
   async create(
     createOrderDto: Prisma.OrderCreateInput & {
       cartItems: { productId: number; quantity: number; price: number }[];
@@ -107,6 +76,15 @@ export class OrdersService {
       where: whereCondition,
       include: {
         OrderImage: true,
+        OrderDetails: {
+          include: {
+            product: {
+              include: {
+                ProductImage: true,
+              },
+            },
+          },
+        },
         user: {
           select: { email: true, profile: true },
         },
@@ -146,8 +124,17 @@ export class OrdersService {
             profile: true,
           },
         },
-        OrderDetails: true,
+        status: true,
+        invoiceNo: true,
+        discount: true,
+        OrderDetails: {
+          include: {
+            product: true,
+          },
+        },
         OrderImage: true,
+        total: true,
+        createdAt: true,
       },
     });
   }
@@ -158,5 +145,11 @@ export class OrdersService {
 
   remove(id: number) {
     return `This action removes a #${id} order`;
+  }
+
+  async image(filename: string, orderId: number) {
+    return this.DatabaseService.orderImage.create({
+      data: { url: filename, orderId: Number(orderId) },
+    });
   }
 }

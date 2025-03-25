@@ -39,7 +39,7 @@ export class CartsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Query('delMany') delMany: boolean) {
+  remove(@Param('id') id: string, @Query('delMany') delMany: string) {
     return this.cartsService.remove(+id, delMany);
   }
 }

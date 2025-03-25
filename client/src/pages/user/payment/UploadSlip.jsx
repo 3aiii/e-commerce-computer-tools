@@ -1,31 +1,57 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaCloudUploadAlt } from "react-icons/fa"; // ไอคอนอัปโหลด
+import { formatPrice } from "../../../utils/formatPrice";
+import { image } from "../../../composables/user/OrderService";
+import { toast } from "react-toastify";
+import { showErrorToast } from "../../../components/ToastNotification";
 
 const UploadSlip = () => {
   const location = useLocation();
-  const { total } = location.state || {};
-
+  const { total, orderId } = location.state || {};
+  console.log(orderId);
   const [slip, setSlip] = useState(null);
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("");
-  console.log(slip);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSlip(file);
       setPreview(URL.createObjectURL(file));
-      setFileName(file.name); // ตั้งค่าชื่อไฟล์ที่เลือก
+      setFileName(file.name);
     }
   };
 
-  const handleUpload = () => {
+  const handleUpload = async (e) => {
+    e.preventDefault();
+
+    if (slip && slip.size > 1048576) {
+      showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
+      return;
+    }
+
     if (!slip) {
       alert("กรุณาเลือกรูปภาพสลิปก่อนอัปโหลด");
       return;
     }
-    console.log("อัปโหลดไฟล์:", slip);
-    // สามารถเพิ่มฟังก์ชันอัปโหลดไปยังเซิร์ฟเวอร์ได้ที่นี่
+
+    const { data } = await image(slip, orderId);
+    console.log(data);
+    if (data) {
+      toast.success("ส่ง slip เรียบร้อย!", {
+        position: "bottom-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          navigate("/order-history");
+        },
+      });
+    }
   };
 
   return (
@@ -42,7 +68,7 @@ const UploadSlip = () => {
         <p className="text-gray-600 mt-4">
           กรุณาโอนเงินจำนวน{" "}
           <span className="text-xl font-bold text-red-500">
-            {total ? `${total} บาท` : "กำลังโหลด..."}
+            {formatPrice(total ? `${total} บาท` : "กำลังโหลด...")}
           </span>
           <br />
           และอัปโหลดสลิปเพื่อยืนยันการชำระเงิน

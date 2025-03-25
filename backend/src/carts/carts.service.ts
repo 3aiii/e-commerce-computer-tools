@@ -69,8 +69,8 @@ export class CartsService {
     });
   }
 
-  remove(id: number, delMany: boolean) {
-    if (delMany) {
+  remove(id: number, delMany: string) {
+    if (delMany === 'delMany') {
       return this.DatabaseService.cart.deleteMany({
         where: { userId: id },
       });

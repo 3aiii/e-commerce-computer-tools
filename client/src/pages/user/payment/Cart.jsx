@@ -67,8 +67,8 @@ const Cart = () => {
   };
 
   const removeItem = async (id) => {
-    const response = await remove(id, false);
-
+    const response = await remove(id, "");
+    
     if (response?.status === 200) {
       toast.success(`ลบสินค้าเสร็จสิ้น!`, {
         position: "bottom-right",
@@ -197,7 +197,7 @@ const Cart = () => {
                     <RiDeleteBin7Line
                       size={20}
                       className="text-gray-500 opacity-80 cursor-pointer"
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeItem(item?.id)}
                     />
                   </div>
                 </div>
