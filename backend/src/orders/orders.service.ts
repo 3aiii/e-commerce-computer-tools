@@ -56,21 +56,35 @@ export class OrdersService {
     });
   }
 
-  async findAll(page: number, perPage: number, search: string) {
+  async findAll(page: number, perPage: number, search: string, status: string) {
     const skip = (page - 1) * perPage;
 
-    const whereCondition: Prisma.OrderWhereInput = search
-      ? {
-          OR: [
-            {
-              invoiceNo: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            },
-          ],
-        }
-      : {};
+    const whereCondition: Prisma.OrderWhereInput =
+      search || (status && status !== 'All')
+        ? {
+            OR: [
+              ...(search
+                ? [
+                    {
+                      invoiceNo: {
+                        contains: search,
+                        mode: 'insensitive',
+                      },
+                    } as Prisma.OrderWhereInput,
+                  ]
+                : []),
+              ...(status && status !== 'All'
+                ? [
+                    {
+                      status: {
+                        equals: status,
+                      },
+                    } as Prisma.OrderWhereInput,
+                  ]
+                : []),
+            ],
+          }
+        : {};
 
     const data = await this.DatabaseService.order.findMany({
       where: whereCondition,

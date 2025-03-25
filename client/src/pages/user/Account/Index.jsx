@@ -1,7 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import ProfileField from "../../../components/user/Accounts/ProfileField";
 import { IMAGE_URL } from "../../../secret";
+import { showErrorToast } from "../../../components/ToastNotification";
+import {
+  findOne,
+  update,
+  image as UploadImage,
+} from "../../../composables/administrator/UserService";
+import { toast } from "react-toastify";
 
 const Index = () => {
   const location = useLocation();
@@ -9,37 +16,65 @@ const Index = () => {
 
   const initialUserState = location?.state?.user || {};
   const [user, setUser] = useState({
-    email: initialUserState?.email || "",
+    email: "",
     password: "",
-    firstname: initialUserState?.profile?.[0]?.firstname || "",
-    lastname: initialUserState?.profile?.[0]?.lastname || "",
-    phone: initialUserState?.profile?.[0]?.phone || "",
-    address: initialUserState?.profile?.[0]?.address || "",
+    firstname: "",
+    lastname: "",
+    phone: "",
+    address: "",
   });
 
   const [isEditingAll, setIsEditingAll] = useState(false);
-  const [image, setImage] = useState(
-    initialUserState?.profile?.[0]?.image || ""
-  );
-  const [previewImage, setPreviewImage] = useState(
-    image ? `${IMAGE_URL}/${image}` : "https://placehold.co/150x150"
-  );
+  const [image, setImage] = useState("");
+  const [imagePreview, setImagePreview] = useState([]);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-        setImage(file);
-      };
-      reader.readAsDataURL(file);
+  const handleFileChange = (e) => {
+    const file = Array.from(e.target.files);
+    const newImagePreview = file.map((file) => URL.createObjectURL(file));
+
+    if (file.length > 0) {
+      setImagePreview(newImagePreview);
+      setImage(file?.[0]);
     }
   };
 
-  const handleSaveAll = () => {
-    console.log("Saving all fields:", user);
-    setIsEditingAll(false);
+  const handleSaveAll = async (e) => {
+    e.preventDefault();
+
+    if (image && image.size > 1048576) {
+      showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
+      return;
+    }
+
+    try {
+      const response = await update(initialUserState?.id, user);
+      if (response.status === 200) {
+        if (image && image instanceof File) {
+          await UploadImage(image, response?.data?.id);
+        }
+
+        toast.success("ปรับแก้ผู้ใช้งานสำเร็จ!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            setIsEditingAll(false);
+          },
+        });
+      } else {
+        showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+      }
+    } catch (error) {
+      if (error.response.data.statusCode === 400) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ jpeg | jpg | png ");
+      } else if (error.response.data.statusCode === 413) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ความจุไม่เกิน 1 MB ");
+      }
+    }
   };
 
   const handleEditAll = () => {
@@ -52,6 +87,22 @@ const Index = () => {
       [field]: newValue,
     }));
   };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data } = await findOne(initialUserState?.id);
+      setImage(data?.profile?.[0]?.image);
+      setUser({
+        email: data?.email || "",
+        password: "",
+        firstname: data?.profile?.[0]?.firstname || "",
+        lastname: data?.profile?.[0]?.lastname || "",
+        phone: data?.profile?.[0]?.phone || "",
+        address: data?.profile?.[0]?.address || "",
+      });
+    };
+    fetchUser();
+  }, []);
 
   return (
     <div>
@@ -66,11 +117,29 @@ const Index = () => {
         <div className="flex justify-between items-center my-2 p-8 border-[1px] rounded-lg">
           <div className="flex flex-col items-center gap-2">
             <div className="flex flex-col items-center gap-2">
-              <img
-                src={previewImage || "/profile image"}
-                className="w-[150px] h-[150px] object-cover rounded-full"
-                alt="Profile Preview"
-              />
+              {!image ? (
+                <img
+                  src={`https://placehold.co/350x200`}
+                  alt="User"
+                  className="w-[150px] h-[150px] object-cover rounded-full"
+                />
+              ) : imagePreview?.length > 0 ? (
+                imagePreview?.map((preview, index) => (
+                  <img
+                    key={index}
+                    src={preview}
+                    alt={`Preview ${index}`}
+                    className="w-[150px] h-[150px] object-cover rounded-full"
+                  />
+                ))
+              ) : (
+                <img
+                  src={`${IMAGE_URL}/${image}`}
+                  alt="User"
+                  className="w-[150px] h-[150px] object-cover rounded-full"
+                />
+              )}
+
               <div className="text-xs text-[#868686]">
                 PNG or JPG no larger than 1 MB
               </div>
@@ -83,8 +152,8 @@ const Index = () => {
             />
             <button
               onClick={() => fileInputRef?.current?.click()}
-              className="bg-red-500 text-white hover:bg-red-400 
-              rounded-lg px-4 py-2 transition w-fit h-fit focus:outline-none"
+              className="bg-red-500 text-white hover:bg-red-600 
+                rounded-lg px-4 py-2 transition w-fit h-fit focus:outline-none"
             >
               UPLOAD PROFILE
             </button>

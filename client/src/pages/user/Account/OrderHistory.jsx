@@ -23,11 +23,11 @@ const OrderHistory = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const { data } = await findAll(1, 99, 0);
+      const { data } = await findAll(1, 99, "", activeTab);
       setOrders(data?.data);
     };
     fetchOrders();
-  }, []);
+  }, [activeTab]);
 
   return (
     <div className="my-6">

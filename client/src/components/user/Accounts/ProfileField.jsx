@@ -14,7 +14,7 @@ const ProfileField = ({ label, value, isEditing, onSave }) => {
           />
         ) : (
           <input
-            type="text"
+            type={`${label === "Password" ? `password` : `text`}`}
             className="w-[619px] text-sm input-field border-[1px] focus:ring-2 
               focus:ring-red-500 border-gray-300 p-2 rounded-md"
             value={value}

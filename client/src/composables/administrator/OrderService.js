@@ -2,11 +2,12 @@ import { HOST_URL } from "../../secret";
 import axios from "./../../../node_modules/axios/lib/axios";
 import { get } from "./ProductService";
 
-export const findAll = async (page, perPage, search) => {
+export const findAll = async (page, perPage, search, status) => {
   return await get(`orders`, {
     page,
     perPage,
     search,
+    status,
   });
 };
 
