@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { verify } from "../../../composables/authentication/Authentication";
 import { RiBillLine, RiDeleteBin7Line } from "react-icons/ri";
 import DiscountCoupon from "../../../components/user/DiscountCoupon";
@@ -57,7 +57,7 @@ const Cart = () => {
   };
 
   const calculationDiscountObject = async () => {
-    const sum = (totalPrice * discountObject?.TEST) / 100;
+    const sum = (totalPrice * discountObject?.discount) / 100;
     setDiscountPrice(sum);
   };
 
@@ -67,7 +67,7 @@ const Cart = () => {
   };
 
   const removeItem = async (id) => {
-    const response = await remove(id);
+    const response = await remove(id, false);
 
     if (response?.status === 200) {
       toast.success(`ลบสินค้าเสร็จสิ้น!`, {

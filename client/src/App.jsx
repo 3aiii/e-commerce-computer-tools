@@ -48,12 +48,13 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
-          <Route path="/upload-slip" element={<UploadSlip />} />
           <Route path="/products" element={<IndexUserProducts />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
           <Route path="/categories/:slug" element={<Categories />} />
         </Route>
 
+        <Route path="/upload-slip" element={<UploadSlip />} />
+        
         {/* Account Layout */}
         <Route path="" element={<AccountLayout />}>
           <Route path="/account" element={<IndexAccount />} />
@@ -66,7 +67,7 @@ function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
         </Route>
-        
+
         {/* Administrator Layout */}
         <Route path="/administrator" element={<AdministratorLayout />}>
           <Route path="dashboard" element={<Dashboard />} />

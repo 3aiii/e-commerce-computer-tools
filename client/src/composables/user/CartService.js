@@ -24,8 +24,8 @@ export const update = async (id, data) => {
   });
 };
 
-export const remove = async (id) => {
-  return axios.delete(`${HOST_URL}/carts/${id}`, {
+export const remove = async (id, delMany) => {
+  return axios.delete(`${HOST_URL}/carts/${id}?delMany=${delMany}`, {
     headers: {
       "Content-Type": "application/json",
     },

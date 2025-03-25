@@ -1,26 +1,30 @@
 import { MdOutlineDiscount } from "react-icons/md";
 import { RiCloseCircleLine } from "react-icons/ri";
 import React, { useState } from "react";
+import { useCode } from "../../composables/user/DiscountService";
+import { showWarningToast } from "../ToastNotification";
 
 const DiscountCoupon = ({ coupon, setCoupon, setDiscountObject }) => {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
-  const validCoupons = {
-    TEST: 10,
-    FREESHIP: "Free Shipping",
-  };
+  const applyCoupon = async () => {
+    if (coupon === "") {
+      showWarningToast("Please, type your discount Code.");
+    }
+    try {
+      const { data } = await useCode(coupon);
 
-  const applyCoupon = () => {
-    if (validCoupons[coupon]) {
-      setAppliedCoupon(coupon);
-      setDiscountObject(validCoupons);
-    } else {
-      alert("Invalid coupon");
+      setAppliedCoupon(data?.data?.code);
+      setDiscountObject(data?.data);
+    } catch (error) {
+      if (error.response.data.statusCode === 404) {
+        showWarningToast("No discount available to use");
+      }
     }
   };
 
   const removeCoupon = () => {
     setAppliedCoupon(null);
-    setDiscountObject([])
+    setDiscountObject([]);
   };
 
   return (

@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { CartsService } from './carts.service';
 import { Prisma } from '@prisma/client';
@@ -38,7 +39,7 @@ export class CartsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cartsService.remove(+id);
+  remove(@Param('id') id: string, @Query('delMany') delMany: boolean) {
+    return this.cartsService.remove(+id, delMany);
   }
 }

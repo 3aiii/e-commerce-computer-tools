@@ -17,8 +17,17 @@ import { Prisma } from '@prisma/client';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
+  // @Post()
+  // create(@Body() createOrderDto: Prisma.OrderCreateInput) {
+  //   return this.ordersService.create(createOrderDto);
+  // }
   @Post()
-  create(@Body() createOrderDto: Prisma.OrderCreateInput) {
+  async create(
+    @Body()
+    createOrderDto: Prisma.OrderCreateInput & {
+      cartItems: { productId: number; quantity: number; price: number }[];
+    },
+  ) {
     return this.ordersService.create(createOrderDto);
   }
 

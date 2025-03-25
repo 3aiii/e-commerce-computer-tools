@@ -10,6 +10,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { findOne } from "../../../composables/administrator/UserService";
 import { formatPrice } from "../../../utils/formatPrice";
 import { verify } from "../../../composables/authentication/Authentication";
+import { create } from "../../../composables/user/OrderService";
+import { remove } from "../../../composables/user/CartService";
 
 const Checkout = () => {
   const location = useLocation();
@@ -18,6 +20,30 @@ const Checkout = () => {
     location.state || {};
 
   const [users, setUsers] = useState([]);
+
+  const CheckOutOrder = async () => {
+    const orderData = {
+      userId: user?.id,
+      discountId: discountObject.length !== 0 ? discountObject?.id : null,
+      total:
+        discountObject.length !== 0 ? totalPrice - discountPrice : totalPrice,
+      cartItems: cartItems.map((item) => ({
+        productId: item?.product?.id,
+        quantity: item?.quantity,
+        price: item?.product?.price,
+      })),
+    };
+
+    try {
+      const response = await create(orderData);
+
+      if (response.status === 201) {
+        await remove(user?.id, true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -188,7 +214,11 @@ const Checkout = () => {
           </div>
           <div className="w-full px-5 py-4">
             <Link
+              onClick={CheckOutOrder}
               to="/upload-slip"
+              state={{
+                total: discountPrice ? totalPrice - discountPrice : totalPrice,
+              }}
               className="w-full block text-center py-2 bg-red-500 
                 hover:bg-red-600 text-white rounded-md transition"
             >

@@ -69,7 +69,13 @@ export class CartsService {
     });
   }
 
-  remove(id: number) {
+  remove(id: number, delMany: boolean) {
+    if (delMany) {
+      return this.DatabaseService.cart.deleteMany({
+        where: { userId: id },
+      });
+    }
+
     return this.DatabaseService.cart.delete({ where: { id } });
   }
 }

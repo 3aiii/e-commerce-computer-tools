@@ -43,6 +43,11 @@ export class DiscountController {
     return this.discountService.findOne(+id);
   }
 
+  @Get('use/:code')
+  useCode(@Param('code') code: string) {
+    return this.discountService.useCode(code);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

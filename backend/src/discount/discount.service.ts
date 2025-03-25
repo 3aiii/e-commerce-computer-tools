@@ -65,6 +65,35 @@ export class DiscountService {
     });
   }
 
+  async useCode(code: string) {
+    const data = await this.DatabaseService.discount.findFirst({
+      where: {
+        AND: [
+          {
+            code,
+          },
+          {
+            status: true,
+          },
+        ],
+      },
+      select: {
+        id: true,
+        code: true,
+        discount: true,
+      },
+    });
+
+    if (!data) {
+      throw new HttpException(
+        'No discount available to use',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return { data };
+  }
+
   update(id: number, updateDiscountDto: Prisma.DiscountCreateInput) {
     return this.DatabaseService.discount.update({
       where: { id },

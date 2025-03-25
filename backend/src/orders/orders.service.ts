@@ -6,14 +6,49 @@ import { DatabaseService } from './../database/database.service';
 export class OrdersService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
-  async create(createOrderDto: Prisma.OrderCreateInput) {
+  // async create(createOrderDto: Prisma.OrderCreateInput) {
+  //   const today = new Date();
+  //   const datePart = today.toISOString().slice(2, 10).replace(/-/g, '');
+
+  //   const lastOrder = await this.DatabaseService.order.findFirst({
+  //     where: {
+  //       invoiceNo: { startsWith: `ECO-${datePart}-` },
+  //     },
+  //     orderBy: { invoiceNo: 'desc' },
+  //   });
+
+  //   let newRunNumber = '001';
+  //   if (lastOrder) {
+  //     const lastNumber = parseInt(
+  //       lastOrder.invoiceNo.split('-').pop() || '0',
+  //       10,
+  //     );
+  //     newRunNumber = String(lastNumber + 1).padStart(3, '0');
+  //   }
+
+  //   const runNumber = `ECO-${datePart}-${newRunNumber}`;
+  //   createOrderDto.invoiceNo = runNumber;
+
+  //   return this.DatabaseService.order.create({
+  //     data: {
+  //       invoiceNo: createOrderDto.invoiceNo,
+  //       user: { connect: { id: 19 } },
+  //       total: createOrderDto.total,
+  //     },
+  //   });
+  // }
+  async create(
+    createOrderDto: Prisma.OrderCreateInput & {
+      cartItems: { productId: number; quantity: number; price: number }[];
+      userId?: number;
+      discountId?: number;
+    },
+  ) {
     const today = new Date();
     const datePart = today.toISOString().slice(2, 10).replace(/-/g, '');
 
     const lastOrder = await this.DatabaseService.order.findFirst({
-      where: {
-        invoiceNo: { startsWith: `ECO-${datePart}-` },
-      },
+      where: { invoiceNo: { startsWith: `ECO-${datePart}-` } },
       orderBy: { invoiceNo: 'desc' },
     });
 
@@ -27,14 +62,28 @@ export class OrdersService {
     }
 
     const runNumber = `ECO-${datePart}-${newRunNumber}`;
-    createOrderDto.invoiceNo = runNumber;
 
-    return this.DatabaseService.order.create({
-      data: {
-        invoiceNo: createOrderDto.invoiceNo,
-        user: { connect: { id: 19 } },
+    return this.DatabaseService.$transaction(async (prisma) => {
+      const orderData: any = {
+        invoiceNo: runNumber,
+        user: { connect: { id: createOrderDto.userId } },
         total: createOrderDto.total,
-      },
+        OrderDetails: {
+          create: createOrderDto.cartItems.map((item) => ({
+            product: { connect: { id: item.productId } },
+            quantity: item.quantity,
+            price: item.price,
+            subtotal: item.quantity * item.price,
+          })),
+        },
+      };
+
+      if (createOrderDto.discountId) {
+        orderData.discount = { connect: { id: createOrderDto.discountId } };
+      }
+
+      const order = await prisma.order.create({ data: orderData });
+      return order;
     });
   }
 
