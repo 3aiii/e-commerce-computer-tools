@@ -24,9 +24,9 @@ const Checkout = () => {
   const CheckOutOrder = async () => {
     const orderData = {
       userId: user?.id,
-      discountId: discountObject.length !== 0 ? discountObject?.id : null,
+      discountId: discountObject?.length !== 0 ? discountObject?.id : null,
       total:
-        discountObject.length !== 0 ? totalPrice - discountPrice : totalPrice,
+        discountObject?.length !== 0 ? totalPrice - discountPrice : totalPrice,
       cartItems: cartItems.map((item) => ({
         productId: item?.product?.id,
         quantity: item?.quantity,
@@ -197,7 +197,7 @@ const Checkout = () => {
                 Discount{" "}
                 <span>
                   ฿{" "}
-                  {discountObject.length !== 0 ? formatPrice(discountPrice) : 0}
+                  {discountObject?.length !== 0 ? formatPrice(discountPrice) : 0}
                 </span>
               </li>
               <li className="flex justify-between">

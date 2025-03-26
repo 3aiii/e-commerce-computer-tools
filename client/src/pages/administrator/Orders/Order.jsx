@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { FaRegEdit } from "react-icons/fa";
+import { FaRegEdit, FaSave } from "react-icons/fa";
 import { formatDateTime } from "../../../utils/formatDateTime";
 import { IMAGE_URL } from "../../../secret";
 import { formatPrice } from "../../../utils/formatPrice";
 import { findOne } from "../../../composables/administrator/OrderService";
+import { update } from "../../../composables/user/OrderService";
+import { toast } from "react-toastify";
 
-const TableRow = ({ label, value, isHighlighted, alignTop }) => (
+const TableRow = ({
+  label,
+  value,
+  isHighlighted,
+  alignTop,
+  isEditingStatus,
+  status,
+  onStatusChange,
+}) => (
   <tr className="w-full">
     <td
       className={`text-left w-1/2 border-t border-r px-6 py-2 font-light break-words ${
@@ -18,9 +28,20 @@ const TableRow = ({ label, value, isHighlighted, alignTop }) => (
     </td>
 
     <td className={`w-1/2 border-t px-4 py-2 font-light break-all break-words`}>
-      {isHighlighted ? (
+      {isEditingStatus && label === "Status" ? (
+        <select
+          value={status}
+          onChange={(e) => onStatusChange(e.target.value)}
+          className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+      ) : isHighlighted ? (
         <span
-          className={` p-[2px] px-2 rounded-md ${
+          className={`p-[2px] px-2 rounded-md ${
             (label === "Invoice No." && `bg-blue-100 text-blue-600`) ||
             (label === "Total" && `bg-teal-100 text-teal-600`) ||
             (label === "Discount" && `bg-red-100 text-red-600`) ||
@@ -46,19 +67,44 @@ const TableRow = ({ label, value, isHighlighted, alignTop }) => (
 
 const Order = () => {
   const location = useLocation();
-  const { slug } = useParams();
   const { id } = location?.state?.order;
+
   const [orders, setOrders] = useState([]);
+  const [status, setStutus] = useState("");
+  const [isEditingStatus, setIsEditingStatus] = useState(false);
+  const handleEditStatus = () => {
+    setIsEditingStatus(true);
+  };
+  
+  const handleSaveStatus = async () => {
+    const response = await update(id, status);
+
+    if (response.status === 200) {
+      toast.success("ปรับแก้สถานะขนส่งเรียบร้อย!", {
+        position: "bottom-right",
+        autoClose: 500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        onClose: () => {
+          setIsEditingStatus(false);
+        },
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
       const { data } = await findOne(id);
       setOrders(data);
+      setStutus(data?.status)
     };
 
     fetchProduct();
-  }, []);
-  
+  }, [isEditingStatus]);
+
   return (
     <div className="flex gap-4 my-6">
       <div className="input-layout-left h-fit">
@@ -127,6 +173,9 @@ const Order = () => {
               label="Status"
               value={formatPrice(orders?.status)}
               isHighlighted
+              isEditingStatus={isEditingStatus}
+              onStatusChange={setStutus}
+              status={status}
             />
             <TableRow
               label="Ordered At"
@@ -163,13 +212,21 @@ const Order = () => {
           >
             <FaArrowLeftLong /> Cancel
           </Link>
-          <Link
-            to={`/administrator/orders/${slug}/edit`}
-            state={{ orders }}
-            className="edit-button flex items-center gap-2"
-          >
-            <FaRegEdit /> Edit
-          </Link>
+          {isEditingStatus ? (
+            <button
+              onClick={handleSaveStatus}
+              className="update-button flex items-center gap-2"
+            >
+              <FaSave /> Save
+            </button>
+          ) : (
+            <button
+              onClick={handleEditStatus}
+              className="edit-button flex items-center gap-2"
+            >
+              <FaRegEdit /> Edit
+            </button>
+          )}
         </div>
       </div>
     </div>

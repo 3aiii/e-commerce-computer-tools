@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { DatabaseService } from './../database/database.service';
+import { stat } from 'fs';
 
 @Injectable()
 export class OrdersService {
@@ -103,6 +104,9 @@ export class OrdersService {
           select: { email: true, profile: true },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
       skip,
       take: Number(perPage),
     });
@@ -153,8 +157,39 @@ export class OrdersService {
     });
   }
 
-  update(id: number, updateOrderDto: Prisma.OrderUpdateInput) {
-    return `This action updates a #${id} order`;
+  async update(id: number, status: string) {
+    const validStatus = ['Pending', 'Processing', 'Shipped', 'Delivered'];
+
+    if (!validStatus.includes(status)) {
+      throw new Error('Invalid status value');
+    }
+
+    const product = await this.DatabaseService.order.findFirst({
+      where: { id },
+      select: {
+        OrderDetails: {
+          select: { productId: true },
+        },
+      },
+    });
+
+    const productIds =
+      product?.OrderDetails?.map((detail) => detail.productId) || [];
+    const reviewStatus = status === 'Delivered';
+
+    await this.DatabaseService.reviewProduct.updateMany({
+      where: {
+        AND: [{ orderId: id }, { productId: { in: productIds } }],
+      },
+      data: { status: reviewStatus },
+    });
+
+    return this.DatabaseService.order.update({
+      where: { id },
+      data: {
+        status: status as 'Pending' | 'Processing' | 'Shipped' | 'Delivered',
+      },
+    });
   }
 
   remove(id: number) {
@@ -162,6 +197,37 @@ export class OrdersService {
   }
 
   async image(filename: string, orderId: number) {
+    const response = await this.DatabaseService.orderDetails.findMany({
+      where: {
+        orderId: Number(orderId),
+      },
+      select: {
+        product: true,
+        order: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+
+    const reviewData = response.map((item) => ({
+      orderId: item.order.id,
+      productId: item.product.id,
+      comment: '',
+      ratingMaterial: 0,
+      ratingFunction: 0,
+      ratingComplementary: 0,
+      ratingUsed: 0,
+      ratingWorth: 0,
+      totalRating: 0,
+      status: false,
+    }));
+
+    await this.DatabaseService.reviewProduct.createMany({
+      data: reviewData,
+    });
+
     return this.DatabaseService.orderImage.create({
       data: { url: filename, orderId: Number(orderId) },
     });

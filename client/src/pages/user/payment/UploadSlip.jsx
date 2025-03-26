@@ -1,15 +1,17 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { FaCloudUploadAlt } from "react-icons/fa"; // ไอคอนอัปโหลด
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaCloudUploadAlt } from "react-icons/fa";
 import { formatPrice } from "../../../utils/formatPrice";
 import { image } from "../../../composables/user/OrderService";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../components/ToastNotification";
+import { verify } from "../../../composables/authentication/Authentication";
 
 const UploadSlip = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+
   const { total, orderId } = location.state || {};
-  console.log(orderId);
   const [slip, setSlip] = useState(null);
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -37,7 +39,6 @@ const UploadSlip = () => {
     }
 
     const { data } = await image(slip, orderId);
-    console.log(data);
     if (data) {
       toast.success("ส่ง slip เรียบร้อย!", {
         position: "bottom-right",
@@ -53,6 +54,20 @@ const UploadSlip = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const verifyUser = async () => {
+      try {
+        await verify();
+      } catch (error) {
+        if (error.response?.data?.statusCode === 404) {
+          navigate("/sign-in");
+        }
+      }
+    };
+
+    verifyUser();
+  }, [navigate]);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100 p-4">
@@ -92,7 +107,6 @@ const UploadSlip = () => {
           <p className="text-sm text-gray-600 mt-2">{fileName}</p>
         </div>
 
-        {/* แสดงตัวอย่างภาพ */}
         {preview && (
           <div className="mt-4">
             <img
@@ -103,7 +117,6 @@ const UploadSlip = () => {
           </div>
         )}
 
-        {/* ปุ่มอัปโหลดสลิป */}
         {slip ? (
           <button
             onClick={handleUpload}

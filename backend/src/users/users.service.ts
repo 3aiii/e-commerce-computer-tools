@@ -41,7 +41,7 @@ export class UsersService {
       where: { id: Number(userId) },
       select: { image: true },
     });
-
+    
     if (user?.image) {
       const oldImagePath = path.join(__dirname, '../../public/', user.image);
 

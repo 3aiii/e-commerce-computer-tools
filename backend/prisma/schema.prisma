@@ -26,17 +26,16 @@ enum Status {
 }
 
 model User {
-  id            Int             @id @default(autoincrement())
-  email         String          @unique
-  password      String
-  role          Role            @default(USER)
-  status        Boolean         @default(true)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  cart          Cart[]
-  Order         Order[]
-  profile       Profile[]
-  ReviewProduct ReviewProduct[]
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  status    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  cart      Cart[]
+  Order     Order[]
+  profile   Profile[]
 }
 
 model Profile {
@@ -100,10 +99,10 @@ model Discount {
 
 model ReviewProduct {
   id                  Int      @id @default(autoincrement())
-  user                User     @relation(fields: [userId], references: [id])
-  userId              Int
-  product             Product  @relation(fields: [productId], references: [id])
-  productId           Int
+  order               Order    @relation(fields: [orderId], references: [id])
+  orderId             Int
+  Product             Product? @relation(fields: [productId], references: [id])
+  productId           Int?
   comment             String
   ratingMaterial      Int
   ratingFunction      Int
@@ -111,6 +110,7 @@ model ReviewProduct {
   ratingUsed          Int
   ratingWorth         Int
   totalRating         Float
+  status              Boolean  @default(false)
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
@@ -127,18 +127,19 @@ model Cart {
 }
 
 model Order {
-  id           Int            @id @default(autoincrement())
-  invoiceNo    String
-  user         User           @relation(fields: [userId], references: [id])
-  userId       Int
-  discount     Discount?      @relation(fields: [discountId], references: [id])
-  discountId   Int?
-  total        Float          @default(0)
-  status       Status         @default(Pending)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  OrderImage   OrderImage[]
-  OrderDetails OrderDetails[]
+  id            Int             @id @default(autoincrement())
+  invoiceNo     String
+  user          User            @relation(fields: [userId], references: [id])
+  userId        Int
+  discount      Discount?       @relation(fields: [discountId], references: [id])
+  discountId    Int?
+  total         Float           @default(0)
+  status        Status          @default(Pending)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  OrderImage    OrderImage[]
+  OrderDetails  OrderDetails[]
+  ReviewProduct ReviewProduct[]
 }
 
 model OrderDetails {
@@ -148,7 +149,7 @@ model OrderDetails {
   product   Product @relation(fields: [productId], references: [id])
   productId Int
   quantity  Int     @default(1)
-  price     Float 
+  price     Float
   subtotal  Float   @default(0)
 }
 

@@ -16,10 +16,16 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
+  const [activeOrderStatus, setActiveOrderStatus] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const fetchs = async () => {
-    const { data } = await findAll(currentPage, itemsPerPage, searchTerm);
+    const { data } = await findAll(
+      currentPage,
+      itemsPerPage,
+      searchTerm,
+      activeOrderStatus
+    );
     setOrder(data);
   };
 
@@ -29,7 +35,7 @@ const Index = () => {
 
   useEffect(() => {
     fetchs();
-  }, [currentPage, searchTerm, itemsPerPage]);
+  }, [currentPage, searchTerm, itemsPerPage, activeOrderStatus]);
 
   return (
     <div className="index-border-div">
@@ -60,7 +66,23 @@ const Index = () => {
           </select>
           <span>entries</span>
         </label>
-        <div>
+        <div className="flex items-center gap-4">
+          <label className="flex items-center space-x-2 h-full text-gray-600 font-light">
+            <select
+              value={activeOrderStatus}
+              onChange={(e) => {
+                setActiveOrderStatus(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="px-3 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="All">All</option>
+              <option value="Pending">Pending</option>
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+            </select>
+          </label>
           <input
             type="text"
             placeholder="🔍 Search..."

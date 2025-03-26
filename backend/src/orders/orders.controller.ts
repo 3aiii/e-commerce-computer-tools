@@ -74,11 +74,8 @@ export class OrdersController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateOrderDto: Prisma.OrderUpdateInput,
-  ) {
-    return this.ordersService.update(+id, updateOrderDto);
+  update(@Param('id') id: string, @Query('status') status: string) {
+    return this.ordersService.update(+id, status);
   }
 
   @Delete(':id')

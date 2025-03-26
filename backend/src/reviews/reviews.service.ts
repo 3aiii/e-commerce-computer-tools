@@ -7,15 +7,25 @@ export class ReviewsService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
   create(createReviewDto: Prisma.ReviewProductCreateInput) {
-    return 'This action adds a new review';
+    return this.DatabaseService.reviewProduct.create({
+      data: createReviewDto,
+    });
   }
 
-  findAll() {
-    return `This action returns all reviews`;
+  findAll(userId: number) {
+    return this.DatabaseService.reviewProduct.findMany({
+      where: {
+        id: userId,
+      },
+    });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} review`;
+    return this.DatabaseService.reviewProduct.findFirst({
+      where: {
+        id,
+      },
+    });
   }
 
   update(id: number, updateReviewDto: Prisma.ReviewProductUpdateInput) {

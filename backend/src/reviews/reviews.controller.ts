@@ -19,9 +19,9 @@ export class ReviewsController {
     return this.reviewsService.create(createReviewDto);
   }
 
-  @Get()
-  findAll() {
-    return this.reviewsService.findAll();
+  @Get('findAll/:id')
+  findAll(@Param('id') userId: string) {
+    return this.reviewsService.findAll(+userId);
   }
 
   @Get(':id')

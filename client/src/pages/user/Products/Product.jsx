@@ -59,7 +59,7 @@ const Product = () => {
       }
     } catch (error) {
       console.log(error);
-      showErrorToast("Error adding product to cart");
+      showErrorToast("กรุณาล็อกอิน ก่อนใช้งานระบบ");
     }
   };
 
@@ -77,10 +77,10 @@ const Product = () => {
         }
       } catch (error) {
         console.log(error);
-        toast.error("Error fetching user data.", {
-          position: "bottom-right",
-          autoClose: 3000,
-        });
+        // toast.error("Error fetching user data.", {
+        //   position: "bottom-right",
+        //   autoClose: 3000,
+        // });
       }
     };
 

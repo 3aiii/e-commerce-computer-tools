@@ -6,7 +6,7 @@ import { showErrorToast } from "../../../components/ToastNotification";
 import {
   findOne,
   update,
-  image as UploadImage,
+  image as UploadImageUser,
 } from "../../../composables/administrator/UserService";
 import { toast } from "react-toastify";
 
@@ -25,34 +25,59 @@ const Index = () => {
   });
 
   const [isEditingAll, setIsEditingAll] = useState(false);
-  const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState([]);
+  const [image, setImage] = useState([]);
 
-  const handleFileChange = (e) => {
-    const file = Array.from(e.target.files);
-    const newImagePreview = file.map((file) => URL.createObjectURL(file));
-
-    if (file.length > 0) {
-      setImagePreview(newImagePreview);
-      setImage(file?.[0]);
-    }
-  };
-
-  const handleSaveAll = async (e) => {
-    e.preventDefault();
-
+  const uploadImage = async (image) => {
     if (image && image.size > 1048576) {
       showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
       return;
     }
 
     try {
+      const response = await UploadImageUser(
+        image,
+        initialUserState?.profile?.[0]?.id
+      );
+      if (response.status === 201) {
+        toast.success("ปรับแก้ผู้ใช้งานสำเร็จ!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            window.location.reload();
+          },
+        });
+      }
+    } catch (error) {
+      if (error.response.data.statusCode === 400) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ jpeg | jpg | png ");
+      } else if (error.response.data.statusCode === 413) {
+        showErrorToast("กรุณาอัปโหลดไฟล์ความจุไม่เกิน 1 MB ");
+      }
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = Array.from(e.target.files);
+    const newImagePreview = file.map((file) => URL.createObjectURL(file));
+    if (file.length > 0) {
+      setImagePreview(newImagePreview);
+      setImage(file?.[0]);
+      uploadImage(file?.[0]);
+    }
+  };
+
+  const handleSaveAll = async (e) => {
+    e.preventDefault();
+
+    try {
       const response = await update(initialUserState?.id, user);
       if (response.status === 200) {
-        if (image && image instanceof File) {
-          await UploadImage(image, response?.data?.id);
-        }
-
         toast.success("ปรับแก้ผู้ใช้งานสำเร็จ!", {
           position: "bottom-right",
           autoClose: 1000,
