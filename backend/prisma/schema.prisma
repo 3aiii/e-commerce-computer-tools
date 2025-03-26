@@ -25,6 +25,11 @@ enum Status {
   Delivered
 }
 
+enum condition {
+  Waiting
+  Reviewed
+}
+
 model User {
   id        Int       @id @default(autoincrement())
   email     String    @unique
@@ -98,10 +103,10 @@ model Discount {
 }
 
 model ReviewProduct {
-  id                  Int      @id @default(autoincrement())
-  order               Order    @relation(fields: [orderId], references: [id])
+  id                  Int       @id @default(autoincrement())
+  order               Order     @relation(fields: [orderId], references: [id])
   orderId             Int
-  Product             Product? @relation(fields: [productId], references: [id])
+  Product             Product?  @relation(fields: [productId], references: [id])
   productId           Int?
   comment             String
   ratingMaterial      Int
@@ -110,9 +115,10 @@ model ReviewProduct {
   ratingUsed          Int
   ratingWorth         Int
   totalRating         Float
-  status              Boolean  @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  status              Boolean   @default(false)
+  condition           condition @default(Waiting)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 model Cart {

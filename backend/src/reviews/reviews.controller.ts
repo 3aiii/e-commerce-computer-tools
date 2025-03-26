@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { Prisma } from '@prisma/client';
@@ -20,8 +21,8 @@ export class ReviewsController {
   }
 
   @Get('findAll/:id')
-  findAll(@Param('id') userId: string) {
-    return this.reviewsService.findAll(+userId);
+  findAll(@Param('id') userId: string, @Query('status') status: string) {
+    return this.reviewsService.findAll(+userId, status);
   }
 
   @Get(':id')

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, condition } from '@prisma/client';
 
 @Injectable()
 export class ReviewsService {
@@ -12,12 +12,49 @@ export class ReviewsService {
     });
   }
 
-  findAll(userId: number) {
-    return this.DatabaseService.reviewProduct.findMany({
+  async findAll(userId: number, status: string) {
+    const orderId = await this.DatabaseService.reviewProduct.findMany({
       where: {
-        id: userId,
+        AND: [
+          {
+            order: {
+              userId,
+            },
+          },
+          {
+            condition: status as condition,
+          },
+        ],
+      },
+      select: {
+        orderId: true,
       },
     });
+
+    if (orderId?.length === 0) {
+      return [];
+    }
+
+    const orderDetails = await this.DatabaseService.orderDetails.findMany({
+      where: {
+        orderId: orderId?.[0]?.orderId,
+      },
+      include: {
+        product: {
+          include: {
+            ProductImage: true,
+            ReviewProduct: true,
+          },
+        },
+        order: {
+          select: {
+            invoiceNo: true,
+          },
+        },
+      },
+    });
+
+    return orderDetails;
   }
 
   findOne(id: number) {
