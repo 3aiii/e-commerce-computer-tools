@@ -1,10 +1,11 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 import SideBar from "../../components/user/Accounts/SideBar";
 import Navbar from "../../components/user/Navbar";
 import Footer from "../../components/user/Footer";
 
 const AccountLayout = () => {
+
   return (
     <div className="flex flex-col justify-center items-center">
       <Navbar />

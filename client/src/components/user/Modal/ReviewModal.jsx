@@ -1,106 +1,116 @@
+import * as Dialog from "@radix-ui/react-dialog";
+import { FaStar } from "react-icons/fa";
 import React, { useState } from "react";
+import { showErrorToast } from "../../../components/ToastNotification";
+import { IMAGE_URL } from "../../../secret";
 
-export const Button = ({ children, onClick, variant = "primary" }) => {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-md ${
-        variant === "outline"
-          ? "border border-gray-500 text-gray-500"
-          : "bg-blue-500 text-white"
-      }`}
-    >
-      {children}
-    </button>
-  );
-};
+const ReviewModal = ({ isOpen, onClose, onSubmit, product }) => {
+  const [comment, setComment] = useState("");
+  const [ratings, setRatings] = useState({
+    ratingMaterial: 0,
+    ratingFunction: 0,
+    ratingComplementary: 0,
+    ratingUsed: 0,
+    ratingWorth: 0,
+  });
 
-const ReviewModal = ({ products, onSubmit }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState(
-    products.map((product) => ({
-      productId: product.id,
-      comment: "",
-      ratingMaterial: 1,
-      ratingFunction: 1,
-      ratingComplementary: 1,
-      ratingUsed: 1,
-      ratingWorth: 1,
-    }))
-  );
-
-  const handleChange = (index, field, value) => {
-    const updatedForm = [...formData];
-    updatedForm[index][field] = value;
-    setFormData(updatedForm);
+  const handleRatingChange = (category, value) => {
+    setRatings((prev) => ({ ...prev, [category]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
-    setIsOpen(false);
+  const handleSubmit = async () => {
+    try {
+      const totalRating =
+        (ratings.ratingMaterial +
+          ratings.ratingFunction +
+          ratings.ratingComplementary +
+          ratings.ratingUsed +
+          ratings.ratingWorth) /
+        5;
+
+      await onSubmit(product?.product?.ReviewProduct?.[0]?.id, {
+        ...ratings,
+        comment,
+        totalRating,
+      });
+      onClose();
+    } catch (error) {
+      showErrorToast(error);
+    }
   };
 
   return (
-    <>
-      <Button onClick={() => setIsOpen(true)}>Leave a Review</Button>
-
-      {isOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-lg">
-            <h2 className="text-xl font-semibold mb-4">Leave a Review</h2>
-            <form onSubmit={handleSubmit}>
-              {products.map((product, index) => (
-                <div key={product.id} className="mb-4 border p-4 rounded-lg">
-                  <h3 className="text-lg font-medium">{product.name}</h3>
-                  <textarea
-                    value={formData[index].comment}
-                    onChange={(e) =>
-                      handleChange(index, "comment", e.target.value)
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed focus:outline-none inset-0 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity z-50" />
+        <Dialog.Content className="fixed top-1/2 left-1/2 w-[90%] max-w-md bg-white p-6 rounded-2xl shadow-xl -translate-x-1/2 -translate-y-1/2 transition-transform z-50">
+          <Dialog.Title className="text-lg font-semibold text-gray-800">
+            {product?.product?.name}
+          </Dialog.Title>
+          Please rate and review{" "}
+          <Dialog.Description className="flex flex-col items-center mt-2 text-gray-600">
+            <img
+              className="w-[250px] h-[250px] object-contain mb-2"
+              src={`${IMAGE_URL}/${product?.product?.ProductImage?.[0]?.url}`}
+            />
+          </Dialog.Description>
+          <div className="mt-4 flex flex-col gap-3">
+            {[
+              "ratingMaterial",
+              "ratingFunction",
+              "ratingComplementary",
+              "ratingUsed",
+              "ratingWorth",
+            ].map((category, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <span className="flex w-56 capitalize text-gray-700">
+                  {category.replace("rating", "")}
+                </span>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    size={24}
+                    className={
+                      star <= ratings[category]
+                        ? "text-yellow-500 cursor-pointer"
+                        : "text-gray-300 cursor-pointer"
                     }
-                    placeholder="Write your comment"
-                    className="w-full p-2 border rounded-md"
+                    onClick={() => handleRatingChange(category, star)}
                   />
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {[
-                      "Material",
-                      "Function",
-                      "Complementary",
-                      "Used",
-                      "Worth",
-                    ].map((field) => (
-                      <label key={field} className="flex flex-col">
-                        {field} Rating
-                        <input
-                          type="number"
-                          min="1"
-                          max="5"
-                          value={formData[index][`rating${field}`]}
-                          onChange={(e) =>
-                            handleChange(
-                              index,
-                              `rating${field}`,
-                              Number(e.target.value)
-                            )
-                          }
-                          className="p-1 border rounded-md"
-                        />
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              <div className="flex justify-end gap-2 mt-4">
-                <Button variant="outline" onClick={() => setIsOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit">Submit</Button>
+                ))}
               </div>
-            </form>
+            ))}
           </div>
-        </div>
-      )}
-    </>
+          <textarea
+            role="dialog"
+            id="radix-:r9:"
+            aria-describedby="radix-:rb:"
+            aria-labelledby="radix-:ra:"
+            data-state="open"
+            className="w-full mt-4 p-2 resize-none border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+            rows={4}
+            placeholder="Write your review here..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+          <div className="mt-5 flex justify-end gap-3">
+            <Dialog.Close asChild>
+              <button className="px-4 py-2 rounded-lg bg-gray-300 hover:bg-gray-400 transition">
+                Cancel
+              </button>
+            </Dialog.Close>
+            <button
+              className="px-4 py-2 rounded-lg cursor-pointer
+                 bg-red-500 hover:bg-red-600 text-white transition"
+              onClick={handleSubmit}
+              disabled={Object.values(ratings).some((value) => value === 0)}
+            >
+              Submit
+            </button>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 };
 

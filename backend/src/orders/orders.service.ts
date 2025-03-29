@@ -57,11 +57,18 @@ export class OrdersService {
     });
   }
 
-  async findAll(page: number, perPage: number, search: string, status: string) {
+  async findAll(
+    id: number,
+    page: number,
+    perPage: number,
+    search: string,
+    status: string,
+  ) {
     const skip = (page - 1) * perPage;
 
-    const whereCondition: Prisma.OrderWhereInput =
-      search || (status && status !== 'All')
+    const whereCondition: Prisma.OrderWhereInput = {
+      userId: id,
+      ...(search || (status && status !== 'All')
         ? {
             OR: [
               ...(search
@@ -85,7 +92,8 @@ export class OrdersService {
                 : []),
             ],
           }
-        : {};
+        : {}),
+    };
 
     const data = await this.DatabaseService.order.findMany({
       where: whereCondition,

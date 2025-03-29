@@ -1,22 +1,61 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import { findAll } from "../../../composables/user/ReviewService";
+import {
+  findAll,
+  patchs,
+  update,
+} from "../../../composables/user/ReviewService";
 import { verify } from "../../../composables/authentication/Authentication";
 import { IMAGE_URL } from "../../../secret";
+import { toast } from "react-toastify";
+import { showErrorToast } from "../../../components/ToastNotification";
+import ReviewModal from "../../../components/user/Modal/ReviewModal";
+import { formatDateTime } from "./../../../utils/formatDateTime";
 
 const MyReview = () => {
+  const tabs = ["Waiting", "Reviewed"];
+  const tabRefs = useRef([]);
+
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isOpenModal, setIsOpenModal] = useState(false);
   const [activeTab, setActiveTab] = useState("Waiting");
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
   const [reviewProduct, setReviewProduct] = useState([]);
-  const tabs = ["Waiting", "Reviewed"];
-  const tabRefs = useRef([]);
-  console.log(reviewProduct);
+  
+  const handleOpen = async (data) => {
+    setIsOpenModal(true);
+    setSelectedProduct(data);
+  };
+
+  const fetchReviews = async () => {
+    const user = await verify();
+    const { data } = await findAll(user?.data?.user?.id, activeTab);
+    setReviewProduct(data);
+  };
+
+  const handleUpdate = async (id, datas) => {
+    const { data } = await patchs(id, datas);
+    try {
+      if (data) {
+        toast.success("ให้คะแนนสินค้าเสร็จสิ้น!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            fetchReviews();
+          },
+        });
+      }
+    } catch (error) {
+      showErrorToast(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchReviews = async () => {
-      const user = await verify();
-      const { data } = await findAll(user?.data?.user?.id, activeTab);
-      setReviewProduct(data);
-    };
     fetchReviews();
   }, [activeTab]);
 
@@ -93,10 +132,21 @@ const MyReview = () => {
                 </div>
               </div>
               <div className="flex justify-end items-center my-2 mr-4">
-                <button className="rounded-lg px-12 py-2 bg-red-200 hover:bg-red-300 text-red-500 transition font-medium text-md">
+                <button
+                  onClick={() => handleOpen(reviewPro)}
+                  className="rounded-lg px-12 py-2 bg-red-200 hover:bg-red-300 text-red-500 transition font-medium text-md"
+                >
                   Rating
                 </button>
               </div>
+              {isOpenModal && (
+                <ReviewModal
+                  isOpen={isOpenModal}
+                  onClose={() => setIsOpenModal(false)}
+                  onSubmit={handleUpdate}
+                  product={selectedProduct}
+                />
+              )}
             </div>
           ))
         ))}
@@ -128,23 +178,58 @@ const MyReview = () => {
                 </div>
                 <div className="flex items-center gap-2 px-5 py-2 rounded-xl w-fit h-fit text-white bg-red-500 text-xl font-semibold">
                   <FaStar className="text-yellow-300" size={20} />
-                  <span>5.0</span>
+                  <span>
+                    {reviewPro?.product?.ReviewProduct?.[0]?.totalRating}
+                  </span>
                 </div>
               </div>
               <div className="grid grid-cols-2 items-start px-8 py-6 gap-6">
                 <div className="flex items-center gap-6">
                   <ul className="flex flex-col text-gray-700 font-medium text-md w-full">
                     {[
-                      "Material",
-                      "Functionality",
-                      "Complementary",
-                      "Used",
-                      "Worth",
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-2">
-                        {item}{" "}
-                        <div className="w-full rounded-md h-2 bg-red-500"></div>{" "}
-                        <span className="text-red-500">5</span>
+                      {
+                        label: "Material",
+                        value:
+                          reviewPro?.product?.ReviewProduct?.[0]
+                            ?.ratingMaterial,
+                      },
+                      {
+                        label: "Functionality",
+                        value:
+                          reviewPro?.product?.ReviewProduct?.[0]
+                            ?.ratingFunction,
+                      },
+                      {
+                        label: "Complementary",
+                        value:
+                          reviewPro?.product?.ReviewProduct?.[0]
+                            ?.ratingComplementary,
+                      },
+                      {
+                        label: "Used",
+                        value:
+                          reviewPro?.product?.ReviewProduct?.[0]?.ratingUsed,
+                      },
+                      {
+                        label: "Worth",
+                        value:
+                          reviewPro?.product?.ReviewProduct?.[0]?.ratingWorth,
+                      },
+                    ].map(({ label, value }) => (
+                      <li
+                        key={label}
+                        className="flex items-center justify-between gap-2"
+                      >
+                        {label}
+                        <div className="flex items-center justify-between w-full gap-2">
+                          <div
+                            className="w-full rounded-md h-2 bg-red-500"
+                            style={{
+                              width: `${Math.min((value / 5) * 100, 100)}%`,
+                            }}
+                          ></div>
+                          <span className="text-red-500 ml-2">{value}</span>
+                        </div>
                       </li>
                     ))}
                   </ul>
@@ -153,19 +238,27 @@ const MyReview = () => {
                   <div className="flex gap-4">
                     <img
                       className="w-[50px] h-[50px] object-cover rounded-full"
-                      src="https://f.ptcdn.info/381/083/000/s9n7im1o6bkINsVTgUOV0-o.jpg"
+                      src={
+                        reviewPro?.order?.user?.profile?.[0]?.image
+                          ? `${IMAGE_URL}/${reviewPro?.order?.user?.profile?.[0]?.image}`
+                          : `https://placehold.co/50x50`
+                      }
                       alt="Reviewer"
                     />
                     <div>
-                      <h4 className="font-medium text-lg">honeyhney839</h4>
+                      <h4 className="font-medium text-lg">
+                        {reviewPro?.order?.user?.email}
+                      </h4>
                       <span className="text-[#757575] text-sm font-light">
-                        Review Date: October 3, 2024
+                        Review Date:{" "}
+                        {formatDateTime(
+                          reviewPro?.product?.ReviewProduct?.[0]?.updatedAt
+                        )}
                       </span>
                     </div>
                   </div>
                   <div className="border-[1px] w-full rounded-md px-4 py-2 font-light text-sm">
-                    "Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry..."
+                    {reviewPro?.product?.ReviewProduct?.[0]?.comment}
                   </div>
                 </div>
               </div>

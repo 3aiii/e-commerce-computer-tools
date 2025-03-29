@@ -13,31 +13,22 @@ export class ReviewsService {
   }
 
   async findAll(userId: number, status: string) {
-    const orderId = await this.DatabaseService.reviewProduct.findMany({
+    const orderIds = await this.DatabaseService.reviewProduct.findMany({
       where: {
         AND: [
-          {
-            order: {
-              userId,
-            },
-          },
-          {
-            condition: status as condition,
-          },
+          { order: { userId } },
+          { condition: { equals: status as condition } },
         ],
-      },
-      select: {
-        orderId: true,
       },
     });
 
-    if (orderId?.length === 0) {
+    if (orderIds?.length === 0) {
       return [];
     }
 
     const orderDetails = await this.DatabaseService.orderDetails.findMany({
       where: {
-        orderId: orderId?.[0]?.orderId,
+        AND: [{ orderId: { in: orderIds.map((order) => order.orderId) } }],
       },
       include: {
         product: {
@@ -47,14 +38,33 @@ export class ReviewsService {
           },
         },
         order: {
-          select: {
-            invoiceNo: true,
+          include: {
+            user: {
+              select: {
+                email: true,
+                profile: true,
+              },
+            },
           },
         },
       },
+      orderBy: [
+        {
+          order: {
+            updatedAt: 'desc',
+          },
+        },
+      ],
     });
 
-    return orderDetails;
+    console.log(orderDetails);
+    const NewOrderDetails = Object.values(orderDetails).filter(
+      (order) =>
+        order?.product?.ReviewProduct?.[0]?.condition === status &&
+        order?.product?.ReviewProduct?.[0]?.status === true,
+    );
+
+    return NewOrderDetails;
   }
 
   findOne(id: number) {
@@ -66,7 +76,30 @@ export class ReviewsService {
   }
 
   update(id: number, updateReviewDto: Prisma.ReviewProductUpdateInput) {
-    return `This action updates a #${id} review`;
+    return this.DatabaseService.reviewProduct.update({
+      where: {
+        id,
+      },
+      data: updateReviewDto,
+    });
+  }
+
+  patch(id: number, updateReviewDto: Prisma.ReviewProductUpdateInput) {
+    return this.DatabaseService.reviewProduct.update({
+      where: {
+        id,
+      },
+      data: {
+        comment: updateReviewDto?.comment,
+        ratingMaterial: updateReviewDto?.ratingMaterial,
+        ratingFunction: updateReviewDto?.ratingFunction,
+        ratingComplementary: updateReviewDto?.ratingComplementary,
+        ratingUsed: updateReviewDto?.ratingUsed,
+        ratingWorth: updateReviewDto?.ratingWorth,
+        totalRating: updateReviewDto?.totalRating,
+        condition: 'Reviewed',
+      },
+    });
   }
 
   remove(id: number) {

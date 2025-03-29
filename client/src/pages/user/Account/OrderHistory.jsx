@@ -9,10 +9,9 @@ const OrderHistory = () => {
   const [activeTab, setActiveTab] = useState("All");
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
   const [orders, setOrders] = useState([]);
-
   const tabs = ["All", "Pending", "Processing", "Shipped", "Delivered"];
   const tabRefs = useRef([]);
-
+  
   useEffect(() => {
     const activeIndex = tabs.indexOf(activeTab);
     if (tabRefs.current[activeIndex]) {
@@ -23,7 +22,7 @@ const OrderHistory = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const { data } = await findAll(1, 99, "", activeTab);
+      const { data } = await findAll(45,1, 99, "", activeTab);
       setOrders(data?.data);
     };
     fetchOrders();

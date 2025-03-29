@@ -15,6 +15,15 @@ export const create = async (data) => {
   });
 };
 
+export const patchs = async (ReviewId, data) => {
+  return await axios.patch(`${HOST_URL}/reviews/patch/${ReviewId}`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    withCredentials: true,
+  });
+};
+
 export const update = async (id, data) => {
   return await axios.patch(`${HOST_URL}/reviews/${id}?status=${data}`, {
     headers: {

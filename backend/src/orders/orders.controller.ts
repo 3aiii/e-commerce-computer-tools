@@ -51,15 +51,16 @@ export class OrdersController {
     }
   }
 
-  @Get()
+  @Get('findAll/:id')
   findAll(
+    @Param('id') id: string,
     @Query('page') page: number,
     @Query('perPage') perPage: number,
     @Query('search') search: string,
     @Query('status') status: string,
   ) {
     try {
-      return this.ordersService.findAll(page, perPage, search, status);
+      return this.ordersService.findAll(+id,page, perPage, search, status);
     } catch (error) {
       throw new HttpException(
         'Something went wrong',

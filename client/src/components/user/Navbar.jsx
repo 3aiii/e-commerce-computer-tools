@@ -89,7 +89,7 @@ const Navbar = () => {
 
   return (
     <div
-      className={`sticky top-0 left-0 z-[999] flex justify-center w-full bg-white py-2
+      className={`sticky top-0 left-0 z-[20] flex justify-center w-full bg-white py-2
         transition-all duration-300 ${
           isScrolled ? "bg-white border-b-[1px] shadow-md" : "bg-transparent"
         }`}

@@ -38,6 +38,14 @@ export class ReviewsController {
     return this.reviewsService.update(+id, updateReviewDto);
   }
 
+  @Patch('patch/:id')
+  patch(
+    @Param('id') id: string,
+    @Body() updateReviewDto: Prisma.ReviewProductUpdateInput,
+  ) {
+    return this.reviewsService.patch(+id, updateReviewDto);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.reviewsService.remove(+id);

@@ -33,11 +33,6 @@ const UploadSlip = () => {
       return;
     }
 
-    if (!slip) {
-      alert("กรุณาเลือกรูปภาพสลิปก่อนอัปโหลด");
-      return;
-    }
-
     const { data } = await image(slip, orderId);
     if (data) {
       toast.success("ส่ง slip เรียบร้อย!", {
