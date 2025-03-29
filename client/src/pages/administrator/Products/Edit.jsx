@@ -102,13 +102,13 @@ const Edit = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       const { data } = await findOne(id);
-      setImagaeArray(data?.ProductImage);
+      setImagaeArray(data?.data?.ProductImage);
       setProduct({
-        name: data?.name,
-        categoryId: data?.categoryId,
-        price: data?.price,
-        tax: data?.tax,
-        description: data?.description,
+        name: data?.data?.name,
+        categoryId: data?.data?.categoryId,
+        price: data?.data?.price,
+        tax: data?.data?.tax,
+        description: data?.data?.description,
       });
     };
 

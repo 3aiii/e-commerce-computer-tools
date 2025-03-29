@@ -152,7 +152,7 @@ const Navbar = () => {
                   <Link
                     to={"/sign-in"}
                     className={`rounded-md font-semibold px-4 p-2 bg-red-500 text-white
-                           hover:bg-red-400 transition`}
+                           hover:bg-red-600 transition`}
                   >
                     SIGN IN
                   </Link>

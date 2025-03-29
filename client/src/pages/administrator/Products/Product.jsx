@@ -8,6 +8,7 @@ import { findOne } from "../../../composables/administrator/ProductService";
 import { formatDateTime } from "../../../utils/formatDateTime";
 import { IMAGE_URL } from "../../../secret";
 import { formatPrice } from "../../../utils/formatPrice";
+import { FaStar, FaUser } from "react-icons/fa";
 
 const TableRow = ({ label, value, isHighlighted, alignTop }) => (
   <tr className="w-full">
@@ -30,7 +31,17 @@ const TableRow = ({ label, value, isHighlighted, alignTop }) => (
           {value}
         </span>
       ) : (
-        <span className="break-words">{value}</span>
+        <>
+          <span className="flex items-center gap-2">
+            {label === "Total Rating" ? (
+              <FaStar className="text-yellow-400" size={20} />
+            ) : null}
+            {label === "Review Count" ? (
+              <FaUser className="text-gray-400" size={20} />
+            ) : null}
+            {value}
+          </span>
+        </>
       )}
     </td>
   </tr>
@@ -41,7 +52,10 @@ const Product = () => {
   const { slug } = useParams();
   const { id } = location?.state?.product;
   const [product, setProduct] = useState([]);
-  console.log(product);
+
+  const avgRating = product?.ratings?.[0]?._avg?.totalRating || 0;
+  const reviewCount = product?.ratings?.[0]?._count?.productId || 0;
+
   useEffect(() => {
     const fetchProduct = async () => {
       const { data } = await findOne(id);
@@ -71,7 +85,7 @@ const Product = () => {
               modules={[Pagination]}
               className="mySwiper"
             >
-              {product?.ProductImage?.map((img, index) => (
+              {product?.data?.ProductImage?.map((img, index) => (
                 <SwiperSlide key={index}>
                   <img
                     src={`${IMAGE_URL}/${img?.url}`}
@@ -90,31 +104,33 @@ const Product = () => {
         </div>
         <table className="w-full border-collapse">
           <tbody>
-            <TableRow label="Name" value={product?.name} />
-            <TableRow label="Slug" value={product?.slug} />
+            <TableRow label="Name" value={product?.data?.name} />
+            <TableRow label="Slug" value={product?.data?.slug} />
             <TableRow
               label="Description"
-              value={product?.description}
+              value={product?.data?.description}
               alignTop
             />
             <TableRow
               label="Category"
-              value={product?.category?.name}
+              value={product?.data?.category?.name}
               isHighlighted
             />
-            <TableRow label="Price" value={formatPrice(product?.price)} />
+            <TableRow label="Price" value={formatPrice(product?.data?.price)} />
             <TableRow
               label="Tax"
-              value={product?.tax + " " + `%`}
+              value={product?.data?.tax + " " + `%`}
               isHighlighted
             />
+            <TableRow label="Total Rating" value={avgRating} />
+            <TableRow label="Review Count" value={reviewCount} />
             <TableRow
               label="Created At"
-              value={formatDateTime(product?.createdAt)}
+              value={formatDateTime(product?.data?.createdAt)}
             />
             <TableRow
               label="Update At"
-              value={formatDateTime(product?.updatedAt)}
+              value={formatDateTime(product?.data?.updatedAt)}
             />
           </tbody>
         </table>
@@ -127,7 +143,7 @@ const Product = () => {
           </Link>
           <Link
             to={`/administrator/products/${slug}/edit`}
-            state={{ product }}
+            state={{ product: product?.data }}
             className="edit-button flex items-center gap-2"
           >
             <FaRegEdit /> Edit
