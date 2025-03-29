@@ -41,7 +41,7 @@ const Product = () => {
   const { slug } = useParams();
   const { id } = location?.state?.product;
   const [product, setProduct] = useState([]);
-
+  console.log(product);
   useEffect(() => {
     const fetchProduct = async () => {
       const { data } = await findOne(id);

@@ -41,7 +41,7 @@ export class UsersService {
       where: { id: Number(userId) },
       select: { image: true },
     });
-    
+
     if (user?.image) {
       const oldImagePath = path.join(__dirname, '../../public/', user.image);
 
@@ -89,10 +89,9 @@ export class UsersService {
     });
 
     if (data.length === 0) {
-      throw new HttpException(
-        'No users available to display',
-        HttpStatus.NOT_FOUND,
-      );
+      return {
+        data,
+      };
     }
 
     return {

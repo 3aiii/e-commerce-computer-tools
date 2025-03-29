@@ -67,7 +67,7 @@ export class OrdersService {
     const skip = (page - 1) * perPage;
 
     const whereCondition: Prisma.OrderWhereInput = {
-      userId: id,
+      ...(id ? { userId: id } : {}),
       ...(search || (status && status !== 'All')
         ? {
             OR: [
@@ -123,11 +123,10 @@ export class OrdersService {
       where: whereCondition,
     });
 
-    if (data.length === 0) {
-      throw new HttpException(
-        'No orders available to display',
-        HttpStatus.NOT_FOUND,
-      );
+    if (data?.length === 0) {
+      return {
+        data,
+      };
     }
 
     return {

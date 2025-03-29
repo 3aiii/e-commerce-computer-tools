@@ -18,7 +18,12 @@ const TableRow = ({
   status,
   onStatusChange,
 }) => (
-  <tr className="w-full">
+  <tr
+    className={`w-full transition-all duration-300 ${
+      isEditingStatus ? "bg-green-100 text-green-800 font-semibold" : ""
+    } hover:bg-gray-100`}
+  >
+    {" "}
     <td
       className={`text-left w-1/2 border-t border-r px-6 py-2 font-light break-words ${
         alignTop ? "align-top" : ""
@@ -26,7 +31,6 @@ const TableRow = ({
     >
       {label}
     </td>
-
     <td className={`w-1/2 border-t px-4 py-2 font-light break-all break-words`}>
       {isEditingStatus && label === "Status" ? (
         <select
@@ -75,7 +79,7 @@ const Order = () => {
   const handleEditStatus = () => {
     setIsEditingStatus(true);
   };
-  
+
   const handleSaveStatus = async () => {
     const response = await update(id, status);
 
@@ -99,7 +103,7 @@ const Order = () => {
     const fetchProduct = async () => {
       const { data } = await findOne(id);
       setOrders(data);
-      setStutus(data?.status)
+      setStutus(data?.status);
     };
 
     fetchProduct();

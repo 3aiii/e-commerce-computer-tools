@@ -14,7 +14,6 @@ import InputLayout from "./layouts/administrator/InputLayout";
 import IndexDiscount from "./pages/administrator/Discounts/Index";
 import CreateUser from "./pages/administrator/Users/Create";
 import EditUser from "./pages/administrator/Users/Edit";
-import EditOrder from "./pages/administrator/Orders/Edit";
 import Order from "./pages/administrator/Orders/Order";
 import { ToastContainer } from "react-toastify";
 import User from "./pages/administrator/Users/User";
@@ -109,9 +108,7 @@ function App() {
             <Route path="orders/:slug" element={<InputLayout />}>
               <Route path="" element={<Order />} />
             </Route>
-            <Route path="orders/:slug/edit" element={<InputLayout />}>
-              <Route path="" element={<EditOrder />} />
-            </Route>
+
             <Route path="categories" element={<IndexCategories />} />
             <Route path="discount" element={<IndexDiscount />} />
             <Route path="discount/create" element={<InputLayout />}>

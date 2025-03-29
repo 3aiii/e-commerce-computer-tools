@@ -20,25 +20,21 @@ export class ReviewsService {
           { condition: { equals: status as condition } },
         ],
       },
-    });
-
-    if (orderIds?.length === 0) {
-      return [];
-    }
-
-    const orderDetails = await this.DatabaseService.orderDetails.findMany({
-      where: {
-        AND: [{ orderId: { in: orderIds.map((order) => order.orderId) } }],
-      },
-      include: {
-        product: {
-          include: {
-            ProductImage: true,
-            ReviewProduct: true,
-          },
-        },
+      select: {
+        id: true,
+        status: true,
+        condition: true,
+        ratingMaterial: true,
+        ratingComplementary: true,
+        ratingUsed: true,
+        ratingFunction: true,
+        ratingWorth: true,
+        totalRating: true,
+        updatedAt: true,
+        comment: true,
         order: {
           include: {
+            OrderDetails: true,
             user: {
               select: {
                 email: true,
@@ -47,24 +43,19 @@ export class ReviewsService {
             },
           },
         },
-      },
-      orderBy: [
-        {
-          order: {
-            updatedAt: 'desc',
+        Product: {
+          include: {
+            ProductImage: true,
           },
         },
-      ],
+      },
     });
 
-    console.log(orderDetails);
-    const NewOrderDetails = Object.values(orderDetails).filter(
-      (order) =>
-        order?.product?.ReviewProduct?.[0]?.condition === status &&
-        order?.product?.ReviewProduct?.[0]?.status === true,
-    );
+    if (orderIds?.length === 0) {
+      return [];
+    }
 
-    return NewOrderDetails;
+    return orderIds;
   }
 
   findOne(id: number) {

@@ -190,7 +190,7 @@ const Index = () => {
                 </tr>
               ))
             ) : (
-              <NoDataTable />
+              <NoDataTable colSpan={7} />
             )}
           </tbody>
         </table>

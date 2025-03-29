@@ -31,6 +31,9 @@ const Product = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
+  const avgRating = data?.ratings?.[0]?._avg?.totalRating || 0;
+  const reviewCount = data?.ratings?.[0]?._count?.productId || 0;
+
   const updateQuantity = async (change) => {
     const newQuantity = Math.max(1, quantity + change);
     setQuantity(newQuantity);
@@ -58,7 +61,6 @@ const Product = () => {
         });
       }
     } catch (error) {
-      console.log(error);
       showErrorToast("กรุณาล็อกอิน ก่อนใช้งานระบบ");
     }
   };
@@ -76,11 +78,7 @@ const Product = () => {
           });
         }
       } catch (error) {
-        console.log(error);
-        // toast.error("Error fetching user data.", {
-        //   position: "bottom-right",
-        //   autoClose: 3000,
-        // });
+        showErrorToast(error.message);
       }
     };
 
@@ -94,18 +92,16 @@ const Product = () => {
       try {
         const { data: product } = await findOne(id);
         setData(product);
-
-        if (product?.categoryId) {
+        if (product?.data?.categoryId) {
           const { data: related } = await findProductByCategory(
-            product.categoryId,
-            product.id,
+            product?.data?.categoryId,
+            product?.data?.id,
             ""
           );
           setRelatedProduct(related?.data || []);
         }
       } catch (error) {
-        // showErrorToast("Error fetching product data:");
-        console.log(error);
+        showErrorToast(error.message);
       }
     };
     fetchProductData();
@@ -118,16 +114,16 @@ const Product = () => {
           <div className="flex items-center gap-3 font-light text-sm cursor-default">
             <span>Home</span>
             <div className="w-1 h-1 rounded-full bg-red-500"></div>
-            <span>{data?.category?.name}</span>
+            <span>{data?.data?.category?.name}</span>
             <div className="w-1 h-1 rounded-full bg-red-500"></div>
             <span className="line-clamp-1">{slug}</span>
           </div>
           <p className="text-gray-400 font-base text-sm mt-1">
-            {data?.category?.name} | {data?.name}
+            {data?.data?.category?.name} | {data?.data?.name}
           </p>
 
           <div>
-            {data?.ProductImage?.length === 0 ? (
+            {data?.data?.ProductImage?.length === 0 ? (
               <div className="flex items-center justify-center mt-4">
                 <img
                   src="https://placehold.co/500x500"
@@ -144,7 +140,7 @@ const Product = () => {
                   className="w-[500px] h-auto"
                   onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
                 >
-                  {data?.ProductImage?.map((img, index) => (
+                  {data?.data?.ProductImage?.map((img, index) => (
                     <SwiperSlide key={index}>
                       <img
                         src={`${IMAGE_URL}/${img.url}`}
@@ -161,7 +157,7 @@ const Product = () => {
                   modules={[Thumbs]}
                   className="mt-2 cursor-pointer"
                 >
-                  {data?.ProductImage?.map((img, index) => (
+                  {data?.data?.ProductImage?.map((img, index) => (
                     <SwiperSlide key={index}>
                       <img
                         src={`${IMAGE_URL}/${img.url}`}
@@ -180,22 +176,33 @@ const Product = () => {
           </div>
         </div>
         <div className="w-1/2">
-          <span className="text-red-500 text-sm">{data?.category?.name}</span>
+          <span className="text-red-500 text-sm">
+            {data?.data?.category?.name}
+          </span>
           <div>
-            <h1 className="text-2xl font-semibold">{data?.name}</h1>
+            <h1 className="text-2xl font-semibold">{data?.data?.name}</h1>
             <div className="flex items-center gap-2 my-3">
-              <FaStar size={25} className="text-[#FFAD33]" />
-              <FaStar size={25} className="text-black opacity-25" />
-              <FaStar size={25} className="text-black opacity-25" />
-              <FaStar size={25} className="text-black opacity-25" />
-              <FaStar size={25} className="text-black opacity-25" />
-              <p className="text-black opacity-50 ml-4">(15 Reviews)</p>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <FaStar
+                  key={index}
+                  size={25}
+                  className={
+                    index < Math.round(avgRating)
+                      ? "text-[#FFAD33]"
+                      : "text-black opacity-25"
+                  }
+                />
+              ))}
+              <p className="text-black opacity-50 ml-4">
+                ({reviewCount} Reviews)
+              </p>
             </div>
+
             <div className="font-semibold text-red-500 my-3 mb-8 text-2xl">
-              ฿ {formatPrice(data?.price)}
+              ฿ {formatPrice(data?.data?.price)}
             </div>
             <p className="font-light break-words pb-8 border-b-[1px]">
-              {data?.description}
+              {data?.data?.description}
             </p>
           </div>
           <div className="flex w-full h-[44px] gap-4 my-6 mb-10">
@@ -258,8 +265,8 @@ const Product = () => {
       <div className="mt-16">
         <HeroCard
           name={"Related Item"}
-          state={data?.category}
-          navigateTo={`/categories/${data?.category?.name}`}
+          state={data?.data?.category}
+          navigateTo={`/categories/${data?.data?.category?.name}`}
         />
         <div className="grid grid-cols-5 gap-4 mt-4">
           {relatedProduct?.map((product, index) => (

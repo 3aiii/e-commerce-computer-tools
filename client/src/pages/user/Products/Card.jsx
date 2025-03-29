@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { IMAGE_URL } from "../../../secret";
 import { formatPrice } from "../../../utils/formatPrice";
+import { FaStar } from "react-icons/fa";
 
 const Card = ({ data }) => {
   return (
@@ -9,7 +10,7 @@ const Card = ({ data }) => {
       to={`/product/${data?.slug}`}
       state={{ data }}
       className="bg-white rounded-xl shadow-lg overflow-hidden p-3 flex flex-col items-center cursor-pointer 
-             transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-red-500/50"
+        transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:shadow-red-500/50"
     >
       <div className="relative w-full h-[140px] flex justify-center items-center">
         {data?.ProductImage?.length === 0 ? (
@@ -33,9 +34,22 @@ const Card = ({ data }) => {
         <h1 className="text-sm font-light leading-tight line-clamp-2">
           {data?.name}
         </h1>
-        <span className="text-md font-medium text-gray-900">
-          ฿{formatPrice(data?.price)}
-        </span>
+        <div className="flex justify-between">
+          <span className="text-md font-medium text-gray-900">
+            ฿{formatPrice(data?.price)}
+          </span>
+          {data?.avgRating || data?.countUserRating ? (
+            <div className="flex items-center gap-1 text-[#757575] text-sm font-light">
+              <FaStar className="text-yellow-300" />
+              <h6 className="flex items-center">
+                {data?.avgRating?.toFixed(2)}
+                <span> ({data?.countUserRating})</span>
+              </h6>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
     </Link>
   );

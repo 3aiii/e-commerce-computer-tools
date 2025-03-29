@@ -1,10 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import {
-  findAll,
-  patchs,
-  update,
-} from "../../../composables/user/ReviewService";
+import { findAll, patchs } from "../../../composables/user/ReviewService";
 import { verify } from "../../../composables/authentication/Authentication";
 import { IMAGE_URL } from "../../../secret";
 import { toast } from "react-toastify";
@@ -21,7 +17,6 @@ const MyReview = () => {
   const [activeTab, setActiveTab] = useState("Waiting");
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
   const [reviewProduct, setReviewProduct] = useState([]);
-  
   const handleOpen = async (data) => {
     setIsOpenModal(true);
     setSelectedProduct(data);
@@ -115,19 +110,19 @@ const MyReview = () => {
                 <div className="flex gap-4 w-2/3">
                   <img
                     className="w-[80px] h-[80px] object-contain rounded-lg bg-white p-2"
-                    src={`${IMAGE_URL}/${reviewPro?.product?.ProductImage?.[0]?.url}`}
-                    alt={reviewPro?.product?.name}
+                    src={`${IMAGE_URL}/${reviewPro?.Product?.ProductImage?.[0]?.url}`}
+                    alt={reviewPro?.Product?.name}
                   />
                   <div className="flex flex-col justify-center items-start gap-1 w-full">
                     <div className="font-semibold">
                       # {reviewPro?.order?.invoiceNo}
                     </div>
                     <h3 className="font-light break-words break-all">
-                      {reviewPro?.product?.name}
+                      {reviewPro?.Product?.name}
                     </h3>
-                    <span className="text-[#858585] text-sm font-light">
-                      Quantity : {reviewPro?.quantity}
-                    </span>
+                    {/* <span className="text-[#858585] text-sm font-light">
+                      Quantity : {reviewPro?.order?.OrderDetails?.[0]?.quantity}
+                    </span> */}
                   </div>
                 </div>
               </div>
@@ -170,17 +165,15 @@ const MyReview = () => {
               <div className="flex gap-6 px-8 py-4 bg-[#F5F5F5]">
                 <img
                   className="w-[80px] h-[80px] object-contain rounded-lg bg-white p-2"
-                  src={`${IMAGE_URL}/${reviewPro?.product?.ProductImage?.[0]?.url}`}
+                  src={`${IMAGE_URL}/${reviewPro?.Product?.ProductImage?.[0]?.url}`}
                   alt="Reviewed Product"
                 />
                 <div className="flex flex-col justify-center gap-2 w-full">
-                  <h3 className="font-light">{reviewPro?.product?.name}</h3>
+                  <h3 className="font-light">{reviewPro?.Product?.name}</h3>
                 </div>
                 <div className="flex items-center gap-2 px-5 py-2 rounded-xl w-fit h-fit text-white bg-red-500 text-xl font-semibold">
                   <FaStar className="text-yellow-300" size={20} />
-                  <span>
-                    {reviewPro?.product?.ReviewProduct?.[0]?.totalRating}
-                  </span>
+                  <span>{reviewPro?.totalRating}</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 items-start px-8 py-6 gap-6">
@@ -189,31 +182,23 @@ const MyReview = () => {
                     {[
                       {
                         label: "Material",
-                        value:
-                          reviewPro?.product?.ReviewProduct?.[0]
-                            ?.ratingMaterial,
+                        value: reviewPro?.ratingMaterial,
                       },
                       {
                         label: "Functionality",
-                        value:
-                          reviewPro?.product?.ReviewProduct?.[0]
-                            ?.ratingFunction,
+                        value: reviewPro?.ratingFunction,
                       },
                       {
                         label: "Complementary",
-                        value:
-                          reviewPro?.product?.ReviewProduct?.[0]
-                            ?.ratingComplementary,
+                        value: reviewPro?.ratingComplementary,
                       },
                       {
                         label: "Used",
-                        value:
-                          reviewPro?.product?.ReviewProduct?.[0]?.ratingUsed,
+                        value: reviewPro?.ratingUsed,
                       },
                       {
                         label: "Worth",
-                        value:
-                          reviewPro?.product?.ReviewProduct?.[0]?.ratingWorth,
+                        value: reviewPro?.ratingWorth,
                       },
                     ].map(({ label, value }) => (
                       <li
@@ -250,15 +235,12 @@ const MyReview = () => {
                         {reviewPro?.order?.user?.email}
                       </h4>
                       <span className="text-[#757575] text-sm font-light">
-                        Review Date:{" "}
-                        {formatDateTime(
-                          reviewPro?.product?.ReviewProduct?.[0]?.updatedAt
-                        )}
+                        Review Date: {formatDateTime(reviewPro?.updatedAt)}
                       </span>
                     </div>
                   </div>
                   <div className="border-[1px] w-full rounded-md px-4 py-2 font-light text-sm">
-                    {reviewPro?.product?.ReviewProduct?.[0]?.comment}
+                    {reviewPro?.comment}
                   </div>
                 </div>
               </div>

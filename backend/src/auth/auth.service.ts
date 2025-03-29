@@ -15,9 +15,14 @@ export class AuthService {
   }
 
   async login(payload: any) {
-    const user = await this.DatabaseService.user.findUnique({
+    const user = await this.DatabaseService.user.findFirst({
       where: {
-        email: payload.email,
+        AND: [
+          {
+            email: payload.email,
+          },
+          { status: true },
+        ],
       },
     });
 

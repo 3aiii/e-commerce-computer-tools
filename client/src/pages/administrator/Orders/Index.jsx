@@ -21,6 +21,7 @@ const Index = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const fetchs = async () => {
     const { data } = await findAll(
+      null,
       currentPage,
       itemsPerPage,
       searchTerm,
@@ -167,7 +168,7 @@ const Index = () => {
                 </tr>
               ))
             ) : (
-              <NoDataTable />
+              <NoDataTable colSpan={7}/>
             )}
           </tbody>
         </table>

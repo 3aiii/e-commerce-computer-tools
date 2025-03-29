@@ -62,10 +62,9 @@ export class CategoriesService {
     });
 
     if (data.length === 0) {
-      throw new HttpException(
-        'No categories available to display',
-        HttpStatus.NOT_FOUND,
-      );
+      return {
+        data,
+      };
     }
 
     return {
@@ -117,6 +116,31 @@ export class CategoriesService {
       },
     });
 
+    const ratings = await this.DatabaseService.reviewProduct.groupBy({
+      by: ['productId'],
+      _avg: {
+        totalRating: true,
+      },
+      _count: {
+        productId: true,
+      },
+      where: {
+        productId: {
+          in: data.map((product) => product.id),
+        },
+        condition: 'Reviewed',
+      },
+    });
+
+    const productsWithAvgRating = data.map((product) => {
+      const rating = ratings.find((r) => r.productId === product.id);
+      return {
+        ...product,
+        avgRating: rating?._avg.totalRating ?? null,
+        countUserRating: rating?._count.productId ?? null,
+      };
+    });
+
     if (data.length === 0) {
       throw new HttpException(
         'No product in this category.',
@@ -141,7 +165,7 @@ export class CategoriesService {
       },
     });
 
-    return { data, countData };
+    return { data: productsWithAvgRating, countData };
   }
 
   async update(id: number, updateCategoryDto: Prisma.CategoryUpdateInput) {

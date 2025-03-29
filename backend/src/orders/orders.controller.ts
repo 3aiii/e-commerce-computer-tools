@@ -60,7 +60,7 @@ export class OrdersController {
     @Query('status') status: string,
   ) {
     try {
-      return this.ordersService.findAll(+id,page, perPage, search, status);
+      return this.ordersService.findAll(+id, page, perPage, search, status);
     } catch (error) {
       throw new HttpException(
         'Something went wrong',

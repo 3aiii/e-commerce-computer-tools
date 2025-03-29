@@ -28,7 +28,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, product }) => {
           ratings.ratingWorth) /
         5;
 
-      await onSubmit(product?.product?.ReviewProduct?.[0]?.id, {
+      await onSubmit(product?.id, {
         ...ratings,
         comment,
         totalRating,
@@ -38,20 +38,22 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, product }) => {
       showErrorToast(error);
     }
   };
-
+  
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed focus:outline-none inset-0 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity z-50" />
         <Dialog.Content className="fixed top-1/2 left-1/2 w-[90%] max-w-md bg-white p-6 rounded-2xl shadow-xl -translate-x-1/2 -translate-y-1/2 transition-transform z-50">
           <Dialog.Title className="text-lg font-semibold text-gray-800">
-            {product?.product?.name}
+            # {product?.order?.invoiceNo}
           </Dialog.Title>
-          Please rate and review{" "}
+          <Dialog.Description className="text-gray-600 text-sm">
+            {product?.Product?.name}
+          </Dialog.Description>
           <Dialog.Description className="flex flex-col items-center mt-2 text-gray-600">
             <img
               className="w-[250px] h-[250px] object-contain mb-2"
-              src={`${IMAGE_URL}/${product?.product?.ProductImage?.[0]?.url}`}
+              src={`${IMAGE_URL}/${product?.Product?.ProductImage?.[0]?.url}`}
             />
           </Dialog.Description>
           <div className="mt-4 flex flex-col gap-3">

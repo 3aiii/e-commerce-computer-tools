@@ -43,10 +43,9 @@ export class DiscountService {
     });
 
     if (data.length === 0) {
-      throw new HttpException(
-        'No discount available to display',
-        HttpStatus.NOT_FOUND,
-      );
+      return {
+        data,
+      };
     }
 
     return {

@@ -66,19 +66,43 @@ export class ProductsService {
       take: Number(perPage),
     });
 
+    const ratings = await this.DatabaseService.reviewProduct.groupBy({
+      by: ['productId'],
+      _avg: {
+        totalRating: true,
+      },
+      _count: {
+        productId: true,
+      },
+      where: {
+        productId: {
+          in: data.map((product) => product.id),
+        },
+        condition: 'Reviewed',
+      },
+    });
+
+    const productsWithAvgRating = data.map((product) => {
+      const rating = ratings.find((r) => r.productId === product.id);
+      return {
+        ...product,
+        avgRating: rating?._avg.totalRating ?? null,
+        countUserRating: rating?._count.productId ?? null,
+      };
+    });
+
     const total = await this.DatabaseService.product.count({
       where: whereCondition,
     });
 
     if (data.length === 0) {
-      throw new HttpException(
-        'No products available to display',
-        HttpStatus.NOT_FOUND,
-      );
+      return {
+        data,
+      };
     }
 
     return {
-      data,
+      data: productsWithAvgRating,
       pagination: {
         totalPages: Math.ceil(total / perPage),
         currentPage: Number(page),
@@ -88,13 +112,39 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    return this.DatabaseService.product.findUnique({
+    
+    const data = await this.DatabaseService.product.findUnique({
       where: { id },
       include: {
         category: true,
         ProductImage: true,
+        ReviewProduct: true,
       },
     });
+
+    const ratings = await this.DatabaseService.reviewProduct.groupBy({
+      by: ['productId'],
+      _avg: {
+        totalRating: true,
+      },
+      _count: {
+        productId: true,
+      },
+      where: {
+        productId: id,
+        condition: 'Reviewed',
+      },
+    });
+    const productsWithAvgRating = {
+      ...data,
+      avgRating: ratings?.[0]?._avg.totalRating ?? null,
+      countUserRating: ratings?.[0]?._count.productId ?? null,
+    };
+
+    return {
+      data,
+      ratings,
+    };
   }
 
   async update(id: number, updateProductDto: Prisma.ProductUpdateInput) {
