@@ -80,7 +80,7 @@ const Navbar = () => {
   return (
     <div className="w-full h-fit bg-white">
       <div className="flex justify-center min-h-16 border-b-[1px] border-gray-200">
-        <div className="flex justify-between items-center xl:w-[1180px] 2xl:w-[1580px]">
+        <div className="flex justify-between items-center w-[1280px]">
           <Link
             to={"/administrator/dashboard"}
             className="w-fit text-xl text-blue-600 font-semibold"
@@ -143,7 +143,7 @@ const Navbar = () => {
       </div>
 
       <div className="relative flex justify-center min-h-16">
-        <div className="flex text-lg font-light gap-4 items-center xl:w-[1180px] 2xl:w-[1580px]">
+        <div className="flex text-lg font-light gap-4 items-center w-[1280px]">
           {/* Dashboard Link */}
           <Link
             to="/administrator/dashboard"

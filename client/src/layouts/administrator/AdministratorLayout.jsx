@@ -9,7 +9,7 @@ const AdministratorLayout = () => {
   useEffect(() => {
     const verifyUser = async () => {
       const response = await verify();
-      
+
       if (response.status === 200) {
         if (response?.data?.user?.role === "ADMIN") {
           navigate("/administrator/dashboard");
@@ -28,7 +28,7 @@ const AdministratorLayout = () => {
         <Navbar />
       </div>
       <div className="flex justify-center w-full bg-[#f7f8fc] min-h-screen">
-        <div className="xl:w-[1180px] 2xl:w-[1580px]">
+        <div className="w-[1280px]">
           <Outlet />
         </div>
       </div>

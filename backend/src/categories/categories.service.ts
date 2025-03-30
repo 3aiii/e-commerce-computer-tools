@@ -82,13 +82,13 @@ export class CategoriesService {
       where: {
         AND: [
           { id },
-          status
-            ? {
-                status: {
-                  equals: status === 'active',
-                },
-              }
-            : {},
+          // status
+          //   ? {
+          //       status: {
+          //         equals: status === 'active',
+          //       },
+          //     }
+          //   : {},
         ],
       },
     });

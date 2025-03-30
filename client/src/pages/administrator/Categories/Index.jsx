@@ -27,12 +27,11 @@ const Index = () => {
   const [category, setCategory] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [edit, setEdit] = useState(false);
-
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const startIndex = (currentPage - 1) * itemsPerPage;
-
+  
   const fetchs = async () => {
     const { data } = await findAll(currentPage, itemsPerPage, searchTerm);
     setCategory(data);
@@ -40,6 +39,7 @@ const Index = () => {
 
   const fetch = async (id) => {
     const { data } = await findOne(id);
+    console.log(data)
     setCategoryInsertData({ id, name: data?.name });
   };
 

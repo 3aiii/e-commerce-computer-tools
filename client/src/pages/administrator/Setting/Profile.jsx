@@ -70,7 +70,7 @@ const Profile = () => {
           draggable: true,
           progress: undefined,
           onClose: () => {
-            navigate("/administrator/users");
+            window.location.reload()
           },
         });
       } else {

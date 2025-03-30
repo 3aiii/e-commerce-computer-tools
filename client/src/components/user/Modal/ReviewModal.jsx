@@ -38,12 +38,13 @@ const ReviewModal = ({ isOpen, onClose, onSubmit, product }) => {
       showErrorToast(error);
     }
   };
-  
+
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed focus:outline-none inset-0 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity z-50" />
-        <Dialog.Content className="fixed top-1/2 left-1/2 w-[90%] max-w-md bg-white p-6 rounded-2xl shadow-xl -translate-x-1/2 -translate-y-1/2 transition-transform z-50">
+        <Dialog.Content className="fixed max-h-[650px] overflow-y-auto top-1/2 left-1/2 w-[90%] max-w-md bg-white 
+            p-6 rounded-2xl shadow-xl -translate-x-1/2 -translate-y-1/2 transition-transform z-50">
           <Dialog.Title className="text-lg font-semibold text-gray-800">
             # {product?.order?.invoiceNo}
           </Dialog.Title>

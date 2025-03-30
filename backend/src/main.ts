@@ -16,16 +16,6 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.use('/images', express.static(join(__dirname, '..', 'public')));
-  // app.use((req, res, next) => {
-  //   // ตั้งค่า cookie ที่ HttpOnly และ Secure (สำหรับใช้งานใน production)
-  //   res.cookie('access_token', 'your_token_value', {
-  //     httpOnly: true, // ป้องกันการเข้าถึง cookies จาก JavaScript
-  //     secure: process.env.NODE_ENV === 'production', // ใช้เฉพาะใน HTTPS ใน production
-  //     sameSite: 'Strict', // หรือ 'Lax' ตามความเหมาะสม
-  //   });
-
-  //   next();
-  // });
 
   await app.listen(process.env.PORT ?? 3000);
 }
