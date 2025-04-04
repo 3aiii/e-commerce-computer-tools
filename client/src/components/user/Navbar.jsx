@@ -34,6 +34,7 @@ const Navbar = () => {
     if (data?.message === "Logged out successfully") {
       navigate("/sign-in");
     } else {
+      // console.log(data?.message);
       showErrorToast(data?.meesage);
     }
   };

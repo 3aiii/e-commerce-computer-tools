@@ -51,7 +51,6 @@ const Cart = () => {
         );
       }
     } catch (error) {
-      console.log(error);
       showErrorToast(error);
     }
   };
@@ -68,7 +67,7 @@ const Cart = () => {
 
   const removeItem = async (id) => {
     const response = await remove(id, "");
-    
+
     if (response?.status === 200) {
       toast.success(`ลบสินค้าเสร็จสิ้น!`, {
         position: "bottom-right",
