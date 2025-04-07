@@ -125,7 +125,7 @@ const Order = () => {
             <img
               src={`${IMAGE_URL}/${orders?.OrderImage?.[0]?.url}`}
               alt="Product"
-              className="w-full mb-8 h-90 object-contain rounded-lg border-gray-300"
+              className="w-full mb-8 h-64 object-contain rounded-lg border-gray-300"
             />
           )}
         </div>

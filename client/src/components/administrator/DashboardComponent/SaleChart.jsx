@@ -1,15 +1,16 @@
 import React from "react";
 import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer,
-    CartesianGrid,
-  } from "recharts";
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
+import { formatPrice } from "../../../utils/formatPrice";
 
-const SaleChart = ({salesData}) => {
+const SaleChart = ({ salesData }) => {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={salesData}>

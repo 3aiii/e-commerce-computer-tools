@@ -2,16 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { formatPrice } from "../../../utils/formatPrice";
-import { image } from "../../../composables/user/OrderService";
+import { create, image } from "../../../composables/user/OrderService";
 import { toast } from "react-toastify";
 import { showErrorToast } from "../../../components/ToastNotification";
 import { verify } from "../../../composables/authentication/Authentication";
+import { remove } from "../../../composables/user/CartService";
 
 const UploadSlip = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { total, orderId } = location.state || {};
+  const { total, orderData, user } = location.state || {};
   const [slip, setSlip] = useState(null);
   const [preview, setPreview] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -33,20 +34,25 @@ const UploadSlip = () => {
       return;
     }
 
-    const { data } = await image(slip, orderId);
-    if (data) {
-      toast.success("ส่ง slip เรียบร้อย!", {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          navigate("/order-history");
-        },
-      });
+    const response = await create(orderData);
+    if (response.status === 201) {
+      await remove(user?.id, "delMany");
+
+      const { data } = await image(slip, response?.data?.id);
+      if (data) {
+        toast.success("ส่ง slip เรียบร้อย!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            navigate("/order-history");
+          },
+        });
+      }
     }
   };
 
@@ -78,7 +84,7 @@ const UploadSlip = () => {
         <p className="text-gray-600 mt-4">
           กรุณาโอนเงินจำนวน{" "}
           <span className="text-xl font-bold text-red-500">
-            {formatPrice(total ? `${total} บาท` : "กำลังโหลด...")}
+            {total ? `${formatPrice(total)} บาท` : "กำลังโหลด..."}
           </span>
           <br />
           และอัปโหลดสลิปเพื่อยืนยันการชำระเงิน

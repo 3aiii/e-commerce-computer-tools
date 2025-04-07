@@ -1,4 +1,5 @@
 import React from "react";
+import { formatPrice } from "../../../utils/formatPrice";
 
 const CardDashboard = ({
   title,
@@ -16,7 +17,9 @@ const CardDashboard = ({
           {icon}
         </div>
         <div>
-          <p className="text-2xl font-semibold">{value}</p>
+          <p className="text-2xl font-semibold">
+            {title === "Orders" ? `${formatPrice(value)} $` : value}
+          </p>
           <span className="text-base font-light text-gray-500">
             {description}
           </span>

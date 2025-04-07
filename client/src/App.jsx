@@ -38,7 +38,6 @@ import UploadSlip from "./pages/user/Payment/UploadSlip";
 
 function App() {
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     // Simulate page loading effect
     const timer = setTimeout(() => setLoading(false), 500);

@@ -1,52 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FiBox, FiUsers, FiDollarSign } from "react-icons/fi";
 import { MdOutlineCategory } from "react-icons/md";
 import { CiCoinInsert } from "react-icons/ci";
 import CardDashboard from "../../components/administrator/DashboardComponent/CardDashboard";
 import SaleChart from "../../components/administrator/DashboardComponent/SaleChart";
-
-const salesData = [
-  { date: "2025-03-01", sales: 30 },
-  { date: "2025-03-02", sales: 45 },
-  { date: "2025-03-03", sales: 20 },
-  { date: "2025-03-04", sales: 60 },
-  { date: "2025-03-05", sales: 40 },
-  { date: "2025-03-06", sales: 75 },
-  { date: "2025-03-07", sales: 50 },
-];
-
-const dashboardData = [
-  {
-    title: "Products",
-    value: "120",
-    description: "Total Products",
-    icon: <FiBox />,
-    color: "bg-blue-500",
-  },
-  {
-    title: "Users",
-    value: "12",
-    description: "Total Users",
-    icon: <FiUsers />,
-    color: "bg-green-500",
-  },
-  {
-    title: "Orders",
-    value: "2,000 $",
-    description: "Total Orders",
-    icon: <FiDollarSign />,
-    color: "bg-yellow-500",
-  },
-  {
-    title: "Category",
-    value: "10",
-    description: "Total Categories",
-    icon: <MdOutlineCategory />,
-    color: "bg-red-500",
-  },
-];
+import {
+  getSalesPerDay,
+  getValues,
+} from "../../composables/user/DashBoardService";
 
 const Dashboard = () => {
+  const [data, setData] = useState([]);
+  const [salesData, setSalesData] = useState([]);
+
+  const dashboardData = [
+    {
+      title: "Products",
+      value: data?.products,
+      description: "Total Products",
+      icon: <FiBox />,
+      color: "bg-blue-500",
+    },
+    {
+      title: "Users",
+      value: data?.users,
+      description: "Total Users",
+      icon: <FiUsers />,
+      color: "bg-green-500",
+    },
+    {
+      title: "Orders",
+      value: data?.orders?._sum?.total,
+      description: "Total Orders",
+      icon: <FiDollarSign />,
+      color: "bg-yellow-500",
+    },
+    {
+      title: "Category",
+      value: data?.categories,
+      description: "Total Categories",
+      icon: <MdOutlineCategory />,
+      color: "bg-red-500",
+    },
+  ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data } = await getValues();
+      const fetchSalesPerDay = await getSalesPerDay();
+      
+      setSalesData(fetchSalesPerDay?.data);
+      setData(data);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div>
       <div className="mt-6">

@@ -10,8 +10,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { findOne } from "../../../composables/administrator/UserService";
 import { formatPrice } from "../../../utils/formatPrice";
 import { verify } from "../../../composables/authentication/Authentication";
-import { create } from "../../../composables/user/OrderService";
-import { remove } from "../../../composables/user/CartService";
+import { showErrorToast } from "../../../components/ToastNotification";
 
 const Checkout = () => {
   const location = useLocation();
@@ -35,20 +34,16 @@ const Checkout = () => {
     };
 
     try {
-      const response = await create(orderData);
-
-      if (response.status === 201) {
-        await remove(user?.id, "delMany");
-
-        navigate("/upload-slip", {
-          state: {
-            total: discountPrice ? totalPrice - discountPrice : totalPrice,
-            orderId: response?.data?.id,
-          },
-        });
-      }
+      navigate("/upload-slip", {
+        state: {
+          total: discountPrice ? totalPrice - discountPrice : totalPrice,
+          orderData,
+          user,
+        },
+      });
+      // }
     } catch (error) {
-      console.log(error);
+      showErrorToast(error.message);
     }
   };
 
@@ -197,7 +192,9 @@ const Checkout = () => {
                 Discount{" "}
                 <span>
                   ฿{" "}
-                  {discountObject?.length !== 0 ? formatPrice(discountPrice) : 0}
+                  {discountObject?.length !== 0
+                    ? formatPrice(discountPrice)
+                    : 0}
                 </span>
               </li>
               <li className="flex justify-between">

@@ -67,18 +67,14 @@ const Product = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const { data } = await verify();
-        if (data?.user) {
-          setUser(data.user);
-        } else {
-          toast.error("Session expired, please log in again.", {
-            position: "bottom-right",
-            autoClose: 3000,
-          });
-        }
-      } catch (error) {
-        showErrorToast(error.message);
+      const { data } = await verify();
+      if (data?.user) {
+        setUser(data.user);
+      } else {
+        toast.error("Session expired, please log in again.", {
+          position: "bottom-right",
+          autoClose: 3000,
+        });
       }
     };
 
