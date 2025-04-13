@@ -61,7 +61,14 @@ const SideBar = () => {
               matchPath(`/account`, location.pathname) ? `text-red-500` : ``
             }`}
         >
-          <FiUser size={25} className="text-gray-500" />
+          <FiUser
+            size={25}
+            className={`${
+              matchPath("/account", location.pathname)
+                ? `text-red-500`
+                : `text-gray-500`
+            }`}
+          />
           Personal infomation
         </Link>
         <Link
@@ -71,7 +78,14 @@ const SideBar = () => {
             matchPath(`/order-history`, location.pathname) ? `text-red-500` : ``
           }`}
         >
-          <GoHistory size={25} className="text-gray-500" />
+          <GoHistory
+            size={25}
+            className={`${
+              matchPath("/order-history", location.pathname)
+                ? `text-red-500`
+                : `text-gray-500`
+            }`}
+          />
           Order History
         </Link>
         <Link
@@ -81,7 +95,14 @@ const SideBar = () => {
               matchPath(`/my-review`, location.pathname) ? `text-red-500` : ``
             }`}
         >
-          <MdOutlineReviews size={25} className="text-gray-500" />
+          <MdOutlineReviews
+            size={25}
+            className={`${
+              matchPath("/my-review", location.pathname)
+                ? `text-red-500`
+                : `text-gray-500`
+            }`}
+          />
           My Review
         </Link>
         <button
@@ -89,7 +110,7 @@ const SideBar = () => {
           className={`flex w-full items-center gap-2 text-lg border-t-[1px] 
             font-medium p-4 hover:bg-[#ecf3fdff] hover:text-red-500 cursor-pointer transition `}
         >
-          <TbLogout2 size={25} className="text-gray-500" />
+          <TbLogout2 size={25} className={`text-gray-500`} />
           Logout
         </button>
       </ul>

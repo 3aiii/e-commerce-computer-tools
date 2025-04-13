@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
-import { startOfDay, endOfDay, subDays, format } from 'date-fns';
+import { startOfDay, endOfDay, subDays, format, formatDate } from 'date-fns';
 import { th } from 'date-fns/locale';
 
 @Injectable()
@@ -35,7 +35,7 @@ export class DashboardService {
   async OrderPerDaySales() {
     const today = new Date();
     const fromDate = subDays(today, 6);
-
+    
     const orders = await this.DatabaseService.order.findMany({
       where: {
         createdAt: {

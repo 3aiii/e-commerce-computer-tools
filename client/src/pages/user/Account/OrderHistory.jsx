@@ -14,6 +14,19 @@ const OrderHistory = () => {
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
   const [orders, setOrders] = useState([]);
 
+  const downloadPdf = async (orderId) => {
+    const response = await fetch("http://localhost:3000/download-pdf");
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "report.pdf";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
+
   useEffect(() => {
     const activeIndex = tabs.indexOf(activeTab);
     if (tabRefs.current[activeIndex]) {
@@ -144,15 +157,19 @@ const OrderHistory = () => {
                 </Link>
               </div>
             ))}
-
-            <div className="flex justify-end px-8 py-4">
-              <button
-                className="rounded-lg px-12 py-2 bg-red-200 hover:bg-red-300 
+            {order?.status === "Delivered" ? (
+              <div className="flex justify-end px-8 py-4">
+                <button
+                  onClick={() => downloadPdf(order?.id)}
+                  className="rounded-lg px-12 py-2 bg-red-200 hover:bg-red-300 
                 text-red-500 transition font-medium text-md"
-              >
-                Receipt
-              </button>
-            </div>
+                >
+                  Receipt
+                </button>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
         ))
       )}

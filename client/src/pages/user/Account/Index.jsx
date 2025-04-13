@@ -87,6 +87,7 @@ const Index = () => {
           draggable: true,
           progress: undefined,
           onClose: () => {
+            window.location.reload();
             setIsEditingAll(false);
           },
         });
@@ -144,7 +145,7 @@ const Index = () => {
             <div className="flex flex-col items-center gap-2">
               {!image ? (
                 <img
-                  src={`https://placehold.co/350x200`}
+                  src={`https://placehold.co/150x150`}
                   alt="User"
                   className="w-[150px] h-[150px] object-cover rounded-full"
                 />
@@ -189,12 +190,13 @@ const Index = () => {
           />
         </div>
 
-        {["email", "password", "name", "phone", "address"].map(
+        {["email", "password", "firstname", "lastname", "phone", "address"].map(
           (field, index) => {
             let value = user[field];
             if (field === "name") {
               value = `${user.firstname} ${user.lastname}`;
             }
+
             return (
               <ProfileField
                 key={index}
@@ -205,6 +207,7 @@ const Index = () => {
                 onSave={(newValue) => {
                   if (field === "name") {
                     const [firstname, lastname] = newValue.split(" ");
+
                     handleChangeUserField("firstname", firstname);
                     handleChangeUserField("lastname", lastname);
                   } else {

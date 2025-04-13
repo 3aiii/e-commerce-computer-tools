@@ -19,6 +19,9 @@ export const update = async (id, data) => {
   });
 };
 
+// export const downloadPDF = async (orderId) => {
+// }
+
 export const image = async (blob, orderId) => {
   const covertToNumber = Number(orderId);
   const formData = new FormData();
