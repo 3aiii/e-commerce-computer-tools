@@ -1,4 +1,5 @@
 import { HOST_URL } from "../../secret";
+import { get } from "../administrator/ProductService";
 import axios from "./../../../node_modules/axios/lib/axios";
 
 export const create = async (data) => {
@@ -19,8 +20,15 @@ export const update = async (id, data) => {
   });
 };
 
-// export const downloadPDF = async (orderId) => {
-// }
+export const downloadPDF = async (orders) => {
+  return await axios.get(`${HOST_URL}/download-pdf/${orders}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    responseType: "blob",
+    withCredentials: true,
+  });
+};
 
 export const image = async (blob, orderId) => {
   const covertToNumber = Number(orderId);

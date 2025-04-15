@@ -5,26 +5,34 @@ import { formatPrice } from "../../../utils/formatPrice";
 import { IMAGE_URL } from "../../../secret";
 import { Link } from "react-router-dom";
 import { verify } from "../../../composables/authentication/Authentication";
+import { downloadPDF } from "../../../composables/user/OrderService";
 
 const OrderHistory = () => {
   const tabs = ["All", "Pending", "Processing", "Shipped", "Delivered"];
   const tabRefs = useRef([]);
+  const time = new Date();
 
   const [activeTab, setActiveTab] = useState("All");
   const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
   const [orders, setOrders] = useState([]);
 
-  const downloadPdf = async (orderId) => {
-    const response = await fetch("http://localhost:3000/download-pdf");
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
+  const downloadPdf = async (orderId, orderInvoice) => {
+    try {
+      const response = await downloadPDF(orderId);
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "report.pdf";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${orderInvoice}-${formatDateTime(time).split(" ")[0]}-${
+        formatDateTime(time).split(" ")[1]
+      }-${formatDateTime(time).split(" ")[2]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
   };
 
   useEffect(() => {
@@ -160,7 +168,7 @@ const OrderHistory = () => {
             {order?.status === "Delivered" ? (
               <div className="flex justify-end px-8 py-4">
                 <button
-                  onClick={() => downloadPdf(order?.id)}
+                  onClick={() => downloadPdf(order?.id, order?.invoiceNo)}
                   className="rounded-lg px-12 py-2 bg-red-200 hover:bg-red-300 
                 text-red-500 transition font-medium text-md"
                 >

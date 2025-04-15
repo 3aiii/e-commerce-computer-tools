@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Param } from '@nestjs/common';
 import { DatabaseService } from './database/database.service';
 import * as PDFDocument from 'pdfkit';
 import { Response } from 'express';
@@ -14,9 +14,7 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async downloadPDF(res: Response, orders: any) {
-    const { orderId } = orders;
-
+  async downloadPDF(res: Response, orderId: any) {
     try {
       const order = await this.DatabaseService.order.findUnique({
         where: { id: orderId },
@@ -55,12 +53,14 @@ export class AppService {
         'assets',
         'THSarabunNew.ttf',
       );
+
       const fontPathBold = path.join(
         __dirname,
         '..',
         'assets',
         'Sarabun-Bold.ttf',
       );
+
       const fontPathSemiBold = path.join(
         __dirname,
         '..',
@@ -71,8 +71,6 @@ export class AppService {
       doc.registerFont('THSarabun', fontPathRegular);
       doc.registerFont('THSarabun-Bold', fontPathBold);
       doc.registerFont('THSarabun-Semi-Bold', fontPathSemiBold);
-
-      doc.strokeColor('red').rect(50, 40, 500, 2).stroke();
 
       // หัวเอกสาร
       doc
@@ -118,13 +116,11 @@ export class AppService {
         lineBreak: true,
       });
 
-      doc.strokeColor('red').rect(50, 298, 500, 2).stroke();
-
       // รายการสินค้า
       doc
-        .fontSize(16)
+        .fontSize(14)
         .font('THSarabun-Semi-Bold')
-        .text(`หมายเลขออเดอร์: #${order?.invoiceNo}`, 50, 250);
+        .text(`หมายเลขออเดอร์: #${order?.invoiceNo}`, 50, 280);
 
       doc
         .fontSize(16)
@@ -133,7 +129,7 @@ export class AppService {
           align: 'left',
         });
 
-      const startY = 310;
+      const startY = 340;
       let currentY = startY;
 
       // หัวตาราง
@@ -141,9 +137,9 @@ export class AppService {
         .font('THSarabun-Semi-Bold')
         .fontSize(14)
         .text('รายการสินค้า', 50, currentY)
-        .text('จำนวน', 340, currentY)
-        .text('ราคาต่อหน่วย', 400, currentY)
-        .text('รวม', 510, currentY);
+        .text('จำนวน', 310, currentY)
+        .text('ราคาต่อหน่วย', 370, currentY)
+        .text('รวม', 490, currentY);
 
       currentY += 25;
 
@@ -155,18 +151,18 @@ export class AppService {
 
         const productName = `${index + 1}) ${item?.product?.name}`;
         const productNameHeight = doc.heightOfString(productName, {
-          width: 290,
+          width: 250,
           lineGap: 0.5,
         });
 
         doc
           .text(productName, 50, currentY, {
-            width: 290,
+            width: 250,
             lineGap: 0.5,
           })
-          .text(item?.quantity, 360, currentY)
-          .text(`${formatPrice(item?.price)} บาท`, 420, currentY)
-          .text(`${formatPrice(item?.subtotal)}`, 500, currentY);
+          .text(item?.quantity, 330, currentY)
+          .text(`${formatPrice(item?.price)} บาท`, 380, currentY)
+          .text(`${formatPrice(item?.subtotal)} บาท`, 480, currentY);
 
         currentY += productNameHeight + 10;
       });
@@ -207,6 +203,27 @@ export class AppService {
             align: 'right',
           },
         );
+
+      doc.moveDown();
+      doc.moveDown();
+
+      doc.image('assets/sign.jpg', 400, undefined, {
+        width: 150,
+        align: 'right',
+      });
+
+      doc.moveDown();
+
+      doc
+        .fontSize(14)
+        .text(`(นาย หิรัญ ชัยเจริญสวัสดิ์)`, 285, undefined, {
+          width: 200,
+          align: 'right',
+        })
+        .text(`ผู้มีอำนาจลงนาม`, 265, undefined, {
+          width: 200,
+          align: 'right',
+        });
 
       doc.end();
     } catch (error) {

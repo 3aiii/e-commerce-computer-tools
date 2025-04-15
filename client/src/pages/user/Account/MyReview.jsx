@@ -239,9 +239,15 @@ const MyReview = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="border-[1px] w-full rounded-md px-4 py-2 font-light text-sm">
-                    {reviewPro?.comment}
-                  </div>
+                  {!reviewPro?.comment ? (
+                    <div className="border-[1px] w-full rounded-md px-4 py-2 text-sm text-gray-500 italic bg-gray-50">
+                      ไม่มีความคิดเห็นของการรีวิวนี้
+                    </div>
+                  ) : (
+                    <div className="border-[1px] w-full rounded-md px-4 py-2 font-light text-sm">
+                      {reviewPro?.comment}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

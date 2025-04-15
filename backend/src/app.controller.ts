@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 import { JwtGuard } from './auth/guards';
 import { Response } from 'express';
@@ -13,8 +22,12 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('download-pdf')
-  downlaodPDF(@Res() res: Response, @Body() orderId: any) {
-    this.appService.downloadPDF(res, orderId);
+  @Get('download-pdf/:id')
+  downlaodPDF(
+    @Res() res: Response,
+    @Param('id')
+    orderId: number,
+  ) {
+    this.appService.downloadPDF(res, +orderId);
   }
 }
