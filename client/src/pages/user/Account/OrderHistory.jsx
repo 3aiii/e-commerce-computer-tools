@@ -144,7 +144,9 @@ const OrderHistory = () => {
             </div>
             {order?.OrderDetails?.map((item, index) => (
               <div
-                className="flex px-8 py-4 hover:bg-[#ecf3fdff] transition border-b-[1px]"
+                className={`flex px-8 py-4 hover:bg-[#ecf3fdff] transition ${
+                  order?.status === "Delivered" ? `border-b-[1px]` : ``
+                }`}
                 key={index}
               >
                 <Link

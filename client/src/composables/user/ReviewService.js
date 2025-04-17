@@ -32,3 +32,7 @@ export const update = async (id, data) => {
     withCredentials: true,
   });
 };
+
+export const findTop3 = async () => {
+  return await get(`reviews/top-3`);
+};

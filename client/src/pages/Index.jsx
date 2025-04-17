@@ -6,10 +6,11 @@ import { default as CateCard } from "../components/user/Categories/Card";
 import { default as HeroCard } from "./../components/user/Hero/Card";
 import { default as ProductCard } from "./user/Products/Card";
 import MockHero from "../components/user/Hero/MockHero";
-import { TbTruckDelivery, TbHeadset } from "react-icons/tb";
+import { findTop3 } from "../composables/user/ReviewService";
 
 const Index = () => {
   const [products, setProducts] = useState([]);
+  const [top3, setTop3] = useState([]);
   const [productsBestSelling, setProductsBestSelling] = useState([]);
   const imageArray = [
     {
@@ -32,8 +33,13 @@ const Index = () => {
       setProductsBestSelling(data?.data);
     };
 
+    const fetchTop3 = async () => {
+      const { data } = await findTop3();
+      setTop3(data);
+    };
     fetchProducts();
     fetchProductssBestSelling();
+    fetchTop3();
   }, []);
 
   return (
@@ -66,9 +72,9 @@ const Index = () => {
             🔥 Best Seller ตลอดกาล!
           </h1>
           <div className="flex flex-col gap-4">
-            <CateCard order={1} />
-            <CateCard order={2} />
-            <CateCard order={3} />
+            {top3?.map((top, index) => (
+              <CateCard order={top} index={index} key={index} />
+            ))}
           </div>
         </div>
       </div>

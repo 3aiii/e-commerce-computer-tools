@@ -25,6 +25,11 @@ export class ReviewsController {
     return this.reviewsService.findAll(+userId, status);
   }
 
+  @Get('top-3')
+  GetTop3() {
+    return this.reviewsService.top3();
+  }
+  
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.reviewsService.findOne(+id);
@@ -44,10 +49,5 @@ export class ReviewsController {
     @Body() updateReviewDto: Prisma.ReviewProductUpdateInput,
   ) {
     return this.reviewsService.patch(+id, updateReviewDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.reviewsService.remove(+id);
   }
 }

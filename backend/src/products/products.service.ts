@@ -112,7 +112,6 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    
     const data = await this.DatabaseService.product.findUnique({
       where: { id },
       include: {
@@ -135,12 +134,12 @@ export class ProductsService {
         condition: 'Reviewed',
       },
     });
-    const productsWithAvgRating = {
-      ...data,
-      avgRating: ratings?.[0]?._avg.totalRating ?? null,
-      countUserRating: ratings?.[0]?._count.productId ?? null,
-    };
-
+    // const productsWithAvgRating = {
+    //   ...data,
+    //   avgRating: ratings?.[0]?._avg.totalRating ?? null,
+    //   countUserRating: ratings?.[0]?._count.productId ?? null,
+    // };
+    console.log(ratings);
     return {
       data,
       ratings,

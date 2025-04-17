@@ -18,6 +18,7 @@ export class ReviewsService {
         AND: [
           { order: { userId } },
           { condition: { equals: status as condition } },
+          { status: true },
         ],
       },
       select: {
@@ -48,6 +49,9 @@ export class ReviewsService {
             ProductImage: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -93,7 +97,49 @@ export class ReviewsService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} review`;
+  async top3() {
+    const topOfProductReviews =
+      await this.DatabaseService.reviewProduct.groupBy({
+        by: ['productId'],
+        _avg: {
+          totalRating: true,
+        },
+        where: {
+          condition: 'Reviewed',
+        },
+        orderBy: {
+          _avg: {
+            totalRating: 'desc',
+          },
+        },
+        take: 3,
+      });
+
+    const products = await Promise.all(
+      topOfProductReviews.map(async (top) => {
+        const product = await this.DatabaseService.product.findFirst({
+          where: {
+            id: top.productId || 0,
+          },
+          select: {
+            name: true,
+            slug: true,
+            ProductImage: true,
+            category: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        });
+
+        return {
+          ...product,
+          averageRating: top._avg.totalRating,
+        };
+      }),
+    );
+
+    return products;
   }
 }
