@@ -259,7 +259,7 @@ const Profile = () => {
               type="submit"
               className="update-button flex items-center gap-2"
             >
-              <FaSave /> Create
+              <FaSave /> Update
             </button>
           </div>
         </form>
