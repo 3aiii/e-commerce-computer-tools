@@ -53,28 +53,28 @@ function App() {
       ) : (
         <Routes>
           {/* Index Layout */}
-          <Route path="" element={<IndexLayout />}> 
-            <Route path="/" element={<Index />} /> {/* เปรม */}
-            <Route path="/cart" element={<Cart />} /> {/* เอิร์ธ */}
-            <Route path="/checkout" element={<Checkout />} /> {/* เอิร์ธ */}
-            <Route path="/products" element={<IndexUserProducts />} /> {/* อิฐ */}
-            <Route path="/product/:slug" element={<ProductDetail />} /> {/* อิฐ */}
-            <Route path="/categories/:slug" element={<Categories />} /> {/* อิฐ */}
+          <Route path="" element={<IndexLayout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/products" element={<IndexUserProducts />} />
+            <Route path="/product/:slug" element={<ProductDetail />} />
+            <Route path="/categories/:slug" element={<Categories />} />
           </Route>
 
-          <Route path="/upload-slip" element={<UploadSlip />} /> {/* เอิร์ธ */}
+          <Route path="/upload-slip" element={<UploadSlip />} />
 
           {/* Account Layout */}
           <Route path="" element={<AccountLayout />}>
-            <Route path="/account" element={<IndexAccount />} /> {/* เปรม */}
+            <Route path="/account" element={<IndexAccount />} />
             <Route path="/order-history" element={<OrderHistory />} />
             <Route path="/my-review" element={<MyReview />} />
           </Route>
 
           {/* Auth Layout */}
           <Route path="" element={<AuthLayout />}>
-            <Route path="/sign-in" element={<SignIn />} /> {/* เปรม */}
-            <Route path="/sign-up" element={<SignUp />} /> {/* เปรม */}
+            <Route path="/sign-in" element={<SignIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
           </Route>
 
           {/* Administrator Layout */}
@@ -83,15 +83,15 @@ function App() {
             <Route path="profile" element={<InputLayout />}>
               <Route path="" element={<Profile />} />
             </Route>
-            <Route path="products" element={<IndexProducts />} /> {/* คอปเตอร์ */}
+            <Route path="products" element={<IndexProducts />} />
             <Route path="products/create" element={<InputLayout />}>
-              <Route path="" element={<CreateProducts />} /> {/* คอปเตอร์ */}
+              <Route path="" element={<CreateProducts />} />
             </Route>
             <Route path="products/:slug" element={<InputLayout />}>
-              <Route path="" element={<Product />} /> {/* คอปเตอร์ */}
+              <Route path="" element={<Product />} />
             </Route>
             <Route path="products/:slug/edit" element={<InputLayout />}>
-              <Route path="" element={<EditProduct />} /> {/* คอปเตอร์ */}
+              <Route path="" element={<EditProduct />} />
             </Route>
             <Route path="users" element={<IndexUsers />} />
             <Route path="users/:slug" element={<InputLayout />}>
@@ -107,10 +107,10 @@ function App() {
             <Route path="orders/:slug" element={<InputLayout />}>
               <Route path="" element={<Order />} />
             </Route>
-
-            <Route path="categories" element={<IndexCategories />} /> {/* แพท */}
+            <Route path="categories" element={<IndexCategories />} />{" "}
+            {/* แพท */}
             <Route path="discount" element={<IndexDiscount />} /> {/* แพท */}
-            <Route path="discount/create" element={<InputLayout />}> 
+            <Route path="discount/create" element={<InputLayout />}>
               <Route path="" element={<CreateDiscount />} /> {/* แพท */}
             </Route>
             <Route path="discount/:slug/edit" element={<InputLayout />}>

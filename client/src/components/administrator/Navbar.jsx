@@ -70,12 +70,21 @@ const Navbar = () => {
     fetchUser();
   }, []);
 
-  // verify user state
   useEffect(() => {
-    if (Array.isArray(user) && user.length === 0) {
-      navigate("/");
-    }
-  }, [user, navigate]);
+    const verifyUser = async () => {
+      const response = await verify();
+
+      if (response.status === 200) {
+        if (response?.data?.user?.role === "ADMIN") {
+          navigate("/administrator/dashboard");
+        } else {
+          navigate("/");
+        }
+      }
+    };
+
+    verifyUser();
+  }, []);
 
   return (
     <div className="w-full h-fit bg-white">

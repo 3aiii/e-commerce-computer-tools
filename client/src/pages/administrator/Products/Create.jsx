@@ -46,7 +46,7 @@ const Create = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (imageData && imageData.size > 1048576) {
       showErrorToast("กรุณาอัปโหลดไฟล์ขนาดไม่เกิน 1MB");
       return;
@@ -64,27 +64,33 @@ const Create = () => {
       categoryId: Number(categoryId),
     };
 
-    const response = await create(updateProduct);
+    try {
+      const response = await create(updateProduct);
 
-    if (response.status === 201) {
-      if (imageData) {
-        await image(imageData, response?.data?.id);
+      if (response.status === 201) {
+        if (imageData) {
+          await image(imageData, response?.data?.id);
+        }
+
+        toast.success("สร้างสินค้าสำเร็จ!", {
+          position: "bottom-right",
+          autoClose: 1000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          onClose: () => {
+            navigate("/administrator/products");
+          },
+        });
+      } else {
+        showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
       }
-
-      toast.success("สร้างสินค้าสำเร็จ!", {
-        position: "bottom-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        onClose: () => {
-          navigate("/administrator/products");
-        },
-      });
-    } else {
-      showErrorToast("เกิดข้อผิดพลาด โปรดลองดูอีกครั้ง");
+    } catch (error) {
+      if (error.response.status === 404) {
+        showErrorToast(error.response.data.message);
+      }
     }
   };
 

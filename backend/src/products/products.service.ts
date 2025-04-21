@@ -1,14 +1,24 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from './../database/database.service';
 import { Prisma } from '@prisma/client';
-import slugify from 'slugify';
+import { slugify as translitSlugify } from 'transliteration';
 
 @Injectable()
 export class ProductsService {
   constructor(private readonly DatabaseService: DatabaseService) {}
 
   async create(createProductDto: Prisma.ProductCreateInput) {
-    const slug = slugify(createProductDto.name, { lower: true, strict: true });
+    const slug = translitSlugify(createProductDto.name, {
+      lowercase: true,
+      replace: [['สินค้า', 'product']],
+    });
+
+    if (!slug || slug.length < 3) {
+      throw new HttpException(
+        'กรุณาตั้งชื่อสินค้าที่มีความหมายมากกว่านี้',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
     return this.DatabaseService.product.create({
       data: { ...createProductDto, slug },
@@ -134,12 +144,7 @@ export class ProductsService {
         condition: 'Reviewed',
       },
     });
-    // const productsWithAvgRating = {
-    //   ...data,
-    //   avgRating: ratings?.[0]?._avg.totalRating ?? null,
-    //   countUserRating: ratings?.[0]?._count.productId ?? null,
-    // };
-    console.log(ratings);
+
     return {
       data,
       ratings,
@@ -149,7 +154,10 @@ export class ProductsService {
   async update(id: number, updateProductDto: Prisma.ProductUpdateInput) {
     const name =
       typeof updateProductDto.name === 'string' ? updateProductDto.name : '';
-    const slug = slugify(name, { lower: true, strict: true });
+    const slug = translitSlugify(name, {
+      lowercase: true,
+      replace: [['สินค้า', 'product']],
+    });
 
     return this.DatabaseService.product.update({
       where: { id },

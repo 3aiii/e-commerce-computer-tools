@@ -1,27 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Navbar from "../../components/administrator/Navbar";
-import { Outlet, useNavigate } from "react-router-dom";
-import { verify } from "../../composables/authentication/Authentication";
+import { Outlet } from "react-router-dom";
 
 const AdministratorLayout = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const verifyUser = async () => {
-      const response = await verify();
-
-      if (response.status === 200) {
-        if (response?.data?.user?.role === "ADMIN") {
-          navigate("/administrator/dashboard");
-        } else {
-          navigate("/");
-        }
-      }
-    };
-
-    verifyUser();
-  }, []);
-
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="w-full">
