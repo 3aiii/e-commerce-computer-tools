@@ -38,6 +38,7 @@ This project is currently in development and used for learning, portfolio buildi
 
 ## 📁 Project Structure
 
+```bash
 dracula-ecommerce/
 ├── backend/
 │   ├── src/
@@ -56,12 +57,12 @@ dracula-ecommerce/
 
 ### Backend
 
+```bash
 cd backend
 npm install
 npx prisma generate
 npx prisma migrate dev
 npm run start:dev
-
 ### Frontend
 
 cd frontend
