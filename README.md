@@ -1,4 +1,4 @@
-echo "# 🧛‍♂️ Dracula — E-Commerce Website for Computer Tools
+# 🧛‍♂️ Dracula — E-Commerce Website for Computer Tools
 
 **Dracula** is a modern, full-stack e-commerce web application built to sell a variety of computer tools and accessories — such as **mice, keyboards, gaming gear, pipes**, and more.
 
