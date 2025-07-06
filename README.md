@@ -38,19 +38,17 @@ This project is currently in development and used for learning, portfolio buildi
 
 ## 📁 Project Structure
 
-\`\`\`bash
 dracula-ecommerce/
 ├── backend/
 │   ├── src/
 │   │   └── main.ts
 │   ├── prisma/
-│       └── schema.prisma
+│   │   └── schema.prisma
 ├── frontend/
 │   ├── src/
 │   ├── redux/
 │   ├── App.jsx
 │   └── main.jsx
-\`\`\`
 
 ---
 
@@ -58,54 +56,15 @@ dracula-ecommerce/
 
 ### Backend
 
-\`\`\`bash
 cd backend
 npm install
 npx prisma generate
 npx prisma migrate dev
 npm run start:dev
-\`\`\`
 
 ### Frontend
 
-\`\`\`bash
 cd frontend
 npm install
 npm run dev
-\`\`\`
-
 ---
-
-## 🌐 Environment Variables
-
-\`\`\`env
-DATABASE_URL=\"postgresql://your_user:your_pass@localhost:5432/your_db\"
-\`\`\`
-
----
-
-## 📌 TODOs
-
-- [ ] Add authentication
-- [ ] Implement checkout
-- [ ] Admin dashboard
-- [ ] Deployment
-- [ ] Reviews & ratings
-
----
-
-## 🤝 Contributions
-
-Contributions are welcome! Feel free to fork or open issues.
-
----
-
-## 📄 License
-
-MIT License
-
----
-
-## 💬 Project Purpose
-
-This is a hands-on project to simulate real-world e-commerce logic using a dark-themed Dracula UI for computer tools." > README.md
