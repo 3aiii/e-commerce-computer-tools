@@ -62,9 +62,12 @@ npx prisma generate
 npx prisma migrate dev
 npm run start:dev
 ### Frontend
+```
+### Fronted
 
+```bash
 cd frontend
 npm install
-npm run dev
+npm run start
 ---
-```
+
