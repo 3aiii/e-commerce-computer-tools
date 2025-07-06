@@ -50,9 +50,7 @@ dracula-ecommerce/
 │   ├── redux/
 │   ├── App.jsx
 │   └── main.jsx
-
----
-
+```
 ## 🚀 Getting Started
 
 ### Backend
@@ -69,3 +67,4 @@ cd frontend
 npm install
 npm run dev
 ---
+```
